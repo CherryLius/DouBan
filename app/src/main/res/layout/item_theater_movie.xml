@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:scaleType="centerCrop" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_name"
+        style="@style/TextView.MovieName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatRatingBar
+            android:id="@+id/rating_bar"
+            style="@style/Base.Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:isIndicator="true" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_rating_average"
+            style="@style/TextView.Rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+</LinearLayout>

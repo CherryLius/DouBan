@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DouBan</string>
+    <string name="title_home">Home</string>
+    <string name="title_android">Android</string>
+
+    <string name="no_rating">暂无评分</string>
+</resources>
