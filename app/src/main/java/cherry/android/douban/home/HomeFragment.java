@@ -1,9 +1,13 @@
-package cherry.android.douban.main;
+package cherry.android.douban.home;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.util.ArrayMap;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,33 +16,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
+import cherry.android.douban.adapter.HomePageAdapter;
 import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.base.BaseFragment;
+import cherry.android.douban.common.Constants;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.recycler.DividerItemDecoration;
+import cherry.android.router.annotations.Route;
 
 /**
  * Created by Administrator on 2017/6/2.
  */
-
-public class HomeFragment extends BaseFragment implements HomeContract.View {
+@Route("movie://fragment/home")
+public class HomeFragment extends BaseFragment {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.recycler_0)
-    RecyclerView hotRecyclerView;
-    @BindView(R.id.recycler_1)
-    RecyclerView comingRecyclerView;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
     AppCompatActivity mActivity;
 
-    HomeContract.Presenter mPresenter;
-    TheaterMovieAdapter mTheaterAdapter;
-    TheaterMovieAdapter mComingSoonAdapter;
+    private HomePageAdapter mPagerAdapter;
 
     @Nullable
     @Override
@@ -50,20 +56,16 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        new HomePresenter(this);
-        mTheaterAdapter = new TheaterMovieAdapter();
-        mComingSoonAdapter = new TheaterMovieAdapter();
-        initRecyclerView(hotRecyclerView, mTheaterAdapter);
-        initRecyclerView(comingRecyclerView, mComingSoonAdapter);
-        mPresenter.loadMovieInTheater();
-        mPresenter.loadComingSoon();
+        init();
     }
 
-    void initRecyclerView(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration());
+    void init() {
+        List<HomeMovieFragment> list = new ArrayList<>(2);
+        list.add(HomeMovieFragment.newInstance(Constants.TAB_IN_THEATER));
+        list.add(HomeMovieFragment.newInstance(Constants.TAB_COMING_SOON));
+        mPagerAdapter = new HomePageAdapter(this.getChildFragmentManager(), list);
+        viewPager.setAdapter(mPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -83,25 +85,6 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
         if (mActivity != null) {
             mActivity.setSupportActionBar(null);
             mActivity = null;
-        }
-    }
-
-    @Override
-    public void setPresenter(@NonNull HomeContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void showTheaterMovie(List<Movie> movies) {
-        if (movies != null) {
-            mTheaterAdapter.showMovies(movies);
-        }
-    }
-
-    @Override
-    public void showComingSoon(List<Movie> movies) {
-        if (movies != null) {
-            mComingSoonAdapter.showMovies(movies);
         }
     }
 }

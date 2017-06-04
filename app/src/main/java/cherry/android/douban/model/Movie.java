@@ -1,5 +1,9 @@
 package cherry.android.douban.model;
 
+import android.support.annotation.IntDef;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -28,12 +32,14 @@ public class Movie {
     private String original_title;
     private String subtype;
     private String year;
-    private Images images;
+    private MovieAvatars images;
     private String alt;
     private String id;
     private List<String> genres;
-    private List<Casts> casts;
-    private List<Directors> directors;
+    @SerializedName("casts")
+    private List<MoviePerson> casts;
+    @SerializedName("directors")
+    private List<MoviePerson> directors;
 
     public Rating getRating() {
         return rating;
@@ -83,11 +89,11 @@ public class Movie {
         this.year = year;
     }
 
-    public Images getImages() {
+    public MovieAvatars getImages() {
         return images;
     }
 
-    public void setImages(Images images) {
+    public void setImages(MovieAvatars images) {
         this.images = images;
     }
 
@@ -115,19 +121,19 @@ public class Movie {
         this.genres = genres;
     }
 
-    public List<Casts> getCasts() {
+    public List<MoviePerson> getCasts() {
         return casts;
     }
 
-    public void setCasts(List<Casts> casts) {
+    public void setCasts(List<MoviePerson> casts) {
         this.casts = casts;
     }
 
-    public List<Directors> getDirectors() {
+    public List<MoviePerson> getDirectors() {
         return directors;
     }
 
-    public void setDirectors(List<Directors> directors) {
+    public void setDirectors(List<MoviePerson> directors) {
         this.directors = directors;
     }
 
@@ -177,203 +183,21 @@ public class Movie {
         }
     }
 
-    public static class Images {
-        /**
-         * small : http://img7.doubanio.com/view/movie_poster_cover/ipst/public/p2460006593.webp
-         * large : http://img7.doubanio.com/view/movie_poster_cover/lpst/public/p2460006593.webp
-         * medium : http://img7.doubanio.com/view/movie_poster_cover/spst/public/p2460006593.webp
-         */
-
-        private String small;
-        private String large;
-        private String medium;
-
-        public String getSmall() {
-            return small;
-        }
-
-        public void setSmall(String small) {
-            this.small = small;
-        }
-
-        public String getLarge() {
-            return large;
-        }
-
-        public void setLarge(String large) {
-            this.large = large;
-        }
-
-        public String getMedium() {
-            return medium;
-        }
-
-        public void setMedium(String medium) {
-            this.medium = medium;
-        }
-    }
-
-    public static class Casts {
-        /**
-         * alt : https://movie.douban.com/celebrity/1044996/
-         * avatars : {"small":"http://img7.doubanio.com/img/celebrity/small/8710.jpg","large":"http://img7.doubanio.com/img/celebrity/large/8710.jpg","medium":"http://img7.doubanio.com/img/celebrity/medium/8710.jpg"}
-         * name : 盖尔·加朵
-         * id : 1044996
-         */
-
-        private String alt;
-        private Avatars avatars;
-        private String name;
-        private String id;
-
-        public String getAlt() {
-            return alt;
-        }
-
-        public void setAlt(String alt) {
-            this.alt = alt;
-        }
-
-        public Avatars getAvatars() {
-            return avatars;
-        }
-
-        public void setAvatars(Avatars avatars) {
-            this.avatars = avatars;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public static class Avatars {
-            /**
-             * small : http://img7.doubanio.com/img/celebrity/small/8710.jpg
-             * large : http://img7.doubanio.com/img/celebrity/large/8710.jpg
-             * medium : http://img7.doubanio.com/img/celebrity/medium/8710.jpg
-             */
-
-            private String small;
-            private String large;
-            private String medium;
-
-            public String getSmall() {
-                return small;
-            }
-
-            public void setSmall(String small) {
-                this.small = small;
-            }
-
-            public String getLarge() {
-                return large;
-            }
-
-            public void setLarge(String large) {
-                this.large = large;
-            }
-
-            public String getMedium() {
-                return medium;
-            }
-
-            public void setMedium(String medium) {
-                this.medium = medium;
-            }
-        }
-    }
-
-    public static class Directors {
-        /**
-         * alt : https://movie.douban.com/celebrity/1023041/
-         * avatars : {"small":"http://img3.doubanio.com/img/celebrity/small/55167.jpg","large":"http://img3.doubanio.com/img/celebrity/large/55167.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/55167.jpg"}
-         * name : 派蒂·杰金斯
-         * id : 1023041
-         */
-
-        private String alt;
-        private AvatarsX avatars;
-        private String name;
-        private String id;
-
-        public String getAlt() {
-            return alt;
-        }
-
-        public void setAlt(String alt) {
-            this.alt = alt;
-        }
-
-        public AvatarsX getAvatars() {
-            return avatars;
-        }
-
-        public void setAvatars(AvatarsX avatars) {
-            this.avatars = avatars;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public static class AvatarsX {
-            /**
-             * small : http://img3.doubanio.com/img/celebrity/small/55167.jpg
-             * large : http://img3.doubanio.com/img/celebrity/large/55167.jpg
-             * medium : http://img3.doubanio.com/img/celebrity/medium/55167.jpg
-             */
-
-            private String small;
-            private String large;
-            private String medium;
-
-            public String getSmall() {
-                return small;
-            }
-
-            public void setSmall(String small) {
-                this.small = small;
-            }
-
-            public String getLarge() {
-                return large;
-            }
-
-            public void setLarge(String large) {
-                this.large = large;
-            }
-
-            public String getMedium() {
-                return medium;
-            }
-
-            public void setMedium(String medium) {
-                this.medium = medium;
-            }
-        }
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "rating=" + rating +
+                ", title='" + title + '\'' +
+                ", collect_count=" + collect_count +
+                ", original_title='" + original_title + '\'' +
+                ", subtype='" + subtype + '\'' +
+                ", year='" + year + '\'' +
+                ", images=" + images +
+                ", alt='" + alt + '\'' +
+                ", id='" + id + '\'' +
+                ", genres=" + genres +
+                ", casts=" + casts +
+                ", directors=" + directors +
+                '}';
     }
 }

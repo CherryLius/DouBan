@@ -1,4 +1,4 @@
-package cherry.android.douban.main;
+package cherry.android.douban.home;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import cherry.android.douban.model.Movie;
  * Created by Administrator on 2017/6/2.
  */
 
-public interface HomeContract {
+public interface HomeMovieContract {
 
     interface View extends BaseView<Presenter> {
         void showTheaterMovie(List<Movie> movies);

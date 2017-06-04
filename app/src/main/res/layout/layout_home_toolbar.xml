@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:drawableRight="@drawable/ic_expand_more_black_24dp"
+        android:gravity="center"
+        android:paddingRight="4dp"
+        android:text="北京" />
+
+    <cherry.android.douban.widget.CenterDrawableTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:background="@drawable/ic_search_round_rect"
+        android:drawableLeft="@drawable/ic_search_black_24dp"
+        android:gravity="center_vertical"
+        android:hint="@string/search_hint"
+        android:padding="3dp" />
+
+</LinearLayout>

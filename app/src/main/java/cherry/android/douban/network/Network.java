@@ -41,7 +41,7 @@ public class Network {
 
     public MovieApi getMovieApi() {
         if (mMovieApi == null) {
-            File cacheFile = new File(App.getContext().getCacheDir(), "douBan");
+            File cacheFile = new File(App.getContext().getCacheDir(), "cache_dou_ban_movie");
             Cache cache = new Cache(cacheFile, 10 * 1024 * 1024);
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(getInterceptor())

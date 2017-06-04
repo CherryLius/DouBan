@@ -14,7 +14,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
+import cherry.android.douban.home.HomeFragment;
+import cherry.android.router.annotations.Route;
+import cherry.android.router.api.Router;
 
+@Route("movie://activity/main")
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.navigation)

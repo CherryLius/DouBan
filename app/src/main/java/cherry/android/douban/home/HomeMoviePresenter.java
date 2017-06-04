@@ -1,4 +1,4 @@
-package cherry.android.douban.main;
+package cherry.android.douban.home;
 
 import android.support.annotation.NonNull;
 
@@ -7,6 +7,7 @@ import java.util.List;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
+import cherry.android.douban.util.Logger;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -16,11 +17,11 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Administrator on 2017/6/2.
  */
 
-public class HomePresenter implements HomeContract.Presenter {
+public class HomeMoviePresenter implements HomeMovieContract.Presenter {
 
-    HomeContract.View mView;
+    HomeMovieContract.View mView;
 
-    public HomePresenter(@NonNull HomeContract.View view) {
+    public HomeMoviePresenter(@NonNull HomeMovieContract.View view) {
         this.mView = view;
         this.mView.setPresenter(this);
     }
@@ -46,7 +47,7 @@ public class HomePresenter implements HomeContract.Presenter {
 
     @Override
     public void loadComingSoon() {
-        Network.instance().getMovieApi().comingSoon(20, 40)
+        Network.instance().getMovieApi().comingSoon(0, 40)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<TheaterMovie, List<Movie>>() {

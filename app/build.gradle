@@ -12,6 +12,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ModuleName: project.getName()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -29,21 +35,30 @@ dependencies {
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportSdkVersion}"
     compile "com.android.support:recyclerview-v7:${rootProject.ext.supportSdkVersion}"
     compile "com.android.support:design:${rootProject.ext.supportSdkVersion}"
+    compile "com.android.support:support-v4:${rootProject.ext.supportSdkVersion}"
 
-    //Permission Request
+    testCompile 'junit:junit:4.12'
+
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+
+    //butterKnife
     compile 'com.jakewharton:butterknife:8.6.0'
     compile 'com.jakewharton:butterknife-annotations:8.6.0'
-    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    apt 'com.jakewharton:butterknife-compiler:8.6.0'
+
+    //Permission Request
     compile 'cherry.android:permissions-api:1.0.0'
     compile 'cherry.android:permissions-annotations:1.0.0'
-    compile 'com.android.support:support-v4:25.3.1'
-    testCompile 'junit:junit:4.12'
-    apt 'com.jakewharton:butterknife-compiler:8.6.0'
     apt 'cherry.android:permissions-compiler:1.0.0'
+
+    //Router
+    compile 'cherry.android:router-api:1.0.0'
+    compile 'cherry.android:router-annotations:1.0.0'
+    apt 'cherry.android:router-compiler:1.0.0'
 }
