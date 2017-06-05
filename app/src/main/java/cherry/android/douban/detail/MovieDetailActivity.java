@@ -10,6 +10,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -19,6 +20,7 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.util.Logger;
 import cherry.android.router.annotations.Route;
 
 /**
@@ -28,6 +30,8 @@ import cherry.android.router.annotations.Route;
 public class MovieDetailActivity extends BaseActivity implements MovieDetailContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tv_tool_title)
+    TextView titleView;
     @BindView(R.id.iv_image)
     ImageView movieImage;
 
@@ -70,7 +74,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @Override
     public void showMovie(Movie movie) {
         Glide.with(this).load(movie.getImages().getLarge())
-                .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
+//                .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(movieImage);
     }
 }
