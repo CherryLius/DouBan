@@ -125,7 +125,6 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
     public void onItemClick(View view, int position) {
         List<Movie> movies = mMovieAdapter.getCurrentMovies();
         Movie movie = movies.get(position);
-        movie.getId();
-        Router.build("movie://activity/movie/detail").open(getActivity());
+        Router.build("movie://activity/movie/detail?id=" + movie.getId()).open(getActivity());
     }
 }

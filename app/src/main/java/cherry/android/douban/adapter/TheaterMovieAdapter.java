@@ -74,7 +74,7 @@ public class TheaterMovieAdapter extends RecyclerView.Adapter<TheaterMovieAdapte
         holder.castView.setText(mContext.getString(R.string.prefix_cast,
                 list2String(movie.getCasts())));
         int resId = mType == TYPE_IN_THEATER ? R.string.suffix_watching : R.string.suffix_want_watching;
-        holder.watchingView.setText(mContext.getString(resId, movie.getCollect_count()));
+        holder.watchingView.setText(mContext.getString(resId, movie.getCollectCount()));
         if (mItemClickListener != null)
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

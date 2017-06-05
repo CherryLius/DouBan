@@ -1,7 +1,5 @@
 package cherry.android.douban.model;
 
-import android.support.annotation.IntDef;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -12,34 +10,78 @@ import java.util.List;
 
 public class Movie {
     /**
-     * rating : {"max":10,"average":8.2,"stars":"45","min":0}
-     * genres : ["动作","奇幻","冒险"]
-     * title : 神奇女侠
-     * casts : [{"alt":"https://movie.douban.com/celebrity/1044996/","avatars":{"small":"http://img7.doubanio.com/img/celebrity/small/8710.jpg","large":"http://img7.doubanio.com/img/celebrity/large/8710.jpg","medium":"http://img7.doubanio.com/img/celebrity/medium/8710.jpg"},"name":"盖尔·加朵","id":"1044996"},{"alt":"https://movie.douban.com/celebrity/1053621/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/32637.jpg","large":"http://img3.doubanio.com/img/celebrity/large/32637.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/32637.jpg"},"name":"克里斯·派恩","id":"1053621"},{"alt":"https://movie.douban.com/celebrity/1002676/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/51737.jpg","large":"http://img3.doubanio.com/img/celebrity/large/51737.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/51737.jpg"},"name":"罗宾·怀特","id":"1002676"}]
-     * collect_count : 4938
-     * original_title : Wonder Woman
-     * subtype : movie
-     * directors : [{"alt":"https://movie.douban.com/celebrity/1023041/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/55167.jpg","large":"http://img3.doubanio.com/img/celebrity/large/55167.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/55167.jpg"},"name":"派蒂·杰金斯","id":"1023041"}]
+     * rating : {"max":10,"average":7.4,"stars":"40","min":0}
+     * reviews_count : 1019
+     * wish_count : 23277
+     * douban_site :
      * year : 2017
-     * images : {"small":"http://img7.doubanio.com/view/movie_poster_cover/ipst/public/p2460006593.webp","large":"http://img7.doubanio.com/view/movie_poster_cover/lpst/public/p2460006593.webp","medium":"http://img7.doubanio.com/view/movie_poster_cover/spst/public/p2460006593.webp"}
+     * images : {"small":"http://img7.doubanio.com/view/movie_poster_cover/ipst/public/p2460006593.jpg","large":"http://img7.doubanio.com/view/movie_poster_cover/lpst/public/p2460006593.jpg","medium":"http://img7.doubanio.com/view/movie_poster_cover/spst/public/p2460006593.jpg"}
      * alt : https://movie.douban.com/subject/1578714/
      * id : 1578714
+     * mobile_url : https://movie.douban.com/subject/1578714/mobile
+     * title : 神奇女侠
+     * do_count : null
+     * share_url : http://m.douban.com/movie/subject/1578714
+     * seasons_count : null
+     * schedule_url : https://movie.douban.com/subject/1578714/cinema/
+     * episodes_count : null
+     * countries : ["美国"]
+     * genres : ["动作","奇幻","冒险"]
+     * collect_count : 75023
+     * casts : [{"alt":"https://movie.douban.com/celebrity/1044996/","avatars":{"small":"http://img7.doubanio.com/img/celebrity/small/8710.jpg","large":"http://img7.doubanio.com/img/celebrity/large/8710.jpg","medium":"http://img7.doubanio.com/img/celebrity/medium/8710.jpg"},"name":"盖尔·加朵","id":"1044996"},{"alt":"https://movie.douban.com/celebrity/1053621/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/32637.jpg","large":"http://img3.doubanio.com/img/celebrity/large/32637.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/32637.jpg"},"name":"克里斯·派恩","id":"1053621"},{"alt":"https://movie.douban.com/celebrity/1009298/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/1416109882.48.jpg","large":"http://img3.doubanio.com/img/celebrity/large/1416109882.48.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/1416109882.48.jpg"},"name":"康妮·尼尔森","id":"1009298"},{"alt":"https://movie.douban.com/celebrity/1002676/","avatars":{"small":"http://img3.doubanio.com/img/celebrity/small/51737.jpg","large":"http://img3.doubanio.com/img/celebrity/large/51737.jpg","medium":"http://img3.doubanio.com/img/celebrity/medium/51737.jpg"},"name":"罗宾·怀特","id":"1002676"}]
+     * current_season : null
+     * original_title : Wonder Woman
+     * summary : 亚马逊公主戴安娜·普林斯（盖尔·加朵 Gal Gadot 饰），经过在家乡天堂岛的训练，取得上帝赐予的武器与装备，化身神奇女侠，与空军上尉史蒂夫·特雷弗（克里斯·派恩 Chris Pine 饰）一同来到人类世界，一起捍卫和平、拯救世界，在一战期间上演了震撼人心的史诗传奇。
+     * subtype : movie
+     * directors : [{"alt":"https://movie.douban.com/celebrity/1023041/","avatars":{"small":"http://img7.doubanio.com/img/celebrity/small/1496555593.75.jpg","large":"http://img7.doubanio.com/img/celebrity/large/1496555593.75.jpg","medium":"http://img7.doubanio.com/img/celebrity/medium/1496555593.75.jpg"},"name":"派蒂·杰金斯","id":"1023041"}]
+     * comments_count : 39158
+     * ratings_count : 71344
+     * aka : ["神力女超人(台)"]
      */
 
     private Rating rating;
-    private String title;
-    private int collect_count;
-    private String original_title;
-    private String subtype;
+    @SerializedName("reviews_count")
+    private int reviewsCount;
+    @SerializedName("wish_count")
+    private int wishCount;
+    @SerializedName("douban_site")
+    private String douBanSite;
     private String year;
     private MovieAvatars images;
     private String alt;
     private String id;
-    private List<String> genres;
+    @SerializedName("mobile_url")
+    private String mobileUrl;
+    private String title;
+    @SerializedName("do_count")
+    private Object doCount;
+    @SerializedName("share_url")
+    private String shareUrl;
+    @SerializedName("seasons_count")
+    private Object seasonsCount;
+    @SerializedName("schedule_url")
+    private String scheduleUrl;
+    @SerializedName("episodes_count")
+    private Object episodesCount;
+    @SerializedName("collect_count")
+    private int collectCount;
+    @SerializedName("current_season")
+    private Object currentSeason;
+    @SerializedName("original_title")
+    private String originalTitle;
+    private String summary;
+    private String subtype;
+    @SerializedName("comments_count")
+    private int commentsCount;
+    @SerializedName("ratings_count")
+    private int ratingsCount;
+    private java.util.List<String> countries;
+    private java.util.List<String> genres;
     @SerializedName("casts")
     private List<MoviePerson> casts;
     @SerializedName("directors")
-    private List<MoviePerson> directors;
+    private java.util.List<MoviePerson> directors;
+    private java.util.List<String> aka;
 
     public Rating getRating() {
         return rating;
@@ -57,20 +99,20 @@ public class Movie {
         this.title = title;
     }
 
-    public int getCollect_count() {
-        return collect_count;
+    public int getCollectCount() {
+        return collectCount;
     }
 
-    public void setCollect_count(int collect_count) {
-        this.collect_count = collect_count;
+    public void setCollect_count(int collectCount) {
+        this.collectCount = collectCount;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getOriginalTitle() {
+        return originalTitle;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
     public String getSubtype() {
@@ -188,8 +230,8 @@ public class Movie {
         return "Movie{" +
                 "rating=" + rating +
                 ", title='" + title + '\'' +
-                ", collect_count=" + collect_count +
-                ", original_title='" + original_title + '\'' +
+                ", collect_count=" + collectCount +
+                ", original_title='" + originalTitle + '\'' +
                 ", subtype='" + subtype + '\'' +
                 ", year='" + year + '\'' +
                 ", images=" + images +

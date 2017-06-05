@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import cherry.android.douban.util.Logger;
-import cherry.android.douban.util.Utils;
 import cherry.android.router.api.RouteMeta;
 import cherry.android.router.api.Router;
 import cherry.android.router.api.intercept.IInterceptor;

@@ -11,11 +11,11 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="5dp">
 
+        <!--android:background="@color/colorPrimary"-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp"
             app:layout_collapseMode="pin"
@@ -30,8 +30,8 @@
                 android:layout_gravity="center"
                 android:drawableLeft="@mipmap/ic_subject_toolbar_movie"
                 android:gravity="center_vertical"
-                android:paddingBottom="6dp"
-                android:paddingTop="6dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="@string/label_movie" />
         </android.support.v7.widget.Toolbar>
 
@@ -43,11 +43,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </LinearLayout>
+        <include layout="@layout/layout_movie_detail_content" />
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

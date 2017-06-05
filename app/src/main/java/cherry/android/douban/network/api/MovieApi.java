@@ -1,5 +1,6 @@
 package cherry.android.douban.network.api;
 
+import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.NorthAmericaMovie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.model.NewWeeklyMovie;
@@ -14,7 +15,7 @@ import retrofit2.http.Query;
  */
 
 public interface MovieApi {
-    //、https://developers.douban.com/wiki/?title=movie_v2#works
+    //https://developers.douban.com/wiki/?title=movie_v2#works
     /*******        榜单        ********/
     /**
      * 正在热映
@@ -94,7 +95,7 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/subject/{id}")
-    Observable<ResponseBody> movieInfo(@Path("id") int id);
+    Observable<Movie> movieInfo(@Path("id") String id);
 
     /**
      * 电影条目剧照 /v2/movie/subject/:id/photos
