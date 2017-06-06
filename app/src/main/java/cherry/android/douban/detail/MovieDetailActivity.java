@@ -1,5 +1,6 @@
 package cherry.android.douban.detail;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     private MovieDetailContract.Presenter mPresenter;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
     private DetailHeader mDetailHeader;
+    private SummaryHeader mSummaryHeader;
     private float mDistance;
 
     @Override
@@ -78,6 +80,10 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(adapter);
         View view = LayoutInflater.from(this).inflate(R.layout.layout_movie_detail_header, recyclerView, false);
         mDetailHeader = new DetailHeader(view);
+        mHeaderAndFooterWrapper.addHeaderView(view);
+
+        view = LayoutInflater.from(this).inflate(R.layout.layout_movie_detail_summary_detail,recyclerView,false);
+        mSummaryHeader = new SummaryHeader(view);
         mHeaderAndFooterWrapper.addHeaderView(view);
         recyclerView.setAdapter(mHeaderAndFooterWrapper);
     }
@@ -133,27 +139,8 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
 
     @Override
     public void showMovie(Movie movie) {
-        Glide.with(this).load(movie.getImages().getLarge())
-                .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
-                .into(mDetailHeader.imageView);
-        mDetailHeader.nameView.setText(movie.getTitle());
-        StringBuilder detailBuilder = new StringBuilder();
-        detailBuilder.append(movie.getYear())
-                .append('/')
-                .append(Utils.list2String(movie.getGenres()))
-                .append('\n')
-                .append("原名：")
-                .append(movie.getOriginalTitle())
-                .append('\n')
-                .append("上映时间：")
-                .append('\n')
-                .append("片长：");
-        mDetailHeader.detailView.setText(detailBuilder.toString());
-        Movie.Rating movieRating = movie.getRating();
-        float rating = (float) (movieRating.getAverage() / movieRating.getMax() * mDetailHeader.ratingBar.getNumStars());
-        mDetailHeader.ratingBar.setRating(rating);
-        mDetailHeader.ratingView.setText(movieRating.getAverage() + "");
-        mDetailHeader.collectView.setText(getString(R.string.label_collect_count, movie.getCollectCount()));
+        mDetailHeader.updateDetail(this, movie);
+        mSummaryHeader.updateSummary(movie);
     }
 
     static class DetailHeader {
@@ -176,6 +163,43 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         public DetailHeader(View itemView) {
             this.itemView = itemView;
             ButterKnife.bind(this, itemView);
+        }
+
+        public void updateDetail(Context context, Movie movie) {
+            Glide.with(context).load(movie.getImages().getLarge())
+                    .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
+                    .into(imageView);
+            nameView.setText(movie.getTitle());
+            StringBuilder detailBuilder = new StringBuilder();
+            detailBuilder.append(movie.getYear())
+                    .append('/')
+                    .append(Utils.list2String(movie.getGenres()))
+                    .append('\n')
+                    .append("原名：")
+                    .append(movie.getOriginalTitle())
+                    .append('\n')
+                    .append("上映时间：")
+                    .append('\n')
+                    .append("片长：");
+            detailView.setText(detailBuilder.toString());
+            Movie.Rating movieRating = movie.getRating();
+            float rating = (float) (movieRating.getAverage() / movieRating.getMax() * ratingBar.getNumStars());
+            ratingBar.setRating(rating);
+            ratingView.setText(movieRating.getAverage() + "");
+            collectView.setText(context.getString(R.string.label_collect_count, movie.getCollectCount()));
+        }
+    }
+
+    static class SummaryHeader {
+        @BindView(R.id.tv_summary)
+        TextView textView;
+
+        SummaryHeader(View view) {
+            ButterKnife.bind(this,view);
+        }
+
+        public void updateSummary(Movie movie) {
+            textView.setText(movie.getSummary());
         }
     }
 

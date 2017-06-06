@@ -41,4 +41,12 @@
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">18sp</item>
     </style>
+
+    <style name="TextView.Summary">
+        <item name="android:textColor">@color/colorGrey_800</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:lineSpacingExtra">1dp</item>
+    </style>
+
 </resources>

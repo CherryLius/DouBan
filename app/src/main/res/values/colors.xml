@@ -9,6 +9,10 @@
     <color name="colorGrey_600">#757575</color>
     <color name="colorGrey_800">#424242</color>
 
+    <color name="colorIndigo_300">#7986cb</color>
+
+    <color name="colorRed_600">#e53935</color>
+
     <color name="colorWhite">#ffffff</color>
 
     <color name="colorBlack">#000000</color>

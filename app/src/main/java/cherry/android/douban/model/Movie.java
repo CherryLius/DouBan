@@ -179,6 +179,130 @@ public class Movie {
         this.directors = directors;
     }
 
+    public int getReviewsCount() {
+        return reviewsCount;
+    }
+
+    public void setReviewsCount(int reviewsCount) {
+        this.reviewsCount = reviewsCount;
+    }
+
+    public int getWishCount() {
+        return wishCount;
+    }
+
+    public void setWishCount(int wishCount) {
+        this.wishCount = wishCount;
+    }
+
+    public String getDouBanSite() {
+        return douBanSite;
+    }
+
+    public void setDouBanSite(String douBanSite) {
+        this.douBanSite = douBanSite;
+    }
+
+    public String getMobileUrl() {
+        return mobileUrl;
+    }
+
+    public void setMobileUrl(String mobileUrl) {
+        this.mobileUrl = mobileUrl;
+    }
+
+    public Object getDoCount() {
+        return doCount;
+    }
+
+    public void setDoCount(Object doCount) {
+        this.doCount = doCount;
+    }
+
+    public String getShareUrl() {
+        return shareUrl;
+    }
+
+    public void setShareUrl(String shareUrl) {
+        this.shareUrl = shareUrl;
+    }
+
+    public Object getSeasonsCount() {
+        return seasonsCount;
+    }
+
+    public void setSeasonsCount(Object seasonsCount) {
+        this.seasonsCount = seasonsCount;
+    }
+
+    public String getScheduleUrl() {
+        return scheduleUrl;
+    }
+
+    public void setScheduleUrl(String scheduleUrl) {
+        this.scheduleUrl = scheduleUrl;
+    }
+
+    public Object getEpisodesCount() {
+        return episodesCount;
+    }
+
+    public void setEpisodesCount(Object episodesCount) {
+        this.episodesCount = episodesCount;
+    }
+
+    public void setCollectCount(int collectCount) {
+        this.collectCount = collectCount;
+    }
+
+    public Object getCurrentSeason() {
+        return currentSeason;
+    }
+
+    public void setCurrentSeason(Object currentSeason) {
+        this.currentSeason = currentSeason;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    public int getRatingsCount() {
+        return ratingsCount;
+    }
+
+    public void setRatingsCount(int ratingsCount) {
+        this.ratingsCount = ratingsCount;
+    }
+
+    public List<String> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(List<String> countries) {
+        this.countries = countries;
+    }
+
+    public List<String> getAka() {
+        return aka;
+    }
+
+    public void setAka(List<String> aka) {
+        this.aka = aka;
+    }
+
     public static class Rating {
         /**
          * max : 10
