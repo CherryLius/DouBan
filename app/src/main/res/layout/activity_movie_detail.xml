@@ -2,49 +2,58 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!--<android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:elevation="5dp">
+        app:elevation="5dp">-->
 
-        <!--android:background="@color/colorPrimary"-->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title=" ">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:fitsSystemWindows="true"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_collapseMode="pin"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title=" ">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/iv_tool_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_tool_title"
+                android:layout_alignTop="@+id/tv_tool_title"
+                app:srcCompat="@mipmap/ic_subject_toolbar_movie" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_tool_title"
                 style="@style/TextView.ToolBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:drawableLeft="@mipmap/ic_subject_toolbar_movie"
-                android:gravity="center_vertical"
-                android:paddingBottom="12dp"
-                android:paddingTop="12dp"
+                android:layout_toRightOf="@id/iv_tool_image"
                 android:text="@string/label_movie" />
-        </android.support.v7.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+        </RelativeLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </android.support.v7.widget.Toolbar>
 
-        <include layout="@layout/layout_movie_detail_content" />
-    </android.support.v4.widget.NestedScrollView>
+    <!--</android.support.design.widget.AppBarLayout>-->
 
 </android.support.design.widget.CoordinatorLayout>

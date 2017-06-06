@@ -8,8 +8,9 @@ import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
 import cherry.android.douban.util.Logger;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -18,6 +19,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class HomeMoviePresenter implements HomeMovieContract.Presenter {
+    private static final String TAG = "HomeMoviePresenter";
 
     HomeMovieContract.View mView;
 
@@ -37,10 +39,25 @@ public class HomeMoviePresenter implements HomeMovieContract.Presenter {
                         return theaterMovie.getMovies();
                     }
                 })
-                .subscribe(new Consumer<List<Movie>>() {
+                .subscribe(new Observer<List<Movie>>() {
                     @Override
-                    public void accept(@io.reactivex.annotations.NonNull List<Movie> movies) throws Exception {
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull List<Movie> movies) {
                         mView.showTheaterMovie(movies);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Logger.e(TAG, "onError", e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -56,10 +73,25 @@ public class HomeMoviePresenter implements HomeMovieContract.Presenter {
                         return theaterMovie.getMovies();
                     }
                 })
-                .subscribe(new Consumer<List<Movie>>() {
+                .subscribe(new Observer<List<Movie>>() {
                     @Override
-                    public void accept(@io.reactivex.annotations.NonNull List<Movie> movies) throws Exception {
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull List<Movie> movies) {
                         mView.showComingSoon(movies);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Logger.e(TAG, "onError", e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }

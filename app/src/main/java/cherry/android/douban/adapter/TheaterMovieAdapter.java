@@ -3,9 +3,7 @@ package cherry.android.douban.adapter;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,42 +16,35 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
-import cherry.android.douban.listener.OnItemClickListener;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
+import cherry.android.douban.recycler.CommonAdapter;
+import cherry.android.douban.util.Utils;
 
 /**
- * Created by Administrator on 2017/6/2.
+ * Created by Administrator on 2017/6/6.
  */
 
-public class TheaterMovieAdapter extends RecyclerView.Adapter<TheaterMovieAdapter.TheaterHolder> {
+public class TheaterMovieAdapter extends CommonAdapter<Movie, TheaterMovieAdapter.TheaterHolder> {
 
     public static final int TYPE_IN_THEATER = 1001;
     public static final int TYPE_COMING_SOON = 1002;
 
-    private List<Movie> mMovies;
     private Context mContext;
-    private OnItemClickListener mItemClickListener;
     private int mType;
 
     @IntDef({TYPE_IN_THEATER, TYPE_COMING_SOON})
     public @interface TheaterType {
     }
 
-    public TheaterMovieAdapter(Context context, @TheaterType int type) {
+    public TheaterMovieAdapter(Context context, @TheaterMovieAdapter.TheaterType int type) {
+        super(R.layout.item_theater_movie);
         mContext = context;
         mType = type;
     }
 
     @Override
-    public TheaterHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_theater_movie, parent, false);
-        return new TheaterHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(TheaterHolder holder, final int position) {
-        final Movie movie = mMovies.get(position);
+    public void convert(TheaterHolder holder, Movie movie, int position) {
         Glide.with(holder.itemView)
                 .load(movie.getImages().getLarge())
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
@@ -75,42 +66,24 @@ public class TheaterMovieAdapter extends RecyclerView.Adapter<TheaterMovieAdapte
                 list2String(movie.getCasts())));
         int resId = mType == TYPE_IN_THEATER ? R.string.suffix_watching : R.string.suffix_want_watching;
         holder.watchingView.setText(mContext.getString(resId, movie.getCollectCount()));
-        if (mItemClickListener != null)
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mItemClickListener.onItemClick(v, position);
-                }
-            });
     }
 
     @Override
-    public int getItemCount() {
-        return mMovies == null ? 0 : mMovies.size();
-    }
-
-    public List<Movie> getCurrentMovies() {
-        return mMovies;
-    }
-
-    public void showMovies(List<Movie> movies) {
-        mMovies = movies;
-        notifyDataSetChanged();
-    }
-
-    public void setOnItemClickListener(OnItemClickListener l) {
-        mItemClickListener = l;
+    protected TheaterHolder createViewHolder(View itemView) {
+        return new TheaterHolder(itemView);
     }
 
     private String list2String(List<MoviePerson> persons) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < persons.size(); i++) {
-            builder.append(persons.get(i).getName());
-            if (i < persons.size() - 1)
-                builder.append('/');
+        return Utils.list2String(persons, new Utils.IPicker<MoviePerson>() {
+            @Override
+            public String pick(MoviePerson moviePerson) {
+                return moviePerson.getName();
+            }
+        });
+    }
 
-        }
-        return builder.toString();
+    public List<Movie> getCurrentMovies() {
+        return mDataList;
     }
 
     static class TheaterHolder extends RecyclerView.ViewHolder {

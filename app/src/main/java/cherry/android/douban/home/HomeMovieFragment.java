@@ -18,8 +18,8 @@ import cherry.android.douban.R;
 import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.base.BaseFragment;
 import cherry.android.douban.common.Constants;
-import cherry.android.douban.listener.OnItemClickListener;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.DividerItemDecoration;
 import cherry.android.router.api.Router;
 
@@ -27,7 +27,7 @@ import cherry.android.router.api.Router;
  * Created by LHEE on 2017/6/3.
  */
 
-public class HomeMovieFragment extends BaseFragment implements HomeMovieContract.View, OnItemClickListener {
+public class HomeMovieFragment extends BaseFragment implements HomeMovieContract.View, BaseAdapter.OnItemClickListener {
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
     @BindView(R.id.recycler)
@@ -111,18 +111,18 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
 
     @Override
     public void showTheaterMovie(List<Movie> movies) {
-        mMovieAdapter.showMovies(movies);
+        mMovieAdapter.showData(movies);
         refreshLayout.setRefreshing(false);
     }
 
     @Override
     public void showComingSoon(List<Movie> movies) {
-        mMovieAdapter.showMovies(movies);
+        mMovieAdapter.showData(movies);
         refreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         List<Movie> movies = mMovieAdapter.getCurrentMovies();
         Movie movie = movies.get(position);
         Router.build("movie://activity/movie/detail?id=" + movie.getId()).open(getActivity());

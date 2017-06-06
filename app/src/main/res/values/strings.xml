@@ -12,4 +12,6 @@
 
     <string name="label_share">分享</string>
     <string name="label_movie">电影</string>
+    <string name="label_rating">豆瓣评分</string>
+    <string name="label_collect_count"><xliff:g id="number">%1$d</xliff:g>人</string>
 </resources>

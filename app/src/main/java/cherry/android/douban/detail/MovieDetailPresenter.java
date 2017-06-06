@@ -4,9 +4,11 @@ import android.text.TextUtils;
 
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.network.Network;
+import cherry.android.douban.util.Logger;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -14,6 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class MovieDetailPresenter implements MovieDetailContract.Presenter {
+    private static final String TAG = "MovieDetailPresenter";
 
     MovieDetailContract.View mView;
 
@@ -29,10 +32,25 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
         Network.instance().getMovieApi().movieInfo(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Movie>() {
+                .subscribe(new Observer<Movie>() {
                     @Override
-                    public void accept(@NonNull Movie movie) throws Exception {
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Movie movie) {
                         mView.showMovie(movie);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Logger.e(TAG, "onError", e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }

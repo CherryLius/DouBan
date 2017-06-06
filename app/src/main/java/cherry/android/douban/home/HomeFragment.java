@@ -2,15 +2,10 @@ package cherry.android.douban.home;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +18,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.HomePageAdapter;
-import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.base.BaseFragment;
 import cherry.android.douban.common.Constants;
-import cherry.android.douban.model.Movie;
-import cherry.android.douban.recycler.DividerItemDecoration;
 import cherry.android.router.annotations.Route;
 
 /**
