@@ -3,6 +3,8 @@ package cherry.android.douban.recycler;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
 
+import cherry.android.douban.util.Logger;
+
 /**
  * Created by Administrator on 2017/6/6.
  */

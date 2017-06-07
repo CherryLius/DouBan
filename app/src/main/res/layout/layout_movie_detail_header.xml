@@ -36,7 +36,7 @@
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_detail"
-                style="@style/TextView.Rating"
+                style="@style/TextView.GreySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -59,7 +59,7 @@
                 android:padding="5dp">
 
                 <android.support.v7.widget.AppCompatTextView
-                    style="@style/TextView.Rating"
+                    style="@style/TextView.GreySmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -82,7 +82,7 @@
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/tv_collect_count"
-                    style="@style/TextView.Rating"
+                    style="@style/TextView.GreySmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center" />
@@ -149,8 +149,6 @@
             android:layout_weight="3"
             android:drawableLeft="@mipmap/ic_subject_movie_tickets"
             android:gravity="center_vertical"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
             android:text="选座购票"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -162,8 +160,6 @@
             android:layout_weight="1"
             android:drawableRight="@mipmap/ic_arrow_gray_small"
             android:gravity="center_vertical|right"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
             android:text="¥22起"
             android:textColor="@color/colorRed_600" />
     </LinearLayout>

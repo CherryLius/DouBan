@@ -69,7 +69,7 @@ public class TheaterMovieAdapter extends CommonAdapter<Movie, TheaterMovieAdapte
     }
 
     @Override
-    protected TheaterHolder createViewHolder(View itemView) {
+    protected TheaterHolder createDefaultViewHolder(View itemView) {
         return new TheaterHolder(itemView);
     }
 

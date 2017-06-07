@@ -1,6 +1,7 @@
 package cherry.android.douban.network.api;
 
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.model.NorthAmericaMovie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.model.NewWeeklyMovie;
@@ -104,10 +105,10 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/subject/{id}/photos")
-    Observable<ResponseBody> moviePhotoInfo(@Path("id") int id);
+    Observable<ResponseBody> moviePhotoInfo(@Path("id") String id);
 
     @GET("/v2/movie/subject/{id}/photos")
-    Observable<ResponseBody> moviePhotoInfo(@Path("id") int id,
+    Observable<ResponseBody> moviePhotoInfo(@Path("id") String id,
                                             @Query("start") int start,
                                             @Query("count") int count);
 
@@ -118,10 +119,10 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/subject/{id}/reviews")
-    Observable<ResponseBody> movieReviews(@Path("id") int id);
+    Observable<ResponseBody> movieReviews(@Path("id") String id);
 
     @GET("/v2/movie/subject/{id}/reviews")
-    Observable<ResponseBody> movieReviews(@Path("id") int id,
+    Observable<ResponseBody> movieReviews(@Path("id") String id,
                                           @Query("start") int start,
                                           @Query("count") int count);
 
@@ -132,10 +133,10 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/subject/{id}/comments")
-    Observable<ResponseBody> movieComments(@Path("id") int id);
+    Observable<ResponseBody> movieComments(@Path("id") String id);
 
     @GET("/v2/movie/subject/{id}/comments")
-    Observable<ResponseBody> movieComments(@Path("id") int id,
+    Observable<ResponseBody> movieComments(@Path("id") String id,
                                            @Query("start") int start,
                                            @Query("count") int count);
     /*******        影人条目        ********/
@@ -145,7 +146,7 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/celebrity/{id}")
-    Observable<ResponseBody> celebrityInfo();
+    Observable<MovieCelebrity> celebrityInfo(@Path("id") String id);
 
     /**
      * 影人剧照
@@ -153,10 +154,11 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/celebrity/{id}/photos")
-    Observable<ResponseBody> celebrityPhotoInfo();
+    Observable<ResponseBody> celebrityPhotoInfo(@Path("id") String id);
 
     @GET("/v2/movie/celebrity/{id}/photos")
-    Observable<ResponseBody> celebrityPhotoInfo(@Query("start") int start,
+    Observable<ResponseBody> celebrityPhotoInfo(@Path("id") String id,
+                                                @Query("start") int start,
                                                 @Query("count") int count);
 
     /**
@@ -165,9 +167,10 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/celebrity/{id}/works")
-    Observable<ResponseBody> celebrityWorksInfo();
+    Observable<ResponseBody> celebrityWorksInfo(@Path("id") String id);
 
     @GET("/v2/movie/celebrity/{id}/works")
-    Observable<ResponseBody> celebrityWorksInfo(@Query("start") int start,
+    Observable<ResponseBody> celebrityWorksInfo(@Path("id") String id,
+                                                @Query("start") int start,
                                                 @Query("count") int count);
 }

@@ -20,13 +20,24 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public static final int HORIZONTAL = LinearLayoutManager.HORIZONTAL;
     public static final int VERTICAL = LinearLayoutManager.VERTICAL;
 
+    private int mOrientation = VERTICAL;
     private int mGap = 1;
     private Paint mPaint;
+    private boolean mUseSpace;
 
-    public DividerItemDecoration(Context context) {
+    public DividerItemDecoration(Context context, int orientation) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         int color = ContextCompat.getColor(context, R.color.colorGrey_500);
         mPaint.setColor(color);
+        mOrientation = orientation;
+    }
+
+    public void setGap(int gap) {
+        mGap = gap;
+    }
+
+    public void useSpace(boolean flag) {
+        mUseSpace = flag;
     }
 
     @Override
@@ -34,13 +45,17 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state);
         int position = parent.getChildAdapterPosition(view);
         if (position != 0) {
-            outRect.set(0, mGap, 0, 0);
+            if (mOrientation == VERTICAL)
+                outRect.set(0, mGap, 0, 0);
+            else
+                outRect.set(mGap, 0, 0, 0);
         }
     }
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDraw(c, parent, state);
+        if (mUseSpace) return;
         for (int i = 0; i < parent.getChildCount(); i++) {
             final View child = parent.getChildAt(i);
             int position = parent.getChildAdapterPosition(child);

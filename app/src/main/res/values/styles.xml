@@ -27,12 +27,12 @@
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
-    <style name="TextView.Rating">
+    <style name="TextView.GreySmall">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/colorGrey_500</item>
     </style>
 
-    <style name="TextView.Watching">
+    <style name="TextView.BlackSmall">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
@@ -43,10 +43,9 @@
     </style>
 
     <style name="TextView.Summary">
-        <item name="android:textColor">@color/colorGrey_800</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:lineSpacingMultiplier">1.2</item>
-        <item name="android:lineSpacingExtra">1dp</item>
+        <item name="textColor">@color/colorGrey_800</item>
+        <item name="textSize">15sp</item>
+        <item name="lineSpacingMultiplier">1.2</item>
     </style>
 
 </resources>

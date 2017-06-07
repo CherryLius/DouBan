@@ -51,7 +51,7 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.layout_recycler, container, false);
+        return inflater.inflate(R.layout.layout_swipe_recycler, container, false);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
                         : TheaterMovieAdapter.TYPE_IN_THEATER);
         mMovieAdapter.setOnItemClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(mMovieAdapter);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

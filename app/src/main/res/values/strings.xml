@@ -16,6 +16,7 @@
     <string name="label_collect_count"><xliff:g id="number">%1$d</xliff:g>人</string>
     <string name="label_summary">简介</string>
     <string name="label_summary_report">举报简介</string>
-    <string name="label_movie_person">影人</string>
+    <string name="label_celebrity">影人</string>
     <string name="label_advance">预告片/剧照</string>
+    <string name="label_collection">收藏</string>
 </resources>

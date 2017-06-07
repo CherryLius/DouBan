@@ -1,6 +1,7 @@
 package cherry.android.douban.util;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.compat.BuildConfig;
@@ -26,6 +27,22 @@ public final class Utils {
         if (activeNetwork != null)
             return activeNetwork.isAvailable();
         return false;
+    }
+
+    /**
+     * getResources().getIdentifier("colorAccent", "attr", "android")
+     * @param context
+     * @return
+     */
+    public static int getColorAccent(Context context) {
+        int colorAccent = 0xff000000;
+        int[] attributes = {android.R.attr.colorAccent};
+        TypedArray ta = context.obtainStyledAttributes(attributes);
+        if (ta != null) {
+            colorAccent = ta.getColor(0, colorAccent);
+            ta.recycle();
+        }
+        return colorAccent;
     }
 
     public static boolean ping() {

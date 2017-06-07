@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Administrator on 2017/6/6.
  */
 
-public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     protected List<T> mDataList;
     protected ItemViewDelegateManager<T, VH> mDelegateManager;
@@ -29,24 +29,24 @@ public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         if (!useDelegate()) return super.getItemViewType(position);
         return mDelegateManager.getViewType(mDataList.get(position), position);
     }
 
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
         ItemViewDelegate delegate = mDelegateManager.getItemViewDelegate(viewType);
         int layoutId = delegate.getViewLayoutId();
         View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-        VH holder = createViewHolder(itemView);
+        VH holder = (VH) delegate.createViewHolder(itemView);
         setListener(itemView, holder);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
-        mDelegateManager.convert(holder, mDataList.get(position), holder.getAdapterPosition());
+    public final void onBindViewHolder(VH holder, int position) {
+        mDelegateManager.convert(holder, mDataList.get(position), position);
     }
 
     @Override
@@ -100,8 +100,6 @@ public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         this.mItemLongClickListener = listener;
     }
-
-    protected abstract VH createViewHolder(View itemView);
 
     public interface OnItemClickListener {
         void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position);

@@ -103,7 +103,7 @@ public class Movie {
         return collectCount;
     }
 
-    public void setCollect_count(int collectCount) {
+    public void setCollectCount(int collectCount) {
         this.collectCount = collectCount;
     }
 
@@ -249,10 +249,6 @@ public class Movie {
 
     public void setEpisodesCount(Object episodesCount) {
         this.episodesCount = episodesCount;
-    }
-
-    public void setCollectCount(int collectCount) {
-        this.collectCount = collectCount;
     }
 
     public Object getCurrentSeason() {

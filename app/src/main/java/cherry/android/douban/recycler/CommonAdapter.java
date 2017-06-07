@@ -1,6 +1,7 @@
 package cherry.android.douban.recycler;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.List;
 
@@ -32,6 +33,11 @@ public abstract class CommonAdapter<T, VH extends RecyclerView.ViewHolder> exten
             }
 
             @Override
+            public VH createViewHolder(View itemView) {
+                return CommonAdapter.this.createDefaultViewHolder(itemView);
+            }
+
+            @Override
             public void convert(VH holder, T t, int position) {
                 CommonAdapter.this.convert(holder, t, position);
             }
@@ -40,5 +46,7 @@ public abstract class CommonAdapter<T, VH extends RecyclerView.ViewHolder> exten
         });
     }
 
-    public abstract void convert(VH holder, T t, int position);
+    protected abstract void convert(VH holder, T t, int position);
+
+    protected abstract VH createDefaultViewHolder(View itemView);
 }

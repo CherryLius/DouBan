@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import cherry.android.douban.base.AbstractPresenterImpl;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
@@ -18,14 +19,18 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Administrator on 2017/6/2.
  */
 
-public class HomeMoviePresenter implements HomeMovieContract.Presenter {
+public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.View, HomeMovieContract.Presenter>
+        implements HomeMovieContract.Presenter {
     private static final String TAG = "HomeMoviePresenter";
 
-    HomeMovieContract.View mView;
-
     public HomeMoviePresenter(@NonNull HomeMovieContract.View view) {
-        this.mView = view;
-        this.mView.setPresenter(this);
+        super(view);
+    }
+
+    @NonNull
+    @Override
+    protected HomeMovieContract.Presenter getPresenter() {
+        return this;
     }
 
     @Override
