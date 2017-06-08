@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     RecyclerView recyclerView;
 
     private String mCelebrityId;
+    private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
     private CelebrityHeader mCelebrityHeader;
     private CelebrityContract.Presenter mPresenter;
@@ -53,6 +55,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         new CelebrityPresenter(this);
         initToolbar();
         initView();
+        registerListener();
         mPresenter.loadCelebrityInfo(mCelebrityId);
     }
 
@@ -88,6 +91,30 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         });
     }
 
+    void registerListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mDistance += dy;
+                if (mDistance <= mCelebrityHeader.getImageView().getHeight()) {
+                    float amount = mDistance / mCelebrityHeader.getImageView().getHeight();
+                    float delta = (float) Math.sin(Math.PI / 2 * amount);
+                    int colorVal = ContextCompat.getColor(CelebrityActivity.this, R.color.colorPrimary);
+                    int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
+                    toolbar.setBackgroundColor(color);
+                } else {
+                    toolbar.setBackgroundResource(R.color.colorPrimary);
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
@@ -101,7 +128,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
 
     @Override
     public void showCelebrityInfo(MovieCelebrity celebrity) {
-
+        mCelebrityHeader.updateHeader(celebrity);
     }
 
     static class Adapter extends CommonAdapter<String, ViewHolder> {

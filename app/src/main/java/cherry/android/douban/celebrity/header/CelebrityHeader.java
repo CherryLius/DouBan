@@ -32,6 +32,10 @@ public class CelebrityHeader extends AbstractHeader<MovieCelebrity> {
         ButterKnife.bind(this, mItemView);
     }
 
+    public ImageView getImageView() {
+        return imageView;
+    }
+
     @Override
     public void updateHeader(MovieCelebrity data) {
         Glide.with(mContext).load(data.getAvatars().getLarge())

@@ -98,6 +98,10 @@ public interface MovieApi {
     @GET("/v2/movie/subject/{id}")
     Observable<Movie> movieInfo(@Path("id") String id);
 
+    @GET("/v2/movie/subject/{id}")
+    Observable<Movie> movieInfo(@Path("id") String id,
+                                @Query("apikey") String apiKey);
+
     /**
      * 电影条目剧照 /v2/movie/subject/:id/photos
      *
@@ -106,6 +110,9 @@ public interface MovieApi {
      */
     @GET("/v2/movie/subject/{id}/photos")
     Observable<ResponseBody> moviePhotoInfo(@Path("id") String id);
+    @GET("/v2/movie/subject/{id}/photos")
+    Observable<ResponseBody> moviePhotoInfo(@Path("id") String id,
+                                            @Query("apikey") String apiKey);
 
     @GET("/v2/movie/subject/{id}/photos")
     Observable<ResponseBody> moviePhotoInfo(@Path("id") String id,
