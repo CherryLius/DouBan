@@ -19,4 +19,5 @@
     <string name="label_celebrity">影人</string>
     <string name="label_advance">预告片/剧照</string>
     <string name="label_collection">收藏</string>
+    <string name="label_celebrity_summary">个人简介</string>
 </resources>

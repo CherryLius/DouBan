@@ -1,5 +1,6 @@
 package cherry.android.douban.home;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import cherry.android.router.api.Router;
  * Created by LHEE on 2017/6/3.
  */
 
+@SuppressLint("ValidFragment")
 public class HomeMovieFragment extends BaseFragment implements HomeMovieContract.View, BaseAdapter.OnItemClickListener {
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;

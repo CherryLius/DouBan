@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'permissions.plugin'
+apply plugin: 'router.plugin'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -12,12 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [ModuleName: project.getName()]
-            }
-        }
     }
     buildTypes {
         release {

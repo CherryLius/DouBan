@@ -23,11 +23,14 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.celebrity.header.CelebrityHeader;
+import cherry.android.douban.celebrity.header.CelebritySummaryHeader;
 import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.recycler.CommonAdapter;
 import cherry.android.douban.recycler.ViewHolder;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Route;
+import cherry.android.router.annotations.RouteField;
+import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -41,10 +44,14 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    private String mCelebrityId;
+    @RouteField(name = "id", nonNull = true)
+    String mCelebrityId;
+    @RouteField(name = "name")
+    String mCelebrityName;
     private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
     private CelebrityHeader mCelebrityHeader;
+    private CelebritySummaryHeader mSummaryHeader;
     private CelebrityContract.Presenter mPresenter;
 
     @Override
@@ -52,6 +59,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
+        Router.bind(this);
         new CelebrityPresenter(this);
         initToolbar();
         initView();
@@ -60,7 +68,6 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     }
 
     void initView() {
-        mCelebrityId = getIntent().getStringExtra("id");
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List<String> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -75,10 +82,13 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     void initHeader() {
         mCelebrityHeader = new CelebrityHeader(recyclerView);
         mHeaderAndFooterWrapper.addHeaderView(mCelebrityHeader.getItemView());
+        mSummaryHeader = new CelebritySummaryHeader(recyclerView);
+        mHeaderAndFooterWrapper.addHeaderView(mSummaryHeader.getItemView());
     }
 
     void initToolbar() {
         titleView.setText(R.string.label_celebrity);
+//        titleView.setText(mCelebrityName);
         Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_arrow_back_black_24dp, getTheme());
         DrawableCompat.setTint(drawable, Color.WHITE);
         toolbar.setNavigationIcon(drawable);
@@ -129,6 +139,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @Override
     public void showCelebrityInfo(MovieCelebrity celebrity) {
         mCelebrityHeader.updateHeader(celebrity);
+        mSummaryHeader.updateHeader(celebrity);
     }
 
     static class Adapter extends CommonAdapter<String, ViewHolder> {

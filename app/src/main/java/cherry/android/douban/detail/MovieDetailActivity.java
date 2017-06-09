@@ -31,6 +31,8 @@ import cherry.android.douban.model.MoviePerson;
 import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Route;
+import cherry.android.router.annotations.RouteField;
+import cherry.android.router.api.Router;
 
 /**
  * Created by LHEE on 2017/6/4.
@@ -42,7 +44,8 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    private String mMovieId;
+    @RouteField(name = "id", nonNull = true)
+    String mMovieId;
 
     private MovieDetailContract.Presenter mPresenter;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
@@ -58,6 +61,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
+        Router.bind(this);
         new MovieDetailPresenter(this);
         initToolbar();
         initView();
@@ -80,8 +84,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     }
 
     void initView() {
-        mMovieId = getIntent().getStringExtra("id");
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List<String> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

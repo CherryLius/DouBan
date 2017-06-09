@@ -12,6 +12,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@color/colorPrimary"
         android:paddingTop="?attr/actionBarSize"
+        android:paddingBottom="@dimen/layout_margin"
         android:scaleType="centerInside" />
 
     <LinearLayout
