@@ -33,7 +33,13 @@
                 style="@style/TextView.MovieName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_alias_name"
+                style="@style/TextView.GreyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_detail"
@@ -137,11 +143,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_ticket_buy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/layout_margin"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/layout_margin">
 
         <android.support.v7.widget.AppCompatTextView
             style="@style/TextView"

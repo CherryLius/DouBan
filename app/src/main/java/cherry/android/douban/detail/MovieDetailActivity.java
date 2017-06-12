@@ -5,9 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +28,7 @@ import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
 import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
+import cherry.android.douban.util.CompatUtils;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -70,8 +69,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     }
 
     void initToolbar() {
-        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_arrow_back_black_24dp, getTheme());
-        DrawableCompat.setTint(drawable, Color.WHITE);
+        Drawable drawable = CompatUtils.getDrawable(this, R.drawable.ic_arrow_back_black_24dp, Color.WHITE);
         toolbar.setNavigationIcon(drawable);
         //toolbar.inflateMenu(R.menu.menu_movie_detail);
         setSupportActionBar(toolbar);

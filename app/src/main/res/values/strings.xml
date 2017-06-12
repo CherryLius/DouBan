@@ -9,6 +9,10 @@
     <string name="prefix_cast">主演：<xliff:g id="text">%1$s</xliff:g></string>
     <string name="suffix_watching"><xliff:g id="number">%1$d</xliff:g>人看过</string>
     <string name="suffix_want_watching"><xliff:g id="number">%1$d</xliff:g>人想看</string>
+    <string name="prefix_english_name">英文名：<xliff:g id="name">%1$s</xliff:g></string>
+    <string name="prefix_gender">性别：<xliff:g id="gender">%1$s</xliff:g></string>
+    <string name="prefix_born_place">出生地：<xliff:g id="place">%1$s</xliff:g></string>
+
 
     <string name="label_share">分享</string>
     <string name="label_movie">电影</string>

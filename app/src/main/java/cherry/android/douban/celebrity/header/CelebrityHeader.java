@@ -42,7 +42,13 @@ public class CelebrityHeader extends AbstractHeader<MovieCelebrity> {
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(imageView);
         nameView.setText(data.getName());
-        detailView.setText(data.getNameEn());
+        StringBuilder builder = new StringBuilder();
+        builder.append(mContext.getString(R.string.prefix_english_name, data.getNameEn()))
+                .append('\n')
+                .append(mContext.getString(R.string.prefix_gender, data.getGender()))
+                .append('\n')
+                .append(mContext.getString(R.string.prefix_born_place, data.getBornPlace()));
+        detailView.setText(builder.toString());
         collectView.setText(mContext.getString(R.string.label_collect_count, 25));
     }
 }

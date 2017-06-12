@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -16,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import cherry.android.douban.R;
+import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.Utils;
 
 /**
@@ -69,10 +68,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         } else {
             mExpandColor = colorAccent;
         }
-        mMoreDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_expand_more_black_24dp, context.getTheme());
-        DrawableCompat.setTint(mMoreDrawable, mExpandColor);
-        mLessDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_expand_less_black_24dp, context.getTheme());
-        DrawableCompat.setTint(mLessDrawable, mExpandColor);
+        mMoreDrawable = CompatUtils.getDrawable(context, R.drawable.ic_expand_more_black_24dp, mExpandColor);
+        mLessDrawable = CompatUtils.getDrawable(context, R.drawable.ic_expand_less_black_24dp, mExpandColor);
     }
 
     private void initView() {
@@ -91,7 +88,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mExpandView.setCompoundDrawables(null, null, mMoreDrawable, null);
         mExpandView.setText(mLabelExpandMore);
         mExpandView.setTextColor(mExpandColor);
-        params.width = LayoutParams.WRAP_CONTENT;
+        params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.RIGHT;
         mExpandView.setLayoutParams(params);
         mExpandView.setOnClickListener(this);

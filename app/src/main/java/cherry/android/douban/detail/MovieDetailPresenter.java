@@ -37,7 +37,7 @@ public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContr
     public void loadMovieDetail(String id) {
         if (TextUtils.isEmpty(id))
             return;
-        Network.instance().getMovieApi().movieInfo(id,"07c78782db00a121175696889101e363")
+        Network.instance().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Movie>() {

@@ -7,7 +7,9 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
+    <!--android:drawableRight="@drawable/ic_expand_more_black_24dp"-->
     <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_location"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -16,7 +18,9 @@
         android:paddingRight="4dp"
         android:text="北京" />
 
+    <!--android:drawableLeft="@drawable/ic_search_black_24dp"-->
     <cherry.android.douban.widget.CenterDrawableTextView
+        android:id="@+id/tv_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="4"

@@ -1,5 +1,6 @@
 package cherry.android.douban.detail.header;
 
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -10,10 +11,12 @@ import com.bumptech.glide.request.RequestOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cherry.android.douban.R;
 import cherry.android.douban.base.AbstractHeader;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.util.Utils;
+import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -22,6 +25,8 @@ import cherry.android.douban.util.Utils;
 public class MovieDetailHeader extends AbstractHeader<Movie> {
     @BindView(R.id.iv_image)
     ImageView imageView;
+    @BindView(R.id.tv_alias_name)
+    TextView aliasView;
     @BindView(R.id.tv_name)
     TextView nameView;
     @BindView(R.id.tv_detail)
@@ -32,6 +37,8 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
     RatingBar ratingBar;
     @BindView(R.id.tv_collect_count)
     TextView collectView;
+
+    private Movie movie;
 
     public MovieDetailHeader(ViewGroup parent) {
         super(parent, R.layout.layout_movie_detail_header);
@@ -44,10 +51,12 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
 
     @Override
     public void updateHeader(Movie movie) {
+        this.movie = movie;
         Glide.with(mContext).load(movie.getImages().getLarge())
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(imageView);
         nameView.setText(movie.getTitle());
+        aliasView.setText(Utils.list2String(movie.getAka()));
         StringBuilder detailBuilder = new StringBuilder();
         detailBuilder.append(movie.getYear())
                 .append('/')
@@ -58,12 +67,24 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
                 .append('\n')
                 .append("上映时间：")
                 .append('\n')
-                .append("片长：");
+                .append("片长：")
+                .append(movie.getYear());
         detailView.setText(detailBuilder.toString());
         Movie.Rating movieRating = movie.getRating();
         float rating = (float) (movieRating.getAverage() / movieRating.getMax() * ratingBar.getNumStars());
         ratingBar.setRating(rating);
         ratingView.setText(movieRating.getAverage() + "");
         collectView.setText(mContext.getString(R.string.label_collect_count, movie.getCollectCount()));
+    }
+
+    @OnClick(R.id.layout_ticket_buy)
+    void onClick(View view) {
+        if (movie == null)
+            return;
+        switch (view.getId()) {
+            case R.id.layout_ticket_buy:
+                Router.build("movie://activity/web?ticket_url=" + movie.getScheduleUrl()).open(mContext);
+                break;
+        }
     }
 }

@@ -11,8 +11,8 @@
         android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
         android:background="@color/colorPrimary"
-        android:paddingTop="?attr/actionBarSize"
         android:paddingBottom="@dimen/layout_margin"
+        android:paddingTop="?attr/actionBarSize"
         android:scaleType="centerInside" />
 
     <LinearLayout
@@ -33,7 +33,7 @@
                 style="@style/TextView.MovieName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_detail"
@@ -59,6 +59,7 @@
                 android:orientation="vertical"
                 android:padding="5dp">
 
+                <!--android:drawableLeft="@drawable/ic_add_black_24dp"-->
                 <android.support.v7.widget.AppCompatTextView
                     style="@style/TextView.GreySmall"
                     android:layout_width="wrap_content"

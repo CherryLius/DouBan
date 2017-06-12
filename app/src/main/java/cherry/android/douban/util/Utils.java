@@ -31,6 +31,7 @@ public final class Utils {
 
     /**
      * getResources().getIdentifier("colorAccent", "attr", "android")
+     *
      * @param context
      * @return
      */
