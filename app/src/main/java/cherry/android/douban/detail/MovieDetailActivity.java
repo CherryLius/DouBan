@@ -10,7 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,12 @@ import cherry.android.douban.detail.delegate.MoviePersonDelegate;
 import cherry.android.douban.detail.delegate.SimpleDelegate;
 import cherry.android.douban.detail.header.MovieDetailHeader;
 import cherry.android.douban.detail.header.SummaryDetailHeader;
+import cherry.android.douban.detail.header.TicketBuySticky;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
 import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
+import cherry.android.douban.sticker.StickyHeaderHelper;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
@@ -40,11 +43,15 @@ import cherry.android.router.api.Router;
 public class MovieDetailActivity extends BaseActivity implements MovieDetailContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tv_tool_title)
+    TextView titleView;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    @RouteField(name = "id", nonNull = true)
+    @RouteField(name = "id")
     String mMovieId;
+    @RouteField(name = "name", nonNull = true)
+    String mMovieName;
 
     private MovieDetailContract.Presenter mPresenter;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
@@ -54,6 +61,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
 
     private MoviePersonDelegate mMoviePersonDelegate;
     private MovieAdvanceDelegate mMovieAdvanceDelegate;
+    private TicketBuySticky mStickyHeader;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,12 +81,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         toolbar.setNavigationIcon(drawable);
         //toolbar.inflateMenu(R.menu.menu_movie_detail);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     void initView() {
@@ -95,6 +98,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(adapter);
         initHeader();
         recyclerView.setAdapter(mHeaderAndFooterWrapper);
+        mStickyHeader = new TicketBuySticky(this, mDetailHeader.getTicketBuyView());
     }
 
     void initHeader() {
@@ -121,9 +125,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
                     int colorVal = ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary);
                     int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
                     toolbar.setBackgroundColor(color);
+                    titleView.setText(R.string.label_movie);
                 } else {
                     toolbar.setBackgroundResource(R.color.colorPrimary);
+                    titleView.setText(mMovieName);
                 }
+                StickyHeaderHelper.onScroll(dx, mDistance, recyclerView, mStickyHeader);
             }
         });
     }
@@ -132,6 +139,16 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -146,6 +163,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         List<MoviePerson> list = movie.getDirectors();
         list.addAll(movie.getCasts());
         mMoviePersonDelegate.update(list);
+        mStickyHeader.setMovie(movie);
         mPresenter.loadMoviePhotos(mMovieId);
     }
 }

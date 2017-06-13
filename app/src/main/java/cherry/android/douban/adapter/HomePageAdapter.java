@@ -14,6 +14,8 @@ import cherry.android.douban.home.HomeMovieFragment;
 
 public class HomePageAdapter extends FragmentStatePagerAdapter {
 
+    private static final String[] PAGER_TITLES = {"正在热映", "即将上映"};
+
     private List<HomeMovieFragment> mList;
 
     public HomePageAdapter(FragmentManager fm, List<HomeMovieFragment> list) {
@@ -33,6 +35,6 @@ public class HomePageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mList.get(position).getTab();
+        return PAGER_TITLES[0];
     }
 }

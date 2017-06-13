@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -87,16 +88,10 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
 
     void initToolbar() {
         titleView.setText(R.string.label_celebrity);
-//        titleView.setText(mCelebrityName);
         Drawable drawable = CompatUtils.getDrawable(this, R.drawable.ic_arrow_back_black_24dp, Color.WHITE);
         toolbar.setNavigationIcon(drawable);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     void registerListener() {
@@ -127,6 +122,16 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import cherry.android.douban.R;
 import cherry.android.douban.util.CompatUtils;
+import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.Utils;
 
 /**
@@ -52,7 +53,6 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
         intResource(context, attrs);
-        initView();
     }
 
     private void intResource(Context context, @Nullable AttributeSet attrs) {
@@ -79,7 +79,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mContentView.setLineSpacing(0.0f, mLineSpacingMultiplier);
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         mContentView.setLayoutParams(params);
-        addView(mContentView);
+        addView(mContentView, 0);
 
         mExpandView = new AppCompatTextView(getContext());
         mExpandView.setGravity(Gravity.RIGHT);
@@ -92,7 +92,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         params.gravity = Gravity.RIGHT;
         mExpandView.setLayoutParams(params);
         mExpandView.setOnClickListener(this);
-        addView(mExpandView);
+        addView(mExpandView, getChildCount());
         mChanged = true;
     }
 
@@ -114,6 +114,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mContentView.setMaxLines(Integer.MAX_VALUE);
         mContentView.setEllipsize(null);
         mExpandView.setVisibility(GONE);
+        visibleExtraView(true);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int lineCount = mContentView.getLineCount();
         if (lineCount <= mMaxLines)
@@ -124,6 +125,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             mContentView.setEllipsize(TextUtils.TruncateAt.END);
             mExpandView.setCompoundDrawables(null, null, mMoreDrawable, null);
             mExpandView.setText(mLabelExpandMore);
+            visibleExtraView(false);
         } else {
             mExpandView.setCompoundDrawables(null, null, mLessDrawable, null);
             mExpandView.setText(mLabelExpandLess);
@@ -141,5 +143,20 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         mExpanded = !mExpanded;
         mChanged = true;
         requestLayout();
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        initView();
+    }
+
+    private void visibleExtraView(boolean visible) {
+        if (getChildCount() == 2)
+            return;
+        for (int i = 1; i < getChildCount() - 1; i++) {
+            final View child = getChildAt(i);
+            child.setVisibility(visible ? VISIBLE : GONE);
+        }
     }
 }

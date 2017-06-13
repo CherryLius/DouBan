@@ -15,8 +15,8 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.home.HomeFragment;
+import cherry.android.douban.rank.RankFragment;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.api.Router;
 
 @Route("movie://activity/main")
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -33,26 +33,26 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         ButterKnife.bind(this);
         initFragmentList();
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        bottomNavigationView.setSelectedItemId(R.id.menu_hot);
     }
 
     private void initFragmentList() {
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new HomeFragment());
-        mFragmentList.add(new EmptyFragment());
+        mFragmentList.add(new RankFragment());
         mFragmentList.add(new EmptyFragment());
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_home:
+            case R.id.menu_hot:
                 showFragment(0);
                 return true;
-            case R.id.menu_android_0:
+            case R.id.menu_rank:
                 showFragment(1);
                 return true;
-            case R.id.menu_android_1:
+            case R.id.menu_mine:
                 showFragment(2);
                 return true;
         }

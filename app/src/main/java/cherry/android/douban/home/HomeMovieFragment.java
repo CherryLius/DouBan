@@ -1,12 +1,12 @@
 package cherry.android.douban.home;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +17,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.TheaterMovieAdapter;
-import cherry.android.douban.base.BaseFragment;
 import cherry.android.douban.common.Constants;
+import cherry.android.douban.common.ui.LazyFragment;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.DividerItemDecoration;
@@ -28,8 +28,8 @@ import cherry.android.router.api.Router;
  * Created by LHEE on 2017/6/3.
  */
 
-@SuppressLint("ValidFragment")
-public class HomeMovieFragment extends BaseFragment implements HomeMovieContract.View, BaseAdapter.OnItemClickListener {
+public class HomeMovieFragment extends LazyFragment implements HomeMovieContract.View, BaseAdapter.OnItemClickListener {
+    private static final String EXTRA_TAB = "extra_tab";
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
     @BindView(R.id.recycler)
@@ -40,14 +40,22 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
     private HomeMovieContract.Presenter mPresenter;
     private TheaterMovieAdapter mMovieAdapter;
 
-    private HomeMovieFragment(String tab) {
-        mTab = tab;
+    public HomeMovieFragment() {
         mPresenter = new HomeMoviePresenter(this);
     }
 
     public static HomeMovieFragment newInstance(String tab) {
-        HomeMovieFragment fragment = new HomeMovieFragment(tab);
+        HomeMovieFragment fragment = new HomeMovieFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(EXTRA_TAB, tab);
+        fragment.setArguments(arguments);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mTab = getArguments().getString(EXTRA_TAB, "");
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -81,21 +89,18 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
         return Constants.TAB_COMING_SOON.endsWith(mTab);
     }
 
-    public String getTab() {
-        return mTab;
+    @Override
+    public void onLazyLoad() {
+        if (mFirstVisible) {
+            loadMovies();
+        }
+        mFirstVisible = false;
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (!isVisibleToUser)
-            return;
-        if (mPresenter == null) {
-            return;
-        }
-        if (!mFirstVisible) return;
-        loadMovies();
-        mFirstVisible = false;
+    public boolean isPrepared() {
+        return !TextUtils.isEmpty(mTab) && getUserVisibleHint()
+                && mPresenter != null;
     }
 
     void loadMovies() {
@@ -127,6 +132,8 @@ public class HomeMovieFragment extends BaseFragment implements HomeMovieContract
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         List<Movie> movies = mMovieAdapter.getCurrentMovies();
         Movie movie = movies.get(position);
-        Router.build("movie://activity/movie/detail?id=" + movie.getId()).open(getActivity());
+        String url = "movie://activity/movie/detail?id=" + movie.getId()
+                + "&name=" + movie.getTitle();
+        Router.build(url).open(getActivity());
     }
 }

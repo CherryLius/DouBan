@@ -21,12 +21,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:expandColor="@color/colorIndigo_300"
-        app:maxLines="6" />
+        app:maxLines="6">
 
-    <android.support.v7.widget.AppCompatTextView
-        style="@style/TextView.GreySmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="@string/label_summary_report" />
+        <android.support.v7.widget.AppCompatTextView
+            style="@style/TextView.GreySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/label_summary_report" />
+    </cherry.android.douban.widget.ExpandableTextView>
+
+
 </LinearLayout>

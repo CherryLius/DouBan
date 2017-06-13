@@ -46,6 +46,17 @@ public final class Utils {
         return colorAccent;
     }
 
+    public static int getActionBarSize(Context context) {
+        int actionBarSize = 0;
+        int[] attributes = {android.R.attr.actionBarSize};
+        TypedArray ta = context.obtainStyledAttributes(attributes);
+        if (ta != null) {
+            actionBarSize = ta.getDimensionPixelOffset(0, 0);
+            ta.recycle();
+        }
+        return actionBarSize;
+    }
+
     public static boolean ping() {
         try {
             String url = "www.baidu.com";

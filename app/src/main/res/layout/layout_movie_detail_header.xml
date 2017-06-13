@@ -37,7 +37,7 @@
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_alias_name"
-                style="@style/TextView.GreyMedium"
+                style="@style/TextView.GreySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -82,7 +82,7 @@
 
                 <android.support.v7.widget.AppCompatRatingBar
                     android:id="@+id/rating_bar"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    style="@style/RatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal" />
@@ -134,7 +134,7 @@
                 android:textColor="@drawable/ic_indigo_text_color" />
 
             <android.support.v7.widget.AppCompatRatingBar
-                style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                style="@style/RatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -142,35 +142,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_ticket_buy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/layout_margin">
-
-        <android.support.v7.widget.AppCompatTextView
-            style="@style/TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:drawableLeft="@mipmap/ic_subject_movie_tickets"
-            android:gravity="center_vertical"
-            android:text="选座购票"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <android.support.v7.widget.AppCompatTextView
-            style="@style/TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableRight="@mipmap/ic_arrow_gray_small"
-            android:gravity="center_vertical|right"
-            android:text="¥22起"
-            android:textColor="@color/colorRed_600" />
-    </LinearLayout>
+    <include layout="@layout/layout_movie_detail_ticket_buy" />
 
     <View
         android:layout_width="match_parent"

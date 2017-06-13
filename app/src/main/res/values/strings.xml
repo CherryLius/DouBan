@@ -2,8 +2,12 @@
     <string name="app_name">豆瓣影评</string>
     <string name="title_home">Home</string>
     <string name="title_android">Android</string>
+    <string name="title_hot">热映</string>
+    <string name="title_rank">排行榜</string>
+    <string name="title_mine">我的</string>
 
     <string name="no_rating">暂无评分</string>
+    <string name="rating_count_not_enough">评价人数不足</string>
     <string name="search_hint">电影/电视剧/影人</string>
     <string name="prefix_director">导演：<xliff:g id="text">%1$s</xliff:g></string>
     <string name="prefix_cast">主演：<xliff:g id="text">%1$s</xliff:g></string>

@@ -11,6 +11,8 @@
     <style name="AppTheme.NoTitle">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!--<item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>-->
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -28,7 +30,7 @@
     </style>
 
     <style name="TextView.GreySmall">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/colorGrey_500</item>
     </style>
 
@@ -43,6 +45,8 @@
     </style>
 
     <style name="TextView.ToolBar">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">18sp</item>
     </style>
@@ -51,6 +55,10 @@
         <item name="textColor">@color/colorGrey_800</item>
         <item name="textSize">15sp</item>
         <item name="lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <style name="RatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <!--<item name="android:progressDrawable">@drawable/ic_ratingbar_small_material</item>-->
     </style>
 
 </resources>

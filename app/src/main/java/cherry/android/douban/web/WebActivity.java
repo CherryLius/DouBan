@@ -4,9 +4,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
-import cherry.android.douban.util.Logger;
+import cherry.android.douban.widget.FixedSwipeRefreshLayout;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -29,10 +30,8 @@ import cherry.android.router.api.Router;
 public class WebActivity extends BaseActivity {
     @RouteField(name = "ticket_url")
     String ticketUrl;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.swipe_refresh)
-    SwipeRefreshLayout refreshLayout;
+    FixedSwipeRefreshLayout refreshLayout;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.web_view)
@@ -47,28 +46,48 @@ public class WebActivity extends BaseActivity {
         initView();
     }
 
-    void initView() {
-        setSupportActionBar(toolbar);
-        setUpWebViewDefaults(webView);
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                Logger.i("Test", "onProgressChnaged=" + newProgress);
-                if (newProgress == 100) {
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setProgress(newProgress);
-                }
-            }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        webView.onResume();
+    }
 
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                toolbar.setTitle(title);
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        webView.onPause();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        webView.stopLoading();
+        webView.removeAllViews();
+        webView.destroy();
+    }
+
+    void initView() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setUpWebViewDefaults(webView);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -76,10 +95,16 @@ public class WebActivity extends BaseActivity {
                 refreshLayout.setRefreshing(false);
             }
         });
+        refreshLayout.setCanChildScrollUpCallback(new FixedSwipeRefreshLayout.ChildScrollUpCallback() {
+            @Override
+            public boolean canChildScrollUp() {
+                return webView.getScrollY() > 0;
+            }
+        });
         webView.loadUrl(ticketUrl);
     }
 
-    void setUpWebViewDefaults(WebView webView) {
+    void setUpWebViewDefaults(final WebView webView) {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setUseWideViewPort(true);
@@ -94,6 +119,29 @@ public class WebActivity extends BaseActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return true;
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(newProgress);
+                }
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                getSupportActionBar().setTitle(title);
             }
         });
     }

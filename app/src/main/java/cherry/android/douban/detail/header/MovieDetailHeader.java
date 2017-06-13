@@ -37,6 +37,8 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
     RatingBar ratingBar;
     @BindView(R.id.tv_collect_count)
     TextView collectView;
+    @BindView(R.id.layout_ticket_buy)
+    View ticketBuyView;
 
     private Movie movie;
 
@@ -49,6 +51,10 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
         return imageView;
     }
 
+    public View getTicketBuyView() {
+        return ticketBuyView;
+    }
+
     @Override
     public void updateHeader(Movie movie) {
         this.movie = movie;
@@ -56,7 +62,11 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(imageView);
         nameView.setText(movie.getTitle());
-        aliasView.setText(Utils.list2String(movie.getAka()));
+        if (movie.getAka().size() == 0) {
+            aliasView.setVisibility(View.GONE);
+        } else {
+            aliasView.setText(Utils.list2String(movie.getAka()));
+        }
         StringBuilder detailBuilder = new StringBuilder();
         detailBuilder.append(movie.getYear())
                 .append('/')
@@ -66,24 +76,34 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
                 .append(movie.getOriginalTitle())
                 .append('\n')
                 .append("上映时间：")
+                .append(movie.getYear())
                 .append('\n')
-                .append("片长：")
-                .append(movie.getYear());
+                .append("地区：")
+                .append(Utils.list2String(movie.getCountries()));
         detailView.setText(detailBuilder.toString());
         Movie.Rating movieRating = movie.getRating();
-        float rating = (float) (movieRating.getAverage() / movieRating.getMax() * ratingBar.getNumStars());
-        ratingBar.setRating(rating);
-        ratingView.setText(movieRating.getAverage() + "");
-        collectView.setText(mContext.getString(R.string.label_collect_count, movie.getCollectCount()));
+        if (movieRating.getAverage() == 0) {
+            ratingView.setVisibility(View.GONE);
+            ratingBar.setRating(0);
+            collectView.setText(R.string.rating_count_not_enough);
+        } else {
+            float rating = (float) (movieRating.getAverage() / movieRating.getMax() * ratingBar.getNumStars());
+            ratingBar.setRating(rating);
+            ratingView.setText(movieRating.getAverage() + "");
+            collectView.setText(mContext.getString(R.string.label_collect_count, movie.getCollectCount()));
+        }
     }
 
-    @OnClick(R.id.layout_ticket_buy)
+    @OnClick({R.id.layout_ticket_buy, R.id.iv_image})
     void onClick(View view) {
         if (movie == null)
             return;
         switch (view.getId()) {
             case R.id.layout_ticket_buy:
                 Router.build("movie://activity/web?ticket_url=" + movie.getScheduleUrl()).open(mContext);
+                break;
+            case R.id.iv_image:
+                Router.build("movie://activity/web?ticket_url=" + movie.getMobileUrl()).open(mContext);
                 break;
         }
     }
