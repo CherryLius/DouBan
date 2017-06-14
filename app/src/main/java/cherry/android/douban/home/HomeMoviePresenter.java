@@ -8,6 +8,8 @@ import cherry.android.douban.base.AbstractPresenterImpl;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
+import cherry.android.douban.rx.FragmentEvent;
+import cherry.android.douban.rx.IRxLifecycleBinding;
 import cherry.android.douban.util.Logger;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -19,12 +21,13 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Administrator on 2017/6/2.
  */
 
-public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.View, HomeMovieContract.Presenter>
+public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.View, HomeMovieContract.Presenter, FragmentEvent>
         implements HomeMovieContract.Presenter {
     private static final String TAG = "HomeMoviePresenter";
 
-    public HomeMoviePresenter(@NonNull HomeMovieContract.View view) {
-        super(view);
+    public HomeMoviePresenter(@NonNull HomeMovieContract.View view,
+                              @NonNull IRxLifecycleBinding<FragmentEvent> lifecycle) {
+        super(view, lifecycle);
     }
 
     @NonNull
@@ -38,6 +41,7 @@ public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.
         Network.instance().getMovieApi().movieInTheaters()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(mRxLifecycle.<TheaterMovie>bindUntilEvent(FragmentEvent.DESTROY))
                 .map(new Function<TheaterMovie, List<Movie>>() {
                     @Override
                     public List<Movie> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie) throws Exception {

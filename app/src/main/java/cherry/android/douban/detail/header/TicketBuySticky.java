@@ -1,6 +1,7 @@
 package cherry.android.douban.detail.header;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class TicketBuySticky implements IStickyHeader, View.OnClickListener {
 
     public TicketBuySticky(Context context, View relatedView) {
         mStickyView = LayoutInflater.from(context).inflate(R.layout.layout_movie_detail_ticket_buy, null);
+        mStickyView.setBackgroundColor(Color.WHITE);
         mRelatedView = relatedView;
         mToolbarHeight = Utils.getActionBarSize(context);
         mStickyView.setOnClickListener(this);

@@ -2,6 +2,7 @@ package cherry.android.douban.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -27,13 +28,30 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     private List<Fragment> mFragmentList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        bottomNavigationView.setSelectedItemId(R.id.menu_hot);
+    }
+
+    @Override
+    protected int getViewLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void onViewInflated() {
         ButterKnife.bind(this);
         initFragmentList();
+    }
+
+    @Override
+    protected void registerListener() {
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.menu_hot);
+    }
+
+    @Override
+    protected void unregisterListener() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(null);
     }
 
     private void initFragmentList() {
@@ -73,4 +91,5 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
         ft.show(fragment).commit();
     }
+
 }

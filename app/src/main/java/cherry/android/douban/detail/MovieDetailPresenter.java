@@ -7,6 +7,8 @@ import java.io.IOException;
 import cherry.android.douban.base.AbstractPresenterImpl;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.network.Network;
+import cherry.android.douban.rx.ActivityEvent;
+import cherry.android.douban.rx.IRxLifecycleBinding;
 import cherry.android.douban.util.Logger;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -19,13 +21,17 @@ import okhttp3.ResponseBody;
  * Created by Administrator on 2017/6/5.
  */
 
-public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContract.View, MovieDetailContract.Presenter>
+public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContract.View,
+        MovieDetailContract.Presenter,
+        ActivityEvent>
         implements MovieDetailContract.Presenter {
     private static final String TAG = "MovieDetailPresenter";
 
-    MovieDetailPresenter(MovieDetailContract.View view) {
-        super(view);
+    public MovieDetailPresenter(@android.support.annotation.NonNull MovieDetailContract.View view,
+                                @android.support.annotation.NonNull IRxLifecycleBinding<ActivityEvent> lifecycle) {
+        super(view, lifecycle);
     }
+
 
     @android.support.annotation.NonNull
     @Override
@@ -40,6 +46,7 @@ public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContr
         Network.instance().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(mRxLifecycle.<Movie>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<Movie>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {

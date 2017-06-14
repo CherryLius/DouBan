@@ -1,15 +1,11 @@
 package cherry.android.douban.home;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,15 +15,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.HomePageAdapter;
-import cherry.android.douban.base.BaseFragment;
 import cherry.android.douban.common.Constants;
+import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.router.annotations.Route;
 
 /**
  * Created by Administrator on 2017/6/2.
  */
 @Route("movie://fragment/home")
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends ToolbarFragment {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -39,14 +35,12 @@ public class HomeFragment extends BaseFragment {
     TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
-    AppCompatActivity mActivity;
 
     private HomePageAdapter mPagerAdapter;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+    protected int getViewLayoutId() {
+        return R.layout.fragment_home;
     }
 
     @Override
@@ -66,22 +60,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (toolbar == null)
-            return;
-        if (context instanceof AppCompatActivity) {
-            mActivity = (AppCompatActivity) context;
-            mActivity.setSupportActionBar(toolbar);
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if (mActivity != null) {
-            mActivity.setSupportActionBar(null);
-            mActivity = null;
-        }
+    protected Toolbar getToolbar() {
+        return toolbar;
     }
 }

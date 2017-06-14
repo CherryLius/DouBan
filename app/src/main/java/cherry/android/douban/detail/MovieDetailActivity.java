@@ -66,13 +66,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-        ButterKnife.bind(this);
-        Router.bind(this);
-        new MovieDetailPresenter(this);
-        initToolbar();
-        initView();
-        registerListener();
+        new MovieDetailPresenter(this, this);
         mPresenter.loadMovieDetail(mMovieId);
     }
 
@@ -108,31 +102,52 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         mHeaderAndFooterWrapper.addHeaderView(mSummaryHeader.getItemView());
     }
 
-    void registerListener() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+    @Override
+    protected int getViewLayoutId() {
+        return R.layout.activity_movie_detail;
+    }
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                mDistance += dy;
-                if (mDistance <= mDetailHeader.getMoviePosterView().getHeight()) {
-                    float amount = mDistance / mDetailHeader.getMoviePosterView().getHeight();
-                    float delta = (float) Math.sin(Math.PI / 2 * amount);
-                    int colorVal = ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary);
-                    int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
-                    toolbar.setBackgroundColor(color);
-                    titleView.setText(R.string.label_movie);
-                } else {
-                    toolbar.setBackgroundResource(R.color.colorPrimary);
-                    titleView.setText(mMovieName);
-                }
-                StickyHeaderHelper.onScroll(dx, mDistance, recyclerView, mStickyHeader);
+    @Override
+    protected void onViewInflated() {
+        ButterKnife.bind(this);
+        Router.bind(this);
+        initToolbar();
+        initView();
+    }
+
+    @Override
+    protected void registerListener() {
+        recyclerView.addOnScrollListener(mRecyclerScrollListener);
+    }
+
+    private RecyclerView.OnScrollListener mRecyclerScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            mDistance += dy;
+            if (mDistance <= mDetailHeader.getMoviePosterView().getHeight()) {
+                float amount = mDistance / mDetailHeader.getMoviePosterView().getHeight();
+                float delta = (float) Math.sin(Math.PI / 2 * amount);
+                int colorVal = ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary);
+                int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
+                toolbar.setBackgroundColor(color);
+                titleView.setText(R.string.label_movie);
+            } else {
+                toolbar.setBackgroundResource(R.color.colorPrimary);
+                titleView.setText(mMovieName);
             }
-        });
+            StickyHeaderHelper.onScroll(dx, mDistance, recyclerView, mStickyHeader);
+        }
+    };
+
+    @Override
+    protected void unregisterListener() {
+        recyclerView.removeOnScrollListener(mRecyclerScrollListener);
     }
 
     @Override

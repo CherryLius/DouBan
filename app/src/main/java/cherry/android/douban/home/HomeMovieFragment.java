@@ -7,9 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -41,7 +39,7 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     private TheaterMovieAdapter mMovieAdapter;
 
     public HomeMovieFragment() {
-        mPresenter = new HomeMoviePresenter(this);
+        mPresenter = new HomeMoviePresenter(this, this);
     }
 
     public static HomeMovieFragment newInstance(String tab) {
@@ -54,14 +52,8 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mTab = getArguments().getString(EXTRA_TAB, "");
         super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.layout_swipe_recycler, container, false);
+        mTab = getArguments().getString(EXTRA_TAB, "");
     }
 
     @Override
@@ -135,5 +127,10 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
         String url = "movie://activity/movie/detail?id=" + movie.getId()
                 + "&name=" + movie.getTitle();
         Router.build(url).open(getActivity());
+    }
+
+    @Override
+    protected int getViewLayoutId() {
+        return R.layout.layout_swipe_recycler;
     }
 }

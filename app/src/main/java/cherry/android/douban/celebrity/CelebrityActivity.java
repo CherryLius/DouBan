@@ -57,13 +57,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-        ButterKnife.bind(this);
-        Router.bind(this);
-        new CelebrityPresenter(this);
-        initToolbar();
-        initView();
-        registerListener();
+        new CelebrityPresenter(this, this);
         mPresenter.loadCelebrityInfo(mCelebrityId);
     }
 
@@ -94,28 +88,49 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    void registerListener() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+    @Override
+    protected int getViewLayoutId() {
+        return R.layout.activity_movie_detail;
+    }
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                mDistance += dy;
-                if (mDistance <= mCelebrityHeader.getImageView().getHeight()) {
-                    float amount = mDistance / mCelebrityHeader.getImageView().getHeight();
-                    float delta = (float) Math.sin(Math.PI / 2 * amount);
-                    int colorVal = ContextCompat.getColor(CelebrityActivity.this, R.color.colorPrimary);
-                    int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
-                    toolbar.setBackgroundColor(color);
-                } else {
-                    toolbar.setBackgroundResource(R.color.colorPrimary);
-                }
+    @Override
+    protected void onViewInflated() {
+        ButterKnife.bind(this);
+        Router.bind(this);
+        initToolbar();
+        initView();
+    }
+
+    @Override
+    protected void registerListener() {
+        recyclerView.addOnScrollListener(mRecyclerScrollListener);
+    }
+
+    private RecyclerView.OnScrollListener mRecyclerScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            mDistance += dy;
+            if (mDistance <= mCelebrityHeader.getImageView().getHeight()) {
+                float amount = mDistance / mCelebrityHeader.getImageView().getHeight();
+                float delta = (float) Math.sin(Math.PI / 2 * amount);
+                int colorVal = ContextCompat.getColor(CelebrityActivity.this, R.color.colorPrimary);
+                int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
+                toolbar.setBackgroundColor(color);
+            } else {
+                toolbar.setBackgroundResource(R.color.colorPrimary);
             }
-        });
+        }
+    };
+
+    @Override
+    protected void unregisterListener() {
+        recyclerView.removeOnScrollListener(mRecyclerScrollListener);
     }
 
     @Override

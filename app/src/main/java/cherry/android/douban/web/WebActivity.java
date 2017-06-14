@@ -1,8 +1,6 @@
 package cherry.android.douban.web;
 
 import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,12 +36,25 @@ public class WebActivity extends BaseActivity {
     WebView webView;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
+    protected int getViewLayoutId() {
+        return R.layout.activity_web;
+    }
+
+    @Override
+    protected void onViewInflated() {
         ButterKnife.bind(this);
         Router.bind(this);
         initView();
+    }
+
+    @Override
+    protected void registerListener() {
+
+    }
+
+    @Override
+    protected void unregisterListener() {
+
     }
 
     @Override
