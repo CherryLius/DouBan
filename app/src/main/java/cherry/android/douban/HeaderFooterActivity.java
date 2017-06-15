@@ -131,6 +131,9 @@ public class HeaderFooterActivity extends AppCompatActivity {
             public DelegateHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
+                ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                recyclerView.setLayoutParams(params);
                 recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
             }
         }

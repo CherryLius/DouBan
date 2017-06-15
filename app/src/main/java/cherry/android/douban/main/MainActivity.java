@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,13 +17,7 @@ import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.home.HomeFragment;
 import cherry.android.douban.rank.RankFragment;
-import cherry.android.douban.rx.ActivityEvent;
-import cherry.android.douban.util.Logger;
 import cherry.android.router.annotations.Route;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 @Route("movie://activity/main")
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -38,21 +31,15 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bottomNavigationView.setSelectedItemId(R.id.menu_hot);
-        Observable.interval(0, 1, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.<Long>bindUntilEvent(ActivityEvent.PAUSE))
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Long aLong) throws Exception {
-                        Logger.i("Test", " along=" + aLong);
-                    }
-                });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Logger.e("Test", "onPause");
+//        Observable.interval(0, 1, TimeUnit.SECONDS)
+//                .compose(RxHelper.<Long>mainIO())
+//                .compose(this.<Long>bindUntilEvent(ActivityEvent.PAUSE))
+//                .subscribe(new Consumer<Long>() {
+//                    @Override
+//                    public void accept(@io.reactivex.annotations.NonNull Long aLong) throws Exception {
+//                        Logger.i("Test", " along=" + aLong);
+//                    }
+//                });
     }
 
     @Override
