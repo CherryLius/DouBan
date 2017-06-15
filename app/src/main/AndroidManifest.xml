@@ -16,11 +16,11 @@
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/AppTheme.NoTitle">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity
             android:name=".detail.MovieDetailActivity"
@@ -33,11 +33,11 @@
 
         </activity>
         <activity android:name=".OverlayCardActivity">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
     </application>
 

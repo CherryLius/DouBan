@@ -35,7 +35,6 @@ public class OverlayCardActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter = new CommonAdapter<Integer, ViewHolder>(list, R.layout.item_overlay_card) {
             @Override
             protected void convert(ViewHolder holder, Integer integer, int position) {
-                Logger.e("Test", "convert!!!!!");
                 TextView textView = holder.findView(R.id.tv);
                 textView.setText("" + integer);
             }

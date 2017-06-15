@@ -1,5 +1,6 @@
 package cherry.android.douban.recycler.layout;
 
+import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -15,7 +16,7 @@ import cherry.android.douban.util.Logger;
 public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
     private static final String TAG = "OverlayCardLayoutManager";
 
-    private static final int MAX_SHOW_COUNT = 3;
+    private static final int MAX_SHOW_COUNT = 4;
     private static final float SCALE_GAP = 0.1f;
     private static final float Y_GAP = 40;
 
@@ -32,8 +33,8 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
         super.onMeasure(recycler, state, widthSpec, heightSpec);
         if (mRecyclerView == null) {
             mRecyclerView = getRecyclerView();
+            mItemTouchHelper.attachToRecyclerView(mRecyclerView);
         }
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -90,13 +91,13 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
         return recyclerView;
     }
 
-    private static class OverlayItemTouchCallback extends ItemTouchHelper.Callback {
-        @Override
-        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            return makeMovementFlags(ItemTouchHelper.UP
+    private static class OverlayItemTouchCallback extends ItemTouchHelper.SimpleCallback {
+
+        public OverlayItemTouchCallback() {
+            super(0, ItemTouchHelper.UP
                     | ItemTouchHelper.DOWN
                     | ItemTouchHelper.LEFT
-                    | ItemTouchHelper.RIGHT, 0);
+                    | ItemTouchHelper.RIGHT);
         }
 
         @Override
@@ -106,7 +107,13 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Logger.i("Test", "onSwipe");
 
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
     }
 }
