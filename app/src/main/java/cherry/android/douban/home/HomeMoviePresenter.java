@@ -4,24 +4,23 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import cherry.android.douban.base.AbstractPresenterImpl;
+import cherry.android.douban.base.RxPresenterImpl;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
 import cherry.android.douban.rx.FragmentEvent;
 import cherry.android.douban.rx.IRxLifecycleBinding;
+import cherry.android.douban.rx.RxHelper;
 import cherry.android.douban.util.Logger;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2017/6/2.
  */
 
-public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.View, HomeMovieContract.Presenter, FragmentEvent>
+public class HomeMoviePresenter extends RxPresenterImpl<HomeMovieContract.View, HomeMovieContract.Presenter, FragmentEvent>
         implements HomeMovieContract.Presenter {
     private static final String TAG = "HomeMoviePresenter";
 
@@ -39,8 +38,7 @@ public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.
     @Override
     public void loadMovieInTheater() {
         Network.instance().getMovieApi().movieInTheaters()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.<TheaterMovie>mainIO())
                 .compose(mRxLifecycle.<TheaterMovie>bindUntilEvent(FragmentEvent.DESTROY))
                 .map(new Function<TheaterMovie, List<Movie>>() {
                     @Override
@@ -74,8 +72,8 @@ public class HomeMoviePresenter extends AbstractPresenterImpl<HomeMovieContract.
     @Override
     public void loadComingSoon() {
         Network.instance().getMovieApi().comingSoon(0, 40)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.<TheaterMovie>mainIO())
+                .compose(mRxLifecycle.<TheaterMovie>bindUntilEvent(FragmentEvent.DESTROY))
                 .map(new Function<TheaterMovie, List<Movie>>() {
                     @Override
                     public List<Movie> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie) throws Exception {

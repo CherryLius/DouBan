@@ -4,24 +4,23 @@ import android.text.TextUtils;
 
 import java.io.IOException;
 
-import cherry.android.douban.base.AbstractPresenterImpl;
+import cherry.android.douban.base.RxPresenterImpl;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.network.Network;
 import cherry.android.douban.rx.ActivityEvent;
 import cherry.android.douban.rx.IRxLifecycleBinding;
+import cherry.android.douban.rx.RxHelper;
 import cherry.android.douban.util.Logger;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
  * Created by Administrator on 2017/6/5.
  */
 
-public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContract.View,
+public class MovieDetailPresenter extends RxPresenterImpl<MovieDetailContract.View,
         MovieDetailContract.Presenter,
         ActivityEvent>
         implements MovieDetailContract.Presenter {
@@ -44,8 +43,7 @@ public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContr
         if (TextUtils.isEmpty(id))
             return;
         Network.instance().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.<Movie>mainIO())
                 .compose(mRxLifecycle.<Movie>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<Movie>() {
                     @Override
@@ -75,8 +73,8 @@ public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContr
         if (TextUtils.isEmpty(id))
             return;
         Network.instance().getMovieApi().moviePhotoInfo(id, "07c78782db00a121175696889101e363")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.<ResponseBody>mainIO())
+                .compose(mRxLifecycle.<ResponseBody>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -104,8 +102,8 @@ public class MovieDetailPresenter extends AbstractPresenterImpl<MovieDetailContr
                 });
 
         Network.instance().getMovieApi().movieReviews(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.<ResponseBody>mainIO())
+                .compose(mRxLifecycle.<ResponseBody>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {

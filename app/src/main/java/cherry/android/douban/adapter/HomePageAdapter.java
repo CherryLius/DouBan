@@ -35,6 +35,6 @@ public class HomePageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return PAGER_TITLES[0];
+        return PAGER_TITLES[position];
     }
 }
