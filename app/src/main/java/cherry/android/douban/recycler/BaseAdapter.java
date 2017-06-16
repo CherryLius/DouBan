@@ -31,6 +31,7 @@ public class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends Recycler
     @Override
     public final int getItemViewType(int position) {
         if (!useDelegate()) return super.getItemViewType(position);
+        if (mDataList == null) return super.getItemViewType(position);
         return mDelegateManager.getViewType(mDataList.get(position), position);
     }
 
@@ -46,6 +47,7 @@ public class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends Recycler
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
+        if (mDataList == null) return;
         mDelegateManager.convert(holder, mDataList.get(position), position);
     }
 

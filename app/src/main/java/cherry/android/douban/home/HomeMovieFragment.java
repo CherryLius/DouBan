@@ -20,6 +20,7 @@ import cherry.android.douban.common.ui.LazyFragment;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.DividerItemDecoration;
+import cherry.android.douban.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.api.Router;
 
 /**
@@ -37,6 +38,8 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     private boolean mFirstVisible = true;
     private HomeMovieContract.Presenter mPresenter;
     private TheaterMovieAdapter mMovieAdapter;
+    private LoadMoreWrapper mLoadMoreWrapper;
+    private int mStart = 0;
 
     public HomeMovieFragment() {
         mPresenter = new HomeMoviePresenter(this, this);
@@ -67,12 +70,20 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
         mMovieAdapter.setOnItemClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(mMovieAdapter);
+        mLoadMoreWrapper = new LoadMoreWrapper(mMovieAdapter, R.layout.layout_load_more);
+        mLoadMoreWrapper.setOnLoadMoreListener(new LoadMoreWrapper.SimpleLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                mStart += 20;
+                loadMovies();
+            }
+        });
+        recyclerView.setAdapter(mLoadMoreWrapper);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshLayout.setRefreshing(true);
-                loadMovies();
+                mPresenter.refreshMovies(isComingSoon());
             }
         });
     }
@@ -96,11 +107,7 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     }
 
     void loadMovies() {
-        if (!isComingSoon()) {
-            mPresenter.loadMovieInTheater();
-        } else {
-            mPresenter.loadComingSoon();
-        }
+        mPresenter.loadMovies(isComingSoon(), mStart, 20);
     }
 
     @Override
@@ -109,15 +116,17 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     }
 
     @Override
-    public void showTheaterMovie(List<Movie> movies) {
+    public void showMovies(List<Movie> movies) {
         mMovieAdapter.showData(movies);
         refreshLayout.setRefreshing(false);
+        if (mStart == 0 && mLoadMoreWrapper.getState() != LoadMoreWrapper.STATE_NO_MORE) {
+            mLoadMoreWrapper.setState(LoadMoreWrapper.STATE_LOADING_MORE);
+        }
     }
 
     @Override
-    public void showComingSoon(List<Movie> movies) {
-        mMovieAdapter.showData(movies);
-        refreshLayout.setRefreshing(false);
+    public void showNoMoreMovie() {
+        mLoadMoreWrapper.setState(LoadMoreWrapper.STATE_NO_MORE);
     }
 
     @Override

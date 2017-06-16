@@ -29,7 +29,7 @@ public class CelebrityPresenter extends RxPresenterImpl<CelebrityContract.View, 
     public void loadCelebrityInfo(@NonNull String id) {
         if (TextUtils.isEmpty(id))
             return;
-        Network.instance().getMovieApi().celebrityInfo(id)
+        Network.get().getMovieApi().celebrityInfo(id)
                 .compose(RxHelper.<MovieCelebrity>mainIO())
                 .compose(mRxLifecycle.<MovieCelebrity>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<MovieCelebrity>() {

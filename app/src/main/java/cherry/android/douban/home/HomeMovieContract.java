@@ -13,14 +13,15 @@ import cherry.android.douban.model.Movie;
 public interface HomeMovieContract {
 
     interface View extends BaseView<Presenter> {
-        void showTheaterMovie(List<Movie> movies);
 
-        void showComingSoon(List<Movie> movies);
+        void showMovies(List<Movie> movies);
+
+        void showNoMoreMovie();
     }
 
     interface Presenter extends BasePresenter {
-        void loadMovieInTheater();
+        void loadMovies(boolean isComingSoon, int start, int count);
 
-        void loadComingSoon();
+        void refreshMovies(boolean isComingSoon);
     }
 }

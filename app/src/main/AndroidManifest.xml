@@ -29,8 +29,18 @@
             android:name=".celebrity.CelebrityActivity"
             android:theme="@style/AppTheme.NoTitle" />
         <activity android:name=".web.WebActivity" />
-        <activity android:name=".HeaderFooterActivity">
+        <activity android:name=".HeaderFooterActivity" />
+        <!--<intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
 
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>-->
+        <activity android:name=".LoadMoreActivity" >
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
         <activity android:name=".OverlayCardActivity">
             <!--<intent-filter>

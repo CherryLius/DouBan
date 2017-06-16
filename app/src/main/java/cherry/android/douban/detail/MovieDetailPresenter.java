@@ -42,7 +42,7 @@ public class MovieDetailPresenter extends RxPresenterImpl<MovieDetailContract.Vi
     public void loadMovieDetail(String id) {
         if (TextUtils.isEmpty(id))
             return;
-        Network.instance().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
+        Network.get().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
                 .compose(RxHelper.<Movie>mainIO())
                 .compose(mRxLifecycle.<Movie>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<Movie>() {
@@ -72,7 +72,7 @@ public class MovieDetailPresenter extends RxPresenterImpl<MovieDetailContract.Vi
     public void loadMoviePhotos(String id) {
         if (TextUtils.isEmpty(id))
             return;
-        Network.instance().getMovieApi().moviePhotoInfo(id, "07c78782db00a121175696889101e363")
+        Network.get().getMovieApi().moviePhotoInfo(id, "07c78782db00a121175696889101e363")
                 .compose(RxHelper.<ResponseBody>mainIO())
                 .compose(mRxLifecycle.<ResponseBody>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<ResponseBody>() {
@@ -101,7 +101,7 @@ public class MovieDetailPresenter extends RxPresenterImpl<MovieDetailContract.Vi
                     }
                 });
 
-        Network.instance().getMovieApi().movieReviews(id)
+        Network.get().getMovieApi().movieReviews(id)
                 .compose(RxHelper.<ResponseBody>mainIO())
                 .compose(mRxLifecycle.<ResponseBody>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<ResponseBody>() {

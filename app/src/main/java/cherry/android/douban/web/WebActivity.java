@@ -11,6 +11,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
@@ -117,14 +119,40 @@ public class WebActivity extends BaseActivity {
 
     void setUpWebViewDefaults(final WebView webView) {
         WebSettings settings = webView.getSettings();
+        // 告诉WebView启用JavaScript执行。默认的是false。
         settings.setJavaScriptEnabled(true);
+        // 设置此属性，可任意比例缩放。
         settings.setUseWideViewPort(true);
-        settings.setLoadWithOverviewMode(true);
+        // 网页内容的宽度是否可大于WebView控件的宽度
+        settings.setLoadWithOverviewMode(false);
         settings.setBuiltInZoomControls(true);
+        // 使用localStorage则必须打开
         settings.setDomStorageEnabled(true);
+        // 是否应该支持使用其屏幕缩放控件和手势缩放
+        settings.setSupportZoom(true);
+        // 保存表单数据
+        settings.setSaveFormData(true);
+        //启用应用缓存
+        settings.setAppCacheEnabled(true);
+        //设置缓存模式
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        //设置缓存路径
+        settings.setAppCachePath(new File(getCacheDir(), "cache_web_view").getAbsolutePath());
+        // 排版适应屏幕
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        // WebView是否支持多个窗口。
+        settings.setSupportMultipleWindows(true);
+        //  页面加载好以后，再放开图片
+        settings.setBlockNetworkImage(false);
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             settings.setDisplayZoomControls(false);
         }
+        // WebView从5.0开始默认不允许混合模式,https中不能加载http资源,需要设置开启。
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        webView.setInitialScale(1);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

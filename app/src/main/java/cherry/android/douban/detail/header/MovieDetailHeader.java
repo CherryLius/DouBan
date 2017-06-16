@@ -57,6 +57,7 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
 
     @Override
     public void updateHeader(Movie movie) {
+
         this.movie = movie;
         Glide.with(mContext).load(movie.getImages().getLarge())
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))

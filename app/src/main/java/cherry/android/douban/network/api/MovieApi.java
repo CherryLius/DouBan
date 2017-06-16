@@ -24,7 +24,8 @@ public interface MovieApi {
      * @return
      */
     @GET("/v2/movie/in_theaters")
-    Observable<TheaterMovie> movieInTheaters();
+    Observable<TheaterMovie> movieInTheaters(@Query("start") int start,
+                                             @Query("count") int count);
 
     /**
      * @param city city name or ID. example: 中文，如: “北京” 或者数字ID: 108288
@@ -110,6 +111,7 @@ public interface MovieApi {
      */
     @GET("/v2/movie/subject/{id}/photos")
     Observable<ResponseBody> moviePhotoInfo(@Path("id") String id);
+
     @GET("/v2/movie/subject/{id}/photos")
     Observable<ResponseBody> moviePhotoInfo(@Path("id") String id,
                                             @Query("apikey") String apiKey);

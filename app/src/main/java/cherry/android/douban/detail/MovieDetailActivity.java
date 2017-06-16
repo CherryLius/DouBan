@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +33,8 @@ import cherry.android.douban.recycler.BaseAdapter;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.sticker.StickyHeaderHelper;
 import cherry.android.douban.util.CompatUtils;
+import cherry.android.douban.util.Logger;
+import cherry.android.douban.util.PalettenHelper;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -180,5 +183,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         mMoviePersonDelegate.update(list);
         mStickyHeader.setMovie(movie);
         mPresenter.loadMoviePhotos(mMovieId);
+        PalettenHelper.paletten(this, movie.getImages().getLarge(), new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                Palette.Swatch swatch = palette.getVibrantSwatch();
+                Logger.i("Test", palette.toString());
+            }
+        });
     }
 }

@@ -28,7 +28,7 @@ public class Network {
     private static Network _instance;
     private static ReentrantLock mLock = new ReentrantLock(true);
 
-    public static Network instance() {
+    public static Network get() {
         if (_instance != null) {
             return _instance;
         }
