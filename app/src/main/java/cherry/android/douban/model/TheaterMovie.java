@@ -1,14 +1,10 @@
 package cherry.android.douban.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
-
 /**
  * Created by Administrator on 2017/6/2.
  */
 
-public class TheaterMovie {
+public class TheaterMovie extends SubjectProvider {
 
     /**
      * count : 20
@@ -22,8 +18,8 @@ public class TheaterMovie {
     private int start;
     private int total;
     private String title;
-    @SerializedName("subjects")
-    private List<Movie> movies;
+//    @SerializedName("subjects")
+//    private List<Movie> movies;
 
     public int getCount() {
         return count;
@@ -57,11 +53,13 @@ public class TheaterMovie {
         this.title = title;
     }
 
-    public List<Movie> getMovies() {
-        return movies;
-    }
-
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
-    }
+//    @Override
+//    public List<Movie> getMovies() {
+//        return movies;
+//    }
+//
+//    @Override
+//    public void setMovies(List<Movie> movies) {
+//        this.movies = movies;
+//    }
 }

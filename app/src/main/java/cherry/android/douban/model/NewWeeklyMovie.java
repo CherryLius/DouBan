@@ -1,17 +1,13 @@
 package cherry.android.douban.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
-
 /**
  * Created by Administrator on 2017/6/2.
  */
 
-public class NewWeeklyMovie {
+public class NewWeeklyMovie extends SubjectProvider{
     private String title;
-    @SerializedName("subjects")
-    private List<Movie> movies;
+//    @SerializedName("subjects")
+//    private List<Movie> movies;
 
     public String getTitle() {
         return title;
@@ -21,11 +17,11 @@ public class NewWeeklyMovie {
         this.title = title;
     }
 
-    public List<Movie> getMovies() {
-        return movies;
-    }
-
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
-    }
+//    public List<Movie> getMovies() {
+//        return movies;
+//    }
+//
+//    public void setMovies(List<Movie> movies) {
+//        this.movies = movies;
+//    }
 }

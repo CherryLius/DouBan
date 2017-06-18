@@ -134,7 +134,8 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
         List<Movie> movies = mMovieAdapter.getCurrentMovies();
         Movie movie = movies.get(position);
         String url = "movie://activity/movie/detail?id=" + movie.getId()
-                + "&name=" + movie.getTitle();
+                + "&name=" + movie.getTitle()
+                + "&imageUrl=" + movie.getImages().getLarge();
         Router.build(url).open(getActivity());
     }
 

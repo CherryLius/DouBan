@@ -61,7 +61,8 @@ public class MoviePersonDelegate implements ItemViewDelegate<Object, ViewHolder>
     @Override
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         MoviePerson moviePerson = moviePersonList.get(position);
-        String query = "id=" + moviePerson.getId() + "&name=" + moviePerson.getName();
+        String query = "id=" + moviePerson.getId() + "&name=" + moviePerson.getName()
+                + "&imageUrl=" + moviePerson.getAvatars().getLarge();
         Router.build("movie://activity/celebrity/detail?" + query).open(itemView.getContext());
     }
 }

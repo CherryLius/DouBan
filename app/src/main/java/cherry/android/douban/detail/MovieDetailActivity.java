@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +35,7 @@ import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.sticker.StickyHeaderHelper;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.Logger;
-import cherry.android.douban.util.PalettenHelper;
+import cherry.android.douban.util.PaletteHelper;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -55,6 +56,9 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     String mMovieId;
     @RouteField(name = "name", nonNull = true)
     String mMovieName;
+    @RouteField(name = "imageUrl", nonNull = true)
+    String mImageUrl;
+    int mToolbarBackground = 0;
 
     private MovieDetailContract.Presenter mPresenter;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
@@ -116,6 +120,17 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         Router.bind(this);
         initToolbar();
         initView();
+        initToolbarBackground();
+    }
+
+    void initToolbarBackground() {
+        PaletteHelper.palette(this, mImageUrl, new PaletteHelper.PaletteCallback() {
+            @Override
+            public void onGenerated(int color) {
+                mToolbarBackground = color;
+                mDetailHeader.getMoviePosterView().setBackgroundColor(mToolbarBackground);
+            }
+        });
     }
 
     @Override
@@ -136,12 +151,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
             if (mDistance <= mDetailHeader.getMoviePosterView().getHeight()) {
                 float amount = mDistance / mDetailHeader.getMoviePosterView().getHeight();
                 float delta = (float) Math.sin(Math.PI / 2 * amount);
-                int colorVal = ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary);
+                int colorVal = mToolbarBackground;
                 int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
                 toolbar.setBackgroundColor(color);
                 titleView.setText(R.string.label_movie);
             } else {
-                toolbar.setBackgroundResource(R.color.colorPrimary);
+                toolbar.setBackgroundColor(mToolbarBackground);
                 titleView.setText(mMovieName);
             }
             StickyHeaderHelper.onScroll(dx, mDistance, recyclerView, mStickyHeader);
@@ -183,12 +198,5 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         mMoviePersonDelegate.update(list);
         mStickyHeader.setMovie(movie);
         mPresenter.loadMoviePhotos(mMovieId);
-        PalettenHelper.paletten(this, movie.getImages().getLarge(), new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                Palette.Swatch swatch = palette.getVibrantSwatch();
-                Logger.i("Test", palette.toString());
-            }
-        });
     }
 }

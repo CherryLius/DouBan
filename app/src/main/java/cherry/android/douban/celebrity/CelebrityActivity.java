@@ -28,6 +28,7 @@ import cherry.android.douban.recycler.CommonAdapter;
 import cherry.android.douban.recycler.ViewHolder;
 import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.util.CompatUtils;
+import cherry.android.douban.util.PaletteHelper;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -48,11 +49,15 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     String mCelebrityId;
     @RouteField(name = "name")
     String mCelebrityName;
+    @RouteField(name = "imageUrl", nonNull = true)
+    String mImageUrl;
     private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
     private CelebrityHeader mCelebrityHeader;
     private CelebritySummaryHeader mSummaryHeader;
+
     private CelebrityContract.Presenter mPresenter;
+    private int mToolbarBackground;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +104,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         Router.bind(this);
         initToolbar();
         initView();
+        initToolbarBackground();
     }
 
     @Override
@@ -119,14 +125,24 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
             if (mDistance <= mCelebrityHeader.getImageView().getHeight()) {
                 float amount = mDistance / mCelebrityHeader.getImageView().getHeight();
                 float delta = (float) Math.sin(Math.PI / 2 * amount);
-                int colorVal = ContextCompat.getColor(CelebrityActivity.this, R.color.colorPrimary);
+                int colorVal = mToolbarBackground;
                 int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
                 toolbar.setBackgroundColor(color);
             } else {
-                toolbar.setBackgroundResource(R.color.colorPrimary);
+                toolbar.setBackgroundColor(mToolbarBackground);
             }
         }
     };
+
+    void initToolbarBackground() {
+        PaletteHelper.palette(this, mImageUrl, new PaletteHelper.PaletteCallback() {
+            @Override
+            public void onGenerated(int color) {
+                mToolbarBackground = color;
+                mCelebrityHeader.getImageView().setBackgroundColor(mToolbarBackground);
+            }
+        });
+    }
 
     @Override
     protected void unregisterListener() {

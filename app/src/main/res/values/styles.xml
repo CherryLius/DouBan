@@ -57,6 +57,11 @@
         <item name="lineSpacingMultiplier">1.2</item>
     </style>
 
+    <style name="TextView.RankTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+
     <style name="RatingBar" parent="Widget.AppCompat.RatingBar.Small">
         <!--<item name="android:progressDrawable">@drawable/ic_ratingbar_small_material</item>-->
     </style>
