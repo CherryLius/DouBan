@@ -13,9 +13,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.douban.recycler.CommonAdapter;
-import cherry.android.douban.recycler.ViewHolder;
-import cherry.android.douban.recycler.wrapper.LoadMoreWrapper;
+import cherry.android.recycler.CommonAdapter;
+import cherry.android.recycler.ViewHolder;
+import cherry.android.recycler.wrapper.LoadMoreWrapper;
 
 /**
  * Created by Administrator on 2017/6/16.

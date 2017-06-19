@@ -1,10 +1,13 @@
 package cherry.android.douban.detail.delegate;
 
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cherry.android.douban.recycler.ItemViewDelegate;
-import cherry.android.douban.recycler.ViewHolder;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.ViewHolder;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -12,18 +15,10 @@ import cherry.android.douban.recycler.ViewHolder;
 
 public class SimpleDelegate implements ItemViewDelegate<String, ViewHolder> {
 
+    @NonNull
     @Override
-    public int getViewLayoutId() {
-        return android.R.layout.simple_list_item_1;
-    }
-
-    @Override
-    public boolean isMatchViewType(String s, int position) {
-        return position != 0 && position != 1;
-    }
-
-    @Override
-    public ViewHolder createViewHolder(View itemView) {
+    public ViewHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        View itemView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
         return new ViewHolder(itemView);
     }
 

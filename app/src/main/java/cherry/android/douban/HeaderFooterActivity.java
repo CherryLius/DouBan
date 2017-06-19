@@ -1,6 +1,7 @@
 package cherry.android.douban;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.douban.recycler.BaseAdapter;
-import cherry.android.douban.recycler.CommonAdapter;
-import cherry.android.douban.recycler.ItemViewDelegate;
-import cherry.android.douban.recycler.ViewHolder;
-import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.widget.ExpandableTextView;
+import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.CommonAdapter;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.ViewHolder;
+import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 
 public class HeaderFooterActivity extends AppCompatActivity {
 
@@ -41,9 +43,13 @@ public class HeaderFooterActivity extends AppCompatActivity {
         }
 //        Adapter adapter = new Adapter(list);
         BaseAdapter adapter = new BaseAdapter(list);
-        adapter.addDelegate(new RecyclerDelegate());
-        adapter.addDelegate(new SimpleDelegate());
-
+        adapter.addDelegate(String.class).bindDelegate(new RecyclerDelegate(), new SimpleDelegate())
+                .to(new ViewChooser() {
+                    @Override
+                    public Class<? extends ItemViewDelegate> choose(Object o, int position) {
+                        return position == 5 ? RecyclerDelegate.class : SimpleDelegate.class;
+                    }
+                });
         mWrapper = new HeaderAndFooterWrapper(adapter);
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_movie_detail_header, recyclerView, false);
         TextView textView = new TextView(this);
@@ -76,18 +82,10 @@ public class HeaderFooterActivity extends AppCompatActivity {
 
     static class SimpleDelegate implements ItemViewDelegate<String, ViewHolder> {
 
+        @NonNull
         @Override
-        public int getViewLayoutId() {
-            return android.R.layout.simple_list_item_1;
-        }
-
-        @Override
-        public boolean isMatchViewType(String s, int position) {
-            return position != 5;
-        }
-
-        @Override
-        public ViewHolder createViewHolder(View itemView) {
+        public ViewHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+            View itemView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
             return new ViewHolder(itemView);
         }
 
@@ -100,23 +98,15 @@ public class HeaderFooterActivity extends AppCompatActivity {
 
     static class RecyclerDelegate implements ItemViewDelegate<String, RecyclerDelegate.DelegateHolder> {
 
+        @NonNull
         @Override
-        public int getViewLayoutId() {
-            return R.layout.layout_recycler;
-        }
-
-        @Override
-        public boolean isMatchViewType(String s, int position) {
-            return position == 5;
-        }
-
-        @Override
-        public DelegateHolder createViewHolder(View itemView) {
+        public DelegateHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+            View itemView = inflater.inflate(R.layout.layout_recycler, parent);
             return new DelegateHolder(itemView);
         }
 
         @Override
-        public void convert(DelegateHolder holder, String s, int position) {
+        public void convert(RecyclerDelegate.DelegateHolder holder, String s, int position) {
             List<String> list = new ArrayList<>();
             for (int i = 0; i < 20; i++) {
                 list.add("item === " + i);

@@ -1,15 +1,12 @@
-package cherry.android.douban.recycler;
+package cherry.android.recycler;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
-import cherry.android.douban.R;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -27,8 +24,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     public DividerItemDecoration(Context context, int orientation) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int color = ContextCompat.getColor(context, R.color.colorGrey_500);
-        mPaint.setColor(color);
+        mPaint.setColor(0xff9e9e9e);
         mOrientation = orientation;
     }
 

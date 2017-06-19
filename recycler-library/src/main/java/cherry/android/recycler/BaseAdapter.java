@@ -1,5 +1,6 @@
-package cherry.android.douban.recycler;
+package cherry.android.recycler;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,56 +12,65 @@ import java.util.List;
  * Created by Administrator on 2017/6/6.
  */
 
-public class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    protected List<T> mDataList;
-    protected ItemViewDelegateManager<T, VH> mDelegateManager;
+    protected List<?> mItems;
+    protected ItemViewDelegateManager mDelegateManager;
+    private LayoutInflater mInflater;
 
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mItemLongClickListener;
 
-    public BaseAdapter(List<T> data) {
-        mDataList = data;
-        mDelegateManager = ItemViewDelegateManager.newDelegateManager();
+    public BaseAdapter(List<?> items) {
+        mItems = items;
+        mDelegateManager = ItemViewDelegateManager.get();
     }
 
     public BaseAdapter() {
-        mDelegateManager = ItemViewDelegateManager.newDelegateManager();
+        mDelegateManager = ItemViewDelegateManager.get();
     }
 
     @Override
     public final int getItemViewType(int position) {
         if (!useDelegate()) return super.getItemViewType(position);
-        if (mDataList == null) return super.getItemViewType(position);
-        return mDelegateManager.getViewType(mDataList.get(position), position);
+        if (mItems == null) return super.getItemViewType(position);
+        Object item = mItems.get(position);
+        return mDelegateManager.getItemViewType(item, position);
     }
 
     @Override
-    public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (mInflater == null)
+            mInflater = LayoutInflater.from(parent.getContext());
         ItemViewDelegate delegate = mDelegateManager.getItemViewDelegate(viewType);
-        int layoutId = delegate.getViewLayoutId();
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-        VH holder = (VH) delegate.createViewHolder(itemView);
-        setListener(itemView, holder);
+        RecyclerView.ViewHolder holder = delegate.createViewHolder(mInflater, parent);
+        setListener(holder.itemView, holder);
         return holder;
     }
 
     @Override
-    public final void onBindViewHolder(VH holder, int position) {
-        if (mDataList == null) return;
-        mDelegateManager.convert(holder, mDataList.get(position), position);
+    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (mItems == null) return;
+        int viewType = holder.getItemViewType();
+        ItemViewDelegate delegate = mDelegateManager.getItemViewDelegate(viewType);
+        delegate.convert(holder, mItems.get(position), position);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     @Override
     public int getItemCount() {
-        return mDataList != null ? mDataList.size() : 0;
+        return mItems != null ? mItems.size() : 0;
     }
 
     protected boolean useDelegate() {
         return mDelegateManager.getDelegateCount() > 0;
     }
 
-    private void setListener(final View itemView, final VH holder) {
+    private void setListener(final View itemView, final RecyclerView.ViewHolder holder) {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,16 +92,18 @@ public class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends Recycler
         });
     }
 
-    public void addDelegate(ItemViewDelegate<T, VH> delegate) {
-        mDelegateManager.addDelegate(delegate);
+    public <T, VH extends RecyclerView.ViewHolder> void addDelegate(@NonNull Class<? extends T> clazz,
+                                                                    @NonNull ItemViewDelegate<T, VH> delegate) {
+        mDelegateManager.addDelegate(clazz, delegate);
     }
 
-    public void addDelegate(int viewType, ItemViewDelegate<T, VH> delegate) {
-        mDelegateManager.addDelegate(viewType, delegate);
+    public <T> OneToManyDelegate addDelegate(@NonNull Class<? extends T> clazz) {
+        OneToManyWrapper<T> wrapper = new OneToManyWrapper<>(clazz, mDelegateManager);
+        return wrapper;
     }
 
-    public void showData(List<T> data) {
-        this.mDataList = data;
+    public void setItems(List<?> items) {
+        this.mItems = items;
         notifyDataSetChanged();
     }
 

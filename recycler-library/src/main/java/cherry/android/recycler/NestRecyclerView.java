@@ -1,4 +1,4 @@
-package cherry.android.douban.recycler;
+package cherry.android.recycler;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

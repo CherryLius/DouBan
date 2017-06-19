@@ -1,4 +1,4 @@
-package cherry.android.douban.recycler.wrapper;
+package cherry.android.recycler.wrapper;
 
 import android.support.annotation.NonNull;
 import android.support.v4.util.SparseArrayCompat;
@@ -6,7 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cherry.android.douban.recycler.ViewHolder;
+import cherry.android.recycler.ViewHolder;
+
 
 /**
  * Created by Administrator on 2017/6/6.

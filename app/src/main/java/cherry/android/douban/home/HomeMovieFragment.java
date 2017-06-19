@@ -18,9 +18,9 @@ import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.common.Constants;
 import cherry.android.douban.common.ui.LazyFragment;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.recycler.BaseAdapter;
-import cherry.android.douban.recycler.DividerItemDecoration;
-import cherry.android.douban.recycler.wrapper.LoadMoreWrapper;
+import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.DividerItemDecoration;
+import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.api.Router;
 
 /**
@@ -117,7 +117,7 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
 
     @Override
     public void showMovies(List<Movie> movies) {
-        mMovieAdapter.showData(movies);
+        mMovieAdapter.setItems(movies);
         refreshLayout.setRefreshing(false);
         if (mStart == 0 && mLoadMoreWrapper.getState() != LoadMoreWrapper.STATE_NO_MORE) {
             mLoadMoreWrapper.setState(LoadMoreWrapper.STATE_LOADING_MORE);

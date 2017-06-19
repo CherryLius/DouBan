@@ -11,10 +11,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.douban.recycler.CommonAdapter;
-import cherry.android.douban.recycler.ViewHolder;
-import cherry.android.douban.recycler.layout.OverlayCardLayoutManager;
-import cherry.android.douban.util.Logger;
+import cherry.android.recycler.CommonAdapter;
+import cherry.android.recycler.ViewHolder;
+import cherry.android.recycler.layout.OverlayCardLayoutManager;
 
 public class OverlayCardActivity extends AppCompatActivity {
 

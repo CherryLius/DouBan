@@ -15,7 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.douban.recycler.CommonAdapter;
+import cherry.android.recycler.CommonAdapter;
 
 /**
  * Created by Administrator on 2017/6/7.

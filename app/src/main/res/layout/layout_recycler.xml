@@ -3,7 +3,7 @@
     android:id="@+id/recycler"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />-->
-<cherry.android.douban.recycler.NestRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<cherry.android.recycler.NestRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/recycler"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

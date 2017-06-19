@@ -18,8 +18,8 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.douban.recycler.CommonAdapter;
 import cherry.android.douban.util.Utils;
+import cherry.android.recycler.CommonAdapter;
 
 /**
  * Created by Administrator on 2017/6/6.
@@ -83,7 +83,7 @@ public class TheaterMovieAdapter extends CommonAdapter<Movie, TheaterMovieAdapte
     }
 
     public List<Movie> getCurrentMovies() {
-        return mDataList;
+        return (List<Movie>) mItems;
     }
 
     static class TheaterHolder extends RecyclerView.ViewHolder {

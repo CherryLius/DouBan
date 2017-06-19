@@ -1,46 +1,41 @@
 package cherry.android.douban.detail.delegate;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.MoviePersonAdapter;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.douban.recycler.BaseAdapter;
-import cherry.android.douban.recycler.DividerItemDecoration;
-import cherry.android.douban.recycler.ItemViewDelegate;
-import cherry.android.douban.recycler.ViewHolder;
+import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.DividerItemDecoration;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.ViewHolder;
 import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/7.
  */
 
-public class MoviePersonDelegate implements ItemViewDelegate<Object, ViewHolder>, BaseAdapter.OnItemClickListener {
+public class MoviePersonDelegate implements ItemViewDelegate<String, ViewHolder>, BaseAdapter.OnItemClickListener {
 
     private List<MoviePerson> moviePersonList;
     private MoviePersonAdapter mAdapter;
 
+    @NonNull
     @Override
-    public int getViewLayoutId() {
-        return R.layout.layout_movie_person;
-    }
-
-    @Override
-    public boolean isMatchViewType(Object o, int position) {
-        return position == 0;
-    }
-
-    @Override
-    public ViewHolder createViewHolder(View itemView) {
+    public ViewHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        View itemView = inflater.inflate(R.layout.layout_movie_person, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
-    public void convert(ViewHolder holder, Object o, int position) {
+    public void convert(ViewHolder holder, String s, int position) {
         RecyclerView recyclerView = holder.findView(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false));
         DividerItemDecoration decoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.HORIZONTAL);
@@ -55,7 +50,7 @@ public class MoviePersonDelegate implements ItemViewDelegate<Object, ViewHolder>
     public void update(List<MoviePerson> data) {
         moviePersonList = data;
         if (mAdapter != null)
-            mAdapter.showData(data);
+            mAdapter.setItems(data);
     }
 
     @Override

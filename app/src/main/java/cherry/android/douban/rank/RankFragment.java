@@ -7,29 +7,20 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
-import cherry.android.douban.adapter.RankMovieAdapter;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.model.NewWeeklyMovie;
 import cherry.android.douban.model.RankMovies;
-import cherry.android.douban.model.SubjectProvider;
-import cherry.android.douban.model.TheaterMovie;
-import cherry.android.douban.network.Network;
-import cherry.android.douban.network.api.MovieApi;
-import cherry.android.douban.recycler.BaseAdapter;
-import cherry.android.douban.rx.RxHelper;
-import cherry.android.douban.util.Logger;
+import cherry.android.douban.rank.delegate.RankDelegate;
+import cherry.android.douban.rank.delegate.SectionDelegate;
+import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.ViewChooser;
 import cherry.android.router.api.Router;
-import io.reactivex.Observable;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Function;
 
 /**
  * Created by Administrator on 2017/6/13.
@@ -40,7 +31,7 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
     Toolbar toolbar;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
-    private RankMovieAdapter mAdapter;
+    private BaseAdapter mAdapter;
 
     private RankContract.Presenter mPresenter;
 
@@ -73,7 +64,14 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
-        mAdapter = new RankMovieAdapter();
+        mAdapter = new BaseAdapter();
+        mAdapter.addDelegate(RankMovies.class).bindDelegate(new RankDelegate(), new SectionDelegate())
+                .to(new ViewChooser<RankMovies>() {
+                    @Override
+                    public Class<? extends ItemViewDelegate<RankMovies, ? extends RecyclerView.ViewHolder>> choose(RankMovies rankMovies, int position) {
+                        return rankMovies.getType() == RankMovies.TYPE_TITLE ? SectionDelegate.class : RankDelegate.class;
+                    }
+                });
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
     }
@@ -90,7 +88,7 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
 
     @Override
     public void showMovies(List<RankMovies> movies) {
-        mAdapter.showData(movies);
+        mAdapter.setItems(movies);
     }
 
     @Override

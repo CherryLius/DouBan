@@ -1,4 +1,4 @@
-package cherry.android.douban.recycler.wrapper;
+package cherry.android.recycler.wrapper;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
@@ -11,8 +11,9 @@ import android.view.ViewGroup;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import cherry.android.douban.R;
-import cherry.android.douban.recycler.ViewHolder;
+import cherry.android.recycler.R;
+import cherry.android.recycler.ViewHolder;
+
 
 /**
  * Created by Administrator on 2017/6/16.

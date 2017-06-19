@@ -1,20 +1,19 @@
-package cherry.android.douban.recycler.layout;
+package cherry.android.recycler.layout;
 
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 
 import java.lang.reflect.Field;
-
-import cherry.android.douban.util.Logger;
 
 /**
  * Created by Administrator on 2017/6/15.
  */
 
 public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
-    private static final String TAG = "OverlayCardLayoutManager";
+    private static final String TAG = "OverlayCard";
 
     private static final int MAX_SHOW_COUNT = 4;
     private static final float SCALE_GAP = 0.1f;
@@ -46,7 +45,7 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         //super.onLayoutChildren(recycler, state);
-        Logger.e(TAG, "recycler=[" + recycler + "], state=[" + state + "]");
+        Log.e(TAG, "recycler=[" + recycler + "], state=[" + state + "]");
         detachAndScrapAttachedViews(recycler);
         final int itemCount = getItemCount();
         int bottomPosition;
@@ -80,13 +79,13 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
         RecyclerView recyclerView = null;
         try {
             Field field = getClass().getSuperclass().getDeclaredField("mRecyclerView");
-            Logger.i("Test", "field=" + field.getName());
+            Log.i("Test", "field=" + field.getName());
             field.setAccessible(true);
             recyclerView = (RecyclerView) field.get(this);
         } catch (NoSuchFieldException e) {
-            Logger.e(TAG, "[NoSuchFieldException]", e);
+            Log.e(TAG, "[NoSuchFieldException]", e);
         } catch (IllegalAccessException e) {
-            Logger.e(TAG, "[IllegalAccessException]", e);
+            Log.e(TAG, "[IllegalAccessException]", e);
         }
         return recyclerView;
     }
@@ -107,7 +106,7 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Logger.i("Test", "onSwipe");
+            Log.i("Test", "onSwipe");
 
         }
 

@@ -5,8 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,12 +27,13 @@ import cherry.android.douban.detail.header.SummaryDetailHeader;
 import cherry.android.douban.detail.header.TicketBuySticky;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.douban.recycler.BaseAdapter;
-import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.sticker.StickyHeaderHelper;
 import cherry.android.douban.util.CompatUtils;
-import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.PaletteHelper;
+import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -93,9 +91,18 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         }
         //Adapter adapter = new Adapter(list);
         BaseAdapter adapter = new BaseAdapter(list);
-        adapter.addDelegate(mMoviePersonDelegate = new MoviePersonDelegate());
-        adapter.addDelegate(mMovieAdvanceDelegate = new MovieAdvanceDelegate());
-        adapter.addDelegate(new SimpleDelegate());
+        adapter.addDelegate(String.class)
+                .bindDelegate(mMoviePersonDelegate = new MoviePersonDelegate(),
+                        mMovieAdvanceDelegate = new MovieAdvanceDelegate(),
+                        new SimpleDelegate())
+                .to(new ViewChooser<String>() {
+                    @Override
+                    public Class<? extends ItemViewDelegate<String, ? extends RecyclerView.ViewHolder>> choose(String s, int position) {
+                        if (position == 0) return MoviePersonDelegate.class;
+                        if (position == 1) return MovieAdvanceDelegate.class;
+                        return SimpleDelegate.class;
+                    }
+                });
         mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(adapter);
         initHeader();
         recyclerView.setAdapter(mHeaderAndFooterWrapper);

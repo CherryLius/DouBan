@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +23,11 @@ import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.celebrity.header.CelebrityHeader;
 import cherry.android.douban.celebrity.header.CelebritySummaryHeader;
 import cherry.android.douban.model.MovieCelebrity;
-import cherry.android.douban.recycler.CommonAdapter;
-import cherry.android.douban.recycler.ViewHolder;
-import cherry.android.douban.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.PaletteHelper;
+import cherry.android.recycler.CommonAdapter;
+import cherry.android.recycler.ViewHolder;
+import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -128,8 +127,10 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
                 int colorVal = mToolbarBackground;
                 int color = Color.argb((int) (255 * delta), Color.red(colorVal), Color.green(colorVal), Color.blue(colorVal));
                 toolbar.setBackgroundColor(color);
+                titleView.setText(R.string.label_celebrity);
             } else {
                 toolbar.setBackgroundColor(mToolbarBackground);
+                titleView.setText(mCelebrityName);
             }
         }
     };
