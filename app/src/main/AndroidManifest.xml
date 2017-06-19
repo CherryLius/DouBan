@@ -28,6 +28,7 @@
         <activity
             android:name=".celebrity.CelebrityActivity"
             android:theme="@style/AppTheme.NoTitle" />
+        <activity android:name=".rank.top.TopMovieActivity"/>
         <activity android:name=".web.WebActivity" />
         <activity android:name=".HeaderFooterActivity" />
         <!--<intent-filter>

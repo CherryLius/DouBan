@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import cherry.android.douban.base.RxPresenterImpl;
 import cherry.android.douban.model.Movie;
@@ -29,7 +30,7 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
         RankContract.Presenter,
         FragmentEvent> implements RankContract.Presenter {
 
-    private List<RankMovies> mList;
+    private List<Object> mList;
 
     public RankPresenter(@NonNull RankContract.View view, @NonNull IRxLifecycleBinding<FragmentEvent> lifecycle) {
         super(view, lifecycle);
@@ -43,16 +44,16 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
 
     @Override
     public void loadMovies() {
-        zipObservable().compose(RxHelper.<List<RankMovies>>mainIO())
-                .compose(mRxLifecycle.<List<RankMovies>>bindUntilEvent(FragmentEvent.DESTROY))
-                .subscribe(new Observer<List<RankMovies>>() {
+        zipObservable().compose(RxHelper.<List<Object>>mainIO())
+                .compose(mRxLifecycle.<List<Object>>bindUntilEvent(FragmentEvent.DESTROY))
+                .subscribe(new Observer<List<Object>>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.annotations.NonNull List<RankMovies> rankMovies) {
+                    public void onNext(@io.reactivex.annotations.NonNull List<Object> rankMovies) {
                         mList = rankMovies;
                         mView.showMovies(rankMovies);
                     }
@@ -70,11 +71,11 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
     }
 
     @Override
-    public List<RankMovies> getCurrentData() {
+    public List getCurrentData() {
         return mList;
     }
 
-    private Observable<List<RankMovies>> zipObservable() {
+    private Observable<List<Object>> zipObservable() {
         MovieApi api = Network.get().getMovieApi();
 //        Observable<List<RankMovies>> observable = Observable.zip(api.top250(0, 5),
 //                api.northAmericaMovie(),
@@ -87,28 +88,33 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
 //                                                  @io.reactivex.annotations.NonNull NewWeeklyMovie newWeeklyMovie,
 //                                                  @io.reactivex.annotations.NonNull NewWeeklyMovie newWeeklyMovie2) throws Exception {
 //                        List<RankMovies> list = new ArrayList<>();
-//                        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
-//                        list.add(new RankMovies(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
-//                        list.add(new RankMovies("口碑榜", RankMovies.TYPE_TITLE));
-//                        list.add(new RankMovies(newWeeklyMovie.getMovies(), RankMovies.TYPE_WEEKLY));
-//                        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
-//                        list.add(new RankMovies(northAmericaMovie.getMovies(), RankMovies.TYPE_NORTH_AMERICA));
-//                        list.add(new RankMovies("新片榜", RankMovies.TYPE_TITLE));
-//                        list.add(new RankMovies(newWeeklyMovie2.getMovies(), RankMovies.TYPE_NEW_MOVIES));
+//                        List<Object> list = new ArrayList<>();
+//        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
+//        list.addAll(movieToRankMovie(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
+//        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
+//        for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
+//            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
+//        }
 //                        return list;
 //                    }
 //                });
-        Observable<List<RankMovies>> observable = Observable.zip(api.top250(0, 6),
-                api.northAmericaMovie(), new BiFunction<TheaterMovie, NorthAmericaMovie, List<RankMovies>>() {
+        Observable<List<Object>> observable = Observable.zip(api.top250(0, 6),
+                api.northAmericaMovie(), new BiFunction<TheaterMovie, NorthAmericaMovie, List<Object>>() {
                     @Override
-                    public List<RankMovies> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie,
-                                                  @io.reactivex.annotations.NonNull NorthAmericaMovie northAmericaMovie) throws Exception {
-                        List<RankMovies> list = new ArrayList<>();
-                        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
-                        list.addAll(movieToRankMovie(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
-                        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
+                    public List<Object> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie,
+                                              @io.reactivex.annotations.NonNull NorthAmericaMovie northAmericaMovie) throws Exception {
+                        List<Object> list = new ArrayList<>();
+//                        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
+//                        list.addAll(movieToRankMovie(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
+//                        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
+//                        for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
+//                            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
+//                        }
+                        list.add("Top250");
+                        list.addAll(theaterMovie.getMovies());
+                        list.add("北美票房榜");
                         for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
-                            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
+                            list.add(box.getMovie());
                         }
                         Logger.i("Test", "biFunc=" + list.size());
                         return list;

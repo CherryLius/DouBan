@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
+import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.RankMovies;
 import cherry.android.recycler.ItemViewDelegate;
 
@@ -21,7 +22,7 @@ import cherry.android.recycler.ItemViewDelegate;
  * Created by Administrator on 2017/6/19.
  */
 
-public class RankDelegate implements ItemViewDelegate<RankMovies, RankDelegate.RankHolder> {
+public class RankDelegate implements ItemViewDelegate<Movie, RankDelegate.RankHolder> {
 
     @NonNull
     @Override
@@ -31,10 +32,10 @@ public class RankDelegate implements ItemViewDelegate<RankMovies, RankDelegate.R
     }
 
     @Override
-    public void convert(RankHolder holder, RankMovies rankMovies, int position) {
-        holder.nameView.setText(rankMovies.getMovie().getTitle());
+    public void convert(RankHolder holder, Movie movie, int position) {
+        holder.nameView.setText(movie.getTitle());
         Glide.with(holder.itemView.getContext())
-                .load(rankMovies.getMovie().getImages().getLarge())
+                .load(movie.getImages().getLarge())
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(holder.imageView);
     }

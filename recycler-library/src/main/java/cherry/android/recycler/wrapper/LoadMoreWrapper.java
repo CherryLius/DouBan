@@ -20,7 +20,7 @@ import cherry.android.recycler.ViewHolder;
  */
 
 public class LoadMoreWrapper extends BaseWrapper {
-    public static final int ITEM_TYPE_LOAD_MORE = Integer.MAX_VALUE - 2;
+    private static final int ITEM_TYPE_LOAD_MORE = Integer.MAX_VALUE - 2;
     public static final int STATE_HIDE = 0;
     public static final int STATE_LOADING_MORE = 1;
     public static final int STATE_NO_MORE = 2;

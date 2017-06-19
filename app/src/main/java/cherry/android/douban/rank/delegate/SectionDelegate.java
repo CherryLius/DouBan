@@ -15,7 +15,7 @@ import cherry.android.recycler.ViewHolder;
  * Created by Administrator on 2017/6/19.
  */
 
-public class SectionDelegate implements ItemViewDelegate<RankMovies, ViewHolder> {
+public class SectionDelegate implements ItemViewDelegate<String, ViewHolder> {
 
     @NonNull
     @Override
@@ -25,11 +25,11 @@ public class SectionDelegate implements ItemViewDelegate<RankMovies, ViewHolder>
     }
 
     @Override
-    public void convert(ViewHolder holder, RankMovies rankMovies, int position) {
+    public void convert(ViewHolder holder, String s, int position) {
         TextView textView = holder.findView(R.id.tv_title);
-        textView.setText(rankMovies.getTitle());
+        textView.setText(s);
         TextView moreView = holder.findView(R.id.tv_more);
-        if (rankMovies.getTitle() == null || !rankMovies.getTitle().contains("250")) {
+        if (s == null || !s.contains("250")) {
             moreView.setVisibility(View.GONE);
         }
     }

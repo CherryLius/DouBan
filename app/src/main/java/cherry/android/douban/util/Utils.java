@@ -52,8 +52,10 @@ public final class Utils {
         TypedArray ta = context.obtainStyledAttributes(attributes);
         if (ta != null) {
             actionBarSize = ta.getDimensionPixelOffset(0, 0);
+            Logger.i("Test", "actionbarsize=" + actionBarSize);
             ta.recycle();
         }
+        Logger.i("Test", "final size=" + actionBarSize);
         return actionBarSize;
     }
 

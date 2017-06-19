@@ -37,7 +37,7 @@ public class ItemViewDelegateManager {
                                    @NonNull ViewChooser<T> chooser,
                                    @NonNull ItemViewDelegate<T, ? extends RecyclerView.ViewHolder>... delegates) {
         if (delegates == null || clazz == null)
-            throw new NullPointerException("class or delegate should not be NULL!");
+            throw new NullPointerException("class or delegates should not be NULL!");
         for (int i = 0; i < delegates.length; i++) {
             this.delegates.put(this.delegates.size(), delegates[i]);
         }

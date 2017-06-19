@@ -57,21 +57,15 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                boolean isTitle = mPresenter.getCurrentData().get(position).getType()
-                        == RankMovies.TYPE_TITLE;
+                boolean isTitle = mPresenter.getCurrentData().get(position) instanceof String;
                 return isTitle ? layoutManager.getSpanCount() : 1;
             }
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
         mAdapter = new BaseAdapter();
-        mAdapter.addDelegate(RankMovies.class).bindDelegate(new RankDelegate(), new SectionDelegate())
-                .to(new ViewChooser<RankMovies>() {
-                    @Override
-                    public Class<? extends ItemViewDelegate<RankMovies, ? extends RecyclerView.ViewHolder>> choose(RankMovies rankMovies, int position) {
-                        return rankMovies.getType() == RankMovies.TYPE_TITLE ? SectionDelegate.class : RankDelegate.class;
-                    }
-                });
+        mAdapter.addDelegate(String.class, new SectionDelegate());
+        mAdapter.addDelegate(Movie.class, new RankDelegate());
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
     }
@@ -87,23 +81,26 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
     }
 
     @Override
-    public void showMovies(List<RankMovies> movies) {
+    public void showMovies(List movies) {
         mAdapter.setItems(movies);
     }
 
     @Override
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
-        List<RankMovies> movies = mPresenter.getCurrentData();
-        RankMovies rankMovies = movies.get(position);
-        if (rankMovies.getType() == RankMovies.TYPE_TITLE
-                && rankMovies.getTitle().contains("250")) {
+        List<Object> movies = mPresenter.getCurrentData();
+        Object item = movies.get(position);
+        if (item instanceof String
+                && item.toString().contains("250")) {
+            Router.build("movie://activity/movie/top").open(getActivity());
             return;
         }
-        Movie movie = rankMovies.getMovie();
-        if (movie == null) return;
-        String url = "movie://activity/movie/detail?id=" + movie.getId()
-                + "&name=" + movie.getTitle()
-                + "&imageUrl=" + movie.getImages().getLarge();
-        Router.build(url).open(getActivity());
+        if (item instanceof Movie) {
+            Movie movie = (Movie) item;
+            if (movie == null) return;
+            String url = "movie://activity/movie/detail?id=" + movie.getId()
+                    + "&name=" + movie.getTitle()
+                    + "&imageUrl=" + movie.getImages().getLarge();
+            Router.build(url).open(getActivity());
+        }
     }
 }
