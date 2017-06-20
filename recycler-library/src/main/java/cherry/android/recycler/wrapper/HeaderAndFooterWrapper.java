@@ -26,11 +26,11 @@ public class HeaderAndFooterWrapper extends BaseWrapper {
     }
 
 
-    private int getHeaderCount() {
+    public int getHeaderCount() {
         return mHeaderViews.size();
     }
 
-    private int getFooterCount() {
+    public int getFooterCount() {
         return mFooterViews.size();
     }
 

@@ -15,13 +15,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.douban.widget.ExpandableTextView;
 import cherry.android.recycler.BaseAdapter;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewChooser;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
+import cherry.android.toast.Toaster;
 
 public class HeaderFooterActivity extends AppCompatActivity {
 
@@ -50,24 +50,48 @@ public class HeaderFooterActivity extends AppCompatActivity {
                         return position == 5 ? RecyclerDelegate.class : SimpleDelegate.class;
                     }
                 });
+        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
+                if (position % 5 == 0) {
+                    Toaster.iError(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    return;
+                }
+                if (position % 5 == 1) {
+                    Toaster.iInfo(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    return;
+                }
+                if (position % 5 == 2) {
+                    Toaster.iSuccess(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    return;
+                }
+                if (position % 5 == 3) {
+                    Toaster.iWarning(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    return;
+                }
+                if (position % 5 == 4) {
+                    Toaster.normal(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    return;
+                }
+            }
+        });
         mWrapper = new HeaderAndFooterWrapper(adapter);
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_movie_detail_header, recyclerView, false);
         TextView textView = new TextView(this);
         textView.setText("It is A Header");
         mWrapper.addHeaderView(textView);
         mWrapper.addHeaderView(headerView);
-        mWrapper.addHeaderView(new ExpandableTextView(this));
         recyclerView.setAdapter(mWrapper);
     }
 
-    static class Adapter<VH extends ViewHolder> extends CommonAdapter<String, VH> {
+    static class Adapter extends CommonAdapter<String, ViewHolder> {
 
         public Adapter(List<String> data) {
             super(data, android.R.layout.simple_list_item_1);
         }
 
         @Override
-        public void convert(VH holder, String s, int position) {
+        public void convert(ViewHolder holder, String s, int position) {
             TextView textView = holder.findView(android.R.id.text1);
             textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     120));
@@ -75,8 +99,8 @@ public class HeaderFooterActivity extends AppCompatActivity {
         }
 
         @Override
-        protected VH createDefaultViewHolder(View itemView) {
-            return (VH) new ViewHolder(itemView);
+        protected ViewHolder createDefaultViewHolder(View itemView) {
+            return new ViewHolder(itemView);
         }
     }
 
@@ -101,7 +125,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
         @NonNull
         @Override
         public DelegateHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-            View itemView = inflater.inflate(R.layout.layout_recycler, parent);
+            View itemView = inflater.inflate(R.layout.layout_recycler, parent, false);
             return new DelegateHolder(itemView);
         }
 
@@ -121,10 +145,10 @@ public class HeaderFooterActivity extends AppCompatActivity {
             public DelegateHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
-                ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+                ViewGroup.LayoutParams params = this.recyclerView.getLayoutParams();
                 params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                recyclerView.setLayoutParams(params);
-                recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                this.recyclerView.setLayoutParams(params);
+                this.recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
             }
         }
     }

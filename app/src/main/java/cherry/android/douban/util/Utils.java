@@ -51,11 +51,9 @@ public final class Utils {
         int[] attributes = {android.R.attr.actionBarSize};
         TypedArray ta = context.obtainStyledAttributes(attributes);
         if (ta != null) {
-            actionBarSize = ta.getDimensionPixelOffset(0, 0);
-            Logger.i("Test", "actionbarsize=" + actionBarSize);
+            actionBarSize = ta.getDimensionPixelSize(0, 0);
             ta.recycle();
         }
-        Logger.i("Test", "final size=" + actionBarSize);
         return actionBarSize;
     }
 

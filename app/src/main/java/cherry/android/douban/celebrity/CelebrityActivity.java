@@ -24,6 +24,7 @@ import cherry.android.douban.celebrity.header.CelebrityHeader;
 import cherry.android.douban.celebrity.header.CelebritySummaryHeader;
 import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.util.CompatUtils;
+import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.PaletteHelper;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ViewHolder;
@@ -62,7 +63,16 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new CelebrityPresenter(this, this);
+        checkNonNull(mCelebrityId, "mCelebrityId", "CelebrityActivity");
+        Logger.i("Test", "id=" + mCelebrityId);
         mPresenter.loadCelebrityInfo(mCelebrityId);
+    }
+
+    public static void checkNonNull(Object object, String name, String className) {
+        if(object == null) {
+            Logger.e("Test", " check null!!!!");
+            throw new NullPointerException(String.format("field \'%s\' in \'%s\' is nonNull", new Object[]{name, className}));
+        }
     }
 
     void initView() {

@@ -14,7 +14,8 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.model.RankMovies;
+import cherry.android.douban.model.MovieWrapper;
+import cherry.android.douban.rank.delegate.NorthRankDelegate;
 import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.douban.rank.delegate.SectionDelegate;
 import cherry.android.recycler.BaseAdapter;
@@ -57,15 +58,24 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                boolean isTitle = mPresenter.getCurrentData().get(position) instanceof String;
-                return isTitle ? layoutManager.getSpanCount() : 1;
+                Object item = mPresenter.getCurrentData().get(position);
+                if (item instanceof String)
+                    return layoutManager.getSpanCount();
+                MovieWrapper wrapper = (MovieWrapper) item;
+                boolean isTop = wrapper.getType() == MovieWrapper.TYPE_TOP_250;
+                return !isTop ? layoutManager.getSpanCount() : 1;
             }
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
         mAdapter = new BaseAdapter();
         mAdapter.addDelegate(String.class, new SectionDelegate());
-        mAdapter.addDelegate(Movie.class, new RankDelegate());
+        mAdapter.addDelegate(MovieWrapper.class).bindDelegate(new RankDelegate(), new NorthRankDelegate()).to(new ViewChooser<MovieWrapper>() {
+            @Override
+            public Class<? extends ItemViewDelegate<MovieWrapper, ? extends RecyclerView.ViewHolder>> choose(MovieWrapper movieWrapper, int position) {
+                return movieWrapper.getType() == MovieWrapper.TYPE_TOP_250 ? RankDelegate.class : NorthRankDelegate.class;
+            }
+        });
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
     }

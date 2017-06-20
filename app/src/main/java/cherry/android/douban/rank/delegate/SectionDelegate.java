@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cherry.android.douban.R;
-import cherry.android.douban.model.RankMovies;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewHolder;
 

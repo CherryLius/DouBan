@@ -32,7 +32,8 @@ public class MoviePersonAdapter extends CommonAdapter<MoviePerson, MoviePersonAd
 
     @Override
     protected void convert(MoviePersonHolder holder, MoviePerson moviePerson, int position) {
-        Glide.with(mContext).load(moviePerson.getAvatars().getLarge())
+        String imageUrl = moviePerson.getAvatars() != null ? moviePerson.getAvatars().getLarge() : "";
+        Glide.with(mContext).load(imageUrl)
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(holder.imageView);
         holder.nameView.setText(moviePerson.getName());

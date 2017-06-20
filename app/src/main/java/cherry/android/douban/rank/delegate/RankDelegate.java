@@ -15,14 +15,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.model.RankMovies;
+import cherry.android.douban.model.MovieWrapper;
 import cherry.android.recycler.ItemViewDelegate;
 
 /**
  * Created by Administrator on 2017/6/19.
  */
 
-public class RankDelegate implements ItemViewDelegate<Movie, RankDelegate.RankHolder> {
+public class RankDelegate implements ItemViewDelegate<MovieWrapper, RankDelegate.RankHolder> {
 
     @NonNull
     @Override
@@ -32,7 +32,8 @@ public class RankDelegate implements ItemViewDelegate<Movie, RankDelegate.RankHo
     }
 
     @Override
-    public void convert(RankHolder holder, Movie movie, int position) {
+    public void convert(RankHolder holder, MovieWrapper movieWrapper, int position) {
+        final Movie movie = movieWrapper.getMovie();
         holder.nameView.setText(movie.getTitle());
         Glide.with(holder.itemView.getContext())
                 .load(movie.getImages().getLarge())

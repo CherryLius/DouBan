@@ -62,6 +62,13 @@
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
+    <style name="TextView.RankNumber">
+        <item name="android:textColor">@color/colorGrey_800</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">serif</item>
+    </style>
+
     <style name="RatingBar" parent="Widget.AppCompat.RatingBar.Small">
         <!--<item name="android:progressDrawable">@drawable/ic_ratingbar_small_material</item>-->
     </style>

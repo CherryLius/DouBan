@@ -4,12 +4,10 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import cherry.android.douban.base.RxPresenterImpl;
-import cherry.android.douban.model.Movie;
+import cherry.android.douban.model.MovieWrapper;
 import cherry.android.douban.model.NorthAmericaMovie;
-import cherry.android.douban.model.RankMovies;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
 import cherry.android.douban.network.api.MovieApi;
@@ -111,10 +109,10 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
 //                            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
 //                        }
                         list.add("Top250");
-                        list.addAll(theaterMovie.getMovies());
+                        list.addAll(MovieWrapper.wrap(theaterMovie.getMovies(), MovieWrapper.TYPE_TOP_250));
                         list.add("北美票房榜");
                         for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
-                            list.add(box.getMovie());
+                            list.add(new MovieWrapper(box.getMovie(), MovieWrapper.TYPE_NORTH_AMERICA));
                         }
                         Logger.i("Test", "biFunc=" + list.size());
                         return list;
@@ -123,11 +121,11 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
         return observable;
     }
 
-    private static List<RankMovies> movieToRankMovie(List<Movie> movies, int type) {
-        List<RankMovies> list = new ArrayList<>(movies.size());
-        for (int i = 0; i < movies.size(); i++) {
-            list.add(new RankMovies(movies.get(i), type));
-        }
-        return list;
-    }
+//    private static List<RankMovies> movieToRankMovie(List<Movie> movies, int type) {
+//        List<RankMovies> list = new ArrayList<>(movies.size());
+//        for (int i = 0; i < movies.size(); i++) {
+//            list.add(new RankMovies(movies.get(i), type));
+//        }
+//        return list;
+//    }
 }

@@ -3,7 +3,6 @@ package cherry.android.douban.rank.top;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -14,7 +13,6 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.recycler.BaseAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.annotations.Route;
@@ -44,27 +42,27 @@ public class TopMovieActivity extends BaseActivity implements TopContract.View, 
         ButterKnife.bind(this);
         new TopPresenter(this, this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAdapter = new BaseAdapter();
-        mAdapter.addDelegate(Movie.class, new RankDelegate());
-        mAdapter.setOnItemClickListener(this);
-        mLoadMoreWrapper = new LoadMoreWrapper(mAdapter, R.layout.layout_load_more);
-        mLoadMoreWrapper.setOnLoadMoreListener(new LoadMoreWrapper.SimpleLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                mStart += 36;
-                mPresenter.loadTop(mStart, 36);
-            }
-        });
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setAdapter(mLoadMoreWrapper);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                mPresenter.refreshMovies();
-            }
-        });
-        mPresenter.loadTop(mStart, 36);
+//        mAdapter = new BaseAdapter();
+//        mAdapter.addDelegate(Movie.class, new RankDelegate());
+//        mAdapter.setOnItemClickListener(this);
+//        mLoadMoreWrapper = new LoadMoreWrapper(mAdapter, R.layout.layout_load_more);
+//        mLoadMoreWrapper.setOnLoadMoreListener(new LoadMoreWrapper.SimpleLoadMoreListener() {
+//            @Override
+//            public void onLoadMore() {
+//                mStart += 36;
+//                mPresenter.loadTop(mStart, 36);
+//            }
+//        });
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+//        recyclerView.setAdapter(mLoadMoreWrapper);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                swipeRefreshLayout.setRefreshing(true);
+//                mPresenter.refreshMovies();
+//            }
+//        });
+//        mPresenter.loadTop(mStart, 36);
     }
 
     @Override

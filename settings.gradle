@@ -1,1 +1,1 @@
-include ':app', ':recycler-library'
+include ':app', ':recycler-library', ':toast-library'

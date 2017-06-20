@@ -3,6 +3,7 @@ package cherry.android.douban.detail.delegate;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.router.api.Router;
+import cherry.android.toast.Toaster;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -56,8 +58,13 @@ public class MoviePersonDelegate implements ItemViewDelegate<String, ViewHolder>
     @Override
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         MoviePerson moviePerson = moviePersonList.get(position);
+        if (TextUtils.isEmpty(moviePerson.getId())) {
+            Toaster.iError(itemView.getContext(), "暂无" + moviePerson.getName() + "的详细资料").show();
+            return;
+        }
+        String imageUrl = moviePerson.getAvatars() != null ? moviePerson.getAvatars().getLarge() : "";
         String query = "id=" + moviePerson.getId() + "&name=" + moviePerson.getName()
-                + "&imageUrl=" + moviePerson.getAvatars().getLarge();
+                + "&imageUrl=" + imageUrl;
         Router.build("movie://activity/celebrity/detail?" + query).open(itemView.getContext());
     }
 }
