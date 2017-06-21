@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Administrator on 2017/6/6.
  */
 
-public abstract class CommonAdapter<T, VH extends RecyclerView.ViewHolder> extends BaseAdapter {
+public abstract class CommonAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerAdapter {
 
     public CommonAdapter(List<T> data, int itemLayoutId) {
         super(data);

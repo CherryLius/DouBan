@@ -69,6 +69,7 @@ public class HomeMoviePresenter extends RxPresenterImpl<HomeMovieContract.View, 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         Logger.e(TAG, "onError", e);
+                        mView.showError();
                     }
 
                     @Override
@@ -109,6 +110,7 @@ public class HomeMoviePresenter extends RxPresenterImpl<HomeMovieContract.View, 
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        mView.showError();
                         Logger.e(TAG, "onError", e);
                     }
 

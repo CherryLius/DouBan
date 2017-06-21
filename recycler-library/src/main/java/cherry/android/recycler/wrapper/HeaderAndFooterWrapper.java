@@ -60,7 +60,7 @@ public class HeaderAndFooterWrapper extends BaseWrapper {
             return mHeaderViews.keyAt(position);
         } else if (isFooterViewPos(position))
             return mFooterViews.keyAt(position - getHeaderCount() - getRealItemCount());
-        return -1;
+        throw new IllegalStateException("cannot match a wrapper ItemType: " + position);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class HeaderAndFooterWrapper extends BaseWrapper {
         } else if (mFooterViews.get(viewType) != null) {
             return new ViewHolder(mFooterViews.get(viewType));
         }
-        return null;
+        throw new IllegalArgumentException("cannot create wrapper ViewHolder: " + viewType);
     }
 
     private boolean isHeaderViewPos(int position) {

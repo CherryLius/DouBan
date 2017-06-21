@@ -18,16 +18,17 @@ import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.common.Constants;
 import cherry.android.douban.common.ui.LazyFragment;
 import cherry.android.douban.model.Movie;
-import cherry.android.recycler.BaseAdapter;
 import cherry.android.recycler.DividerItemDecoration;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.api.Router;
+import cherry.android.toast.Toaster;
 
 /**
  * Created by LHEE on 2017/6/3.
  */
 
-public class HomeMovieFragment extends LazyFragment implements HomeMovieContract.View, BaseAdapter.OnItemClickListener {
+public class HomeMovieFragment extends LazyFragment implements HomeMovieContract.View, RecyclerAdapter.OnItemClickListener {
     private static final String EXTRA_TAB = "extra_tab";
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
@@ -86,6 +87,7 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
                 mPresenter.refreshMovies(isComingSoon());
             }
         });
+        refreshLayout.setRefreshing(true);
     }
 
     private boolean isComingSoon() {
@@ -127,6 +129,12 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     @Override
     public void showNoMoreMovie() {
         mLoadMoreWrapper.setState(LoadMoreWrapper.STATE_NO_MORE);
+    }
+
+    @Override
+    public void showError() {
+        refreshLayout.setRefreshing(false);
+        Toaster.iError(getContext(), "加载出错了");
     }
 
     @Override

@@ -83,6 +83,9 @@ public final class Toaster extends Toast {
         private Drawable icon;
         private CharSequence message;
         @ColorInt
+        private int textColor;
+        private int textSize;
+        @ColorInt
         private int tintColor;
         private int duration;
         private int gravity;
@@ -97,6 +100,8 @@ public final class Toaster extends Toast {
             this.gravity = Gravity.BOTTOM;
             this.duration = LENGTH_SHORT;
             this.animationStyle = -1;
+            this.textColor = DEFAULT_TEXT_COLOR;
+            this.textSize = DEFAULT_TEXT_SIZE;
         }
 
         public Builder setIcon(Drawable icon) {
@@ -111,6 +116,21 @@ public final class Toaster extends Toast {
 
         public Builder setMessage(@NonNull CharSequence message) {
             this.message = message;
+            return this;
+        }
+
+        public Builder setTextColor(@ColorInt int color) {
+            this.textColor = color;
+            return this;
+        }
+
+        public Builder setTextColorRes(@ColorRes int colorResId) {
+            this.textColor = ContextCompat.getColor(this.context, colorResId);
+            return this;
+        }
+
+        public Builder setTextSize(int textSize) {
+            this.textSize = textSize;
             return this;
         }
 
@@ -175,9 +195,9 @@ public final class Toaster extends Toast {
         }
 
         //text content view
-        textView.setTextColor(DEFAULT_TEXT_COLOR);
+        textView.setTextColor(builder.textColor);
         textView.setTypeface(DEFAULT_TOAST_TYPEFACE);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, builder.textSize);
         textView.setText(builder.message);
 
         //toast

@@ -14,25 +14,24 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.Movie;
-import cherry.android.douban.model.MovieWrapper;
+import cherry.android.douban.model.NorthAmericaMovie;
+import cherry.android.douban.rank.delegate.NorthHeaderDelegate;
 import cherry.android.douban.rank.delegate.NorthRankDelegate;
 import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.douban.rank.delegate.SectionDelegate;
-import cherry.android.recycler.BaseAdapter;
-import cherry.android.recycler.ItemViewDelegate;
-import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/13.
  */
 
-public class RankFragment extends ToolbarFragment implements RankContract.View, BaseAdapter.OnItemClickListener {
+public class RankFragment extends ToolbarFragment implements RankContract.View, RecyclerAdapter.OnItemClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
-    private BaseAdapter mAdapter;
+    private RecyclerAdapter mAdapter;
 
     private RankContract.Presenter mPresenter;
 
@@ -59,23 +58,20 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
             @Override
             public int getSpanSize(int position) {
                 Object item = mPresenter.getCurrentData().get(position);
-                if (item instanceof String)
+                if (item instanceof String
+                        || item instanceof NorthAmericaMovie.Subjects
+                        || item instanceof NorthAmericaMovie)
                     return layoutManager.getSpanCount();
-                MovieWrapper wrapper = (MovieWrapper) item;
-                boolean isTop = wrapper.getType() == MovieWrapper.TYPE_TOP_250;
-                return !isTop ? layoutManager.getSpanCount() : 1;
+                return 1;
             }
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
-        mAdapter = new BaseAdapter();
+        mAdapter = new RecyclerAdapter();
         mAdapter.addDelegate(String.class, new SectionDelegate());
-        mAdapter.addDelegate(MovieWrapper.class).bindDelegate(new RankDelegate(), new NorthRankDelegate()).to(new ViewChooser<MovieWrapper>() {
-            @Override
-            public Class<? extends ItemViewDelegate<MovieWrapper, ? extends RecyclerView.ViewHolder>> choose(MovieWrapper movieWrapper, int position) {
-                return movieWrapper.getType() == MovieWrapper.TYPE_TOP_250 ? RankDelegate.class : NorthRankDelegate.class;
-            }
-        });
+        mAdapter.addDelegate(Movie.class, new RankDelegate());
+        mAdapter.addDelegate(NorthAmericaMovie.class, new NorthHeaderDelegate());
+        mAdapter.addDelegate(NorthAmericaMovie.Subjects.class, new NorthRankDelegate());
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
     }
@@ -104,8 +100,14 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
             Router.build("movie://activity/movie/top").open(getActivity());
             return;
         }
+        Movie movie = null;
         if (item instanceof Movie) {
-            Movie movie = (Movie) item;
+            movie = (Movie) item;
+        } else if (item instanceof NorthAmericaMovie.Subjects) {
+            NorthAmericaMovie.Subjects subject = (NorthAmericaMovie.Subjects) item;
+            movie = subject.getMovie();
+        }
+        if (movie != null) {
             if (movie == null) return;
             String url = "movie://activity/movie/detail?id=" + movie.getId()
                     + "&name=" + movie.getTitle()

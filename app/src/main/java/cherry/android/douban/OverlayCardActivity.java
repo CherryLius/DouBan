@@ -26,11 +26,11 @@ public class OverlayCardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_header_footer);
         ButterKnife.bind(this);
-        recyclerView.setLayoutManager(new OverlayCardLayoutManager());
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             list.add(i);
         }
+        recyclerView.setLayoutManager(new OverlayCardLayoutManager(list));
         recyclerView.setAdapter(mAdapter = new CommonAdapter<Integer, ViewHolder>(list, R.layout.item_overlay_card) {
             @Override
             protected void convert(ViewHolder holder, Integer integer, int position) {

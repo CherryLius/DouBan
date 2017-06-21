@@ -30,7 +30,7 @@ import cherry.android.douban.model.MoviePerson;
 import cherry.android.douban.sticker.StickyHeaderHelper;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.PaletteHelper;
-import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewChooser;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
@@ -90,7 +90,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
             list.add("item === " + i);
         }
         //Adapter adapter = new Adapter(list);
-        BaseAdapter adapter = new BaseAdapter(list);
+        RecyclerAdapter adapter = new RecyclerAdapter(list);
         adapter.addDelegate(String.class)
                 .bindDelegate(mMoviePersonDelegate = new MoviePersonDelegate(),
                         mMovieAdvanceDelegate = new MovieAdvanceDelegate(),

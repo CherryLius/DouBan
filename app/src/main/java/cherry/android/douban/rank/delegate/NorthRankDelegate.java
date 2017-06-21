@@ -1,7 +1,9 @@
 package cherry.android.douban.rank.delegate;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,7 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.douban.model.MovieWrapper;
+import cherry.android.douban.model.NorthAmericaMovie;
 import cherry.android.douban.util.Utils;
 import cherry.android.recycler.ItemViewDelegate;
 
@@ -28,7 +30,7 @@ import cherry.android.recycler.ItemViewDelegate;
  * Created by Administrator on 2017/6/20.
  */
 
-public class NorthRankDelegate implements ItemViewDelegate<MovieWrapper, NorthRankDelegate.NorthHolder> {
+public class NorthRankDelegate implements ItemViewDelegate<NorthAmericaMovie.Subjects, NorthRankDelegate.NorthHolder> {
 
     @NonNull
     @Override
@@ -38,10 +40,19 @@ public class NorthRankDelegate implements ItemViewDelegate<MovieWrapper, NorthRa
     }
 
     @Override
-    public void convert(@NonNull NorthHolder holder, MovieWrapper movieWrapper, int position) {
+    public void convert(@NonNull NorthHolder holder, NorthAmericaMovie.Subjects subjects, int position) {
         final Context context = holder.itemView.getContext();
-        final Movie movie = movieWrapper.getMovie();
-        holder.number.setText(position + "");
+        final Movie movie = subjects.getMovie();
+        @ColorInt int color = ContextCompat.getColor(context, R.color.colorGrey_800);
+        if (subjects.getRank() == 1) {
+            color = ContextCompat.getColor(context, R.color.colorRed_600);
+        } else if (subjects.getRank() == 2) {
+            color = ContextCompat.getColor(context, R.color.colorDeepOrange_400);
+        } else if (subjects.getRank() == 3) {
+            color = ContextCompat.getColor(context, R.color.colorOrange_400);
+        }
+        holder.number.setTextColor(color);
+        holder.number.setText(subjects.getRank() + "");
         Glide.with(context).load(movie.getImages().getLarge())
                 .apply(new RequestOptions().placeholder(R.mipmap.ic_movie_default))
                 .into(holder.imageView);

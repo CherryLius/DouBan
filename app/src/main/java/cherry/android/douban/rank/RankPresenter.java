@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cherry.android.douban.base.RxPresenterImpl;
-import cherry.android.douban.model.MovieWrapper;
 import cherry.android.douban.model.NorthAmericaMovie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.network.Network;
@@ -102,19 +101,11 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
                     public List<Object> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie,
                                               @io.reactivex.annotations.NonNull NorthAmericaMovie northAmericaMovie) throws Exception {
                         List<Object> list = new ArrayList<>();
-//                        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
-//                        list.addAll(movieToRankMovie(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
-//                        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
-//                        for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
-//                            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
-//                        }
                         list.add("Top250");
-                        list.addAll(MovieWrapper.wrap(theaterMovie.getMovies(), MovieWrapper.TYPE_TOP_250));
+                        list.addAll(theaterMovie.getMovies());
                         list.add("北美票房榜");
-                        for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
-                            list.add(new MovieWrapper(box.getMovie(), MovieWrapper.TYPE_NORTH_AMERICA));
-                        }
-                        Logger.i("Test", "biFunc=" + list.size());
+                        list.add(northAmericaMovie);
+                        list.addAll(northAmericaMovie.getSubjects());
                         return list;
                     }
                 });

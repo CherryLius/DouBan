@@ -15,9 +15,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.recycler.BaseAdapter;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ViewChooser;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
@@ -42,7 +42,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
             list.add("item === " + i);
         }
 //        Adapter adapter = new Adapter(list);
-        BaseAdapter adapter = new BaseAdapter(list);
+        RecyclerAdapter adapter = new RecyclerAdapter();
         adapter.addDelegate(String.class).bindDelegate(new RecyclerDelegate(), new SimpleDelegate())
                 .to(new ViewChooser() {
                     @Override
@@ -50,7 +50,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
                         return position == 5 ? RecyclerDelegate.class : SimpleDelegate.class;
                     }
                 });
-        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
                 if (position % 5 == 0) {
@@ -75,12 +75,14 @@ public class HeaderFooterActivity extends AppCompatActivity {
                 }
             }
         });
+
         mWrapper = new HeaderAndFooterWrapper(adapter);
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_movie_detail_header, recyclerView, false);
         TextView textView = new TextView(this);
         textView.setText("It is A Header");
         mWrapper.addHeaderView(textView);
         mWrapper.addHeaderView(headerView);
+
         recyclerView.setAdapter(mWrapper);
     }
 

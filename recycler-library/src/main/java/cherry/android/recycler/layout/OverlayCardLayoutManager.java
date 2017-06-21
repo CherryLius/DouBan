@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/6/15.
@@ -22,8 +23,11 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
     private RecyclerView mRecyclerView;
     private ItemTouchHelper mItemTouchHelper;
 
-    public OverlayCardLayoutManager() {
+    private List mItems;
+
+    public OverlayCardLayoutManager(List items) {
         super();
+        this.mItems = items;
         mItemTouchHelper = new ItemTouchHelper(new OverlayItemTouchCallback());
     }
 
@@ -69,9 +73,16 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
             int topLevel = itemCount - position - 1;
             if (topLevel == 0)
                 continue;
-            child.setTranslationY(Y_GAP * topLevel);
-            child.setScaleX(1 - SCALE_GAP * topLevel);
-            child.setScaleY(1 - SCALE_GAP * topLevel);
+            if (topLevel < MAX_SHOW_COUNT - 1) {
+                child.setTranslationY(Y_GAP * topLevel);
+                child.setScaleX(1 - SCALE_GAP * topLevel);
+                child.setScaleY(1 - SCALE_GAP * topLevel);
+            } else {
+                child.setTranslationY(Y_GAP * (topLevel - 1));
+                child.setScaleX(1 - SCALE_GAP * (topLevel - 1));
+                child.setScaleY(1 - SCALE_GAP * (topLevel - 1));
+
+            }
         }
     }
 
@@ -79,7 +90,6 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
         RecyclerView recyclerView = null;
         try {
             Field field = getClass().getSuperclass().getDeclaredField("mRecyclerView");
-            Log.i("Test", "field=" + field.getName());
             field.setAccessible(true);
             recyclerView = (RecyclerView) field.get(this);
         } catch (NoSuchFieldException e) {
@@ -90,7 +100,7 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
         return recyclerView;
     }
 
-    private static class OverlayItemTouchCallback extends ItemTouchHelper.SimpleCallback {
+    private class OverlayItemTouchCallback extends ItemTouchHelper.SimpleCallback {
 
         public OverlayItemTouchCallback() {
             super(0, ItemTouchHelper.UP
@@ -106,13 +116,32 @@ public class OverlayCardLayoutManager extends RecyclerView.LayoutManager {
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.i("Test", "onSwipe");
-
+            Log.i(TAG, "onSwipe");
+            int position = viewHolder.getLayoutPosition();
+//            mItems.add(0, mItems.remove(position));
+//            mRecyclerView.getAdapter().notifyDataSetChanged();
         }
 
         @Override
         public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            double swipedVal = Math.sqrt(dX * dX + dY * dY);
+            double fraction = swipedVal / (recyclerView.getWidth() * 0.5f);
+            if (fraction > 1)
+                fraction = 1;
+            Log.i(TAG, "onChildDraw");
+            final int count = recyclerView.getChildCount();
+            for (int i = 0; i < count; i++) {
+                final View child = recyclerView.getChildAt(i);
+                int topLevel = count - 1 - i;
+                if (topLevel > 0) {
+                    child.setScaleX((float) (1 - SCALE_GAP * topLevel + fraction * SCALE_GAP));
+                    if (topLevel < MAX_SHOW_COUNT - 1) {
+                        child.setScaleY((float) (1 - SCALE_GAP * topLevel + fraction * SCALE_GAP));
+                        child.setTranslationY((float) (Y_GAP * topLevel - fraction * Y_GAP));
+                    }
+                }
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.MoviePersonAdapter;
 import cherry.android.douban.model.MoviePerson;
-import cherry.android.recycler.BaseAdapter;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewHolder;
@@ -24,7 +24,7 @@ import cherry.android.toast.Toaster;
  * Created by Administrator on 2017/6/7.
  */
 
-public class MoviePersonDelegate implements ItemViewDelegate<String, ViewHolder>, BaseAdapter.OnItemClickListener {
+public class MoviePersonDelegate implements ItemViewDelegate<String, ViewHolder>, RecyclerAdapter.OnItemClickListener {
 
     private List<MoviePerson> moviePersonList;
     private MoviePersonAdapter mAdapter;

@@ -17,6 +17,8 @@ public interface HomeMovieContract {
         void showMovies(List<Movie> movies);
 
         void showNoMoreMovie();
+
+        void showError();
     }
 
     interface Presenter extends BasePresenter {

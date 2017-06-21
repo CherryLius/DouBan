@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Administrator on 2017/6/6.
  */
 
-public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected List<?> mItems;
     protected ItemViewDelegateManager mDelegateManager;
@@ -21,12 +21,12 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mItemLongClickListener;
 
-    public BaseAdapter(List<?> items) {
+    public RecyclerAdapter(List<?> items) {
         mItems = items;
         mDelegateManager = ItemViewDelegateManager.get();
     }
 
-    public BaseAdapter() {
+    public RecyclerAdapter() {
         mDelegateManager = ItemViewDelegateManager.get();
     }
 

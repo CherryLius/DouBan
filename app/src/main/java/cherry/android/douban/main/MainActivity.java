@@ -18,6 +18,7 @@ import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.home.HomeFragment;
 import cherry.android.douban.rank.RankFragment;
 import cherry.android.router.annotations.Route;
+import cherry.android.toast.Toaster;
 
 @Route("movie://activity/main")
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -26,20 +27,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     BottomNavigationView bottomNavigationView;
 
     private List<Fragment> mFragmentList;
+    private long mLastPressedTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bottomNavigationView.setSelectedItemId(R.id.menu_hot);
-//        Observable.interval(0, 1, TimeUnit.SECONDS)
-//                .compose(RxHelper.<Long>mainIO())
-//                .compose(this.<Long>bindUntilEvent(ActivityEvent.PAUSE))
-//                .subscribe(new Consumer<Long>() {
-//                    @Override
-//                    public void accept(@io.reactivex.annotations.NonNull Long aLong) throws Exception {
-//                        Logger.i("Test", " along=" + aLong);
-//                    }
-//                });
     }
 
     @Override
@@ -101,4 +94,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         ft.show(fragment).commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - mLastPressedTime < 2000) {
+            super.onBackPressed();
+        } else {
+            Toaster.warning(this, "再按一次退出应用").show();
+            mLastPressedTime = System.currentTimeMillis();
+        }
+    }
 }
