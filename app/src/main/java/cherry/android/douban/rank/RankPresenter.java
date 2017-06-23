@@ -41,7 +41,9 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
 
     @Override
     public void loadMovies() {
-        zipObservable().compose(RxHelper.<List<Object>>mainIO())
+        zipObservable()
+                .compose(RxHelper.<List<Object>>delay(2000))
+                .compose(RxHelper.<List<Object>>mainIO())
                 .compose(mRxLifecycle.<List<Object>>bindUntilEvent(FragmentEvent.DESTROY))
                 .subscribe(new Observer<List<Object>>() {
                     @Override

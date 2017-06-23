@@ -37,11 +37,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/layout_recycler"
+    <cherry.android.ptr.PullToRefreshLayout
+        android:id="@+id/layout_pull_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorGrey_300"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/layout_recycler" />
+    </cherry.android.ptr.PullToRefreshLayout>
 
 </android.support.design.widget.CoordinatorLayout>

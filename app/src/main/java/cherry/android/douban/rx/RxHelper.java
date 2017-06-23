@@ -1,5 +1,7 @@
 package cherry.android.douban.rx;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -18,6 +20,15 @@ public final class RxHelper {
             public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
                 return upstream.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    public static <T> ObservableTransformer<T, T> delay(final long delay) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
+                return upstream.delay(delay, TimeUnit.MILLISECONDS);
             }
         };
     }

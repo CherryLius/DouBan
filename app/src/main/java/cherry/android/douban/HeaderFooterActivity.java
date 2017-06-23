@@ -15,6 +15,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cherry.android.douban.widget.JDRefreshHeader;
+import cherry.android.ptr.PullToRefreshLayout;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
@@ -27,6 +29,8 @@ public class HeaderFooterActivity extends AppCompatActivity {
 
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
+    @BindView(R.id.layout_pull_to_refresh)
+    PullToRefreshLayout mRefreshLayout;
 
     private HeaderAndFooterWrapper mWrapper;
 
@@ -35,6 +39,20 @@ public class HeaderFooterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_header_footer);
         ButterKnife.bind(this);
+
+        mRefreshLayout.setRefreshHeader(new JDRefreshHeader(this, mRefreshLayout));
+        mRefreshLayout.setOnRefreshListener(new PullToRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toaster.iSuccess(HeaderFooterActivity.this, "刷新成功").show();
+                        mRefreshLayout.notifyRefreshComplete();
+                    }
+                }, 3000);
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         List<String> list = new ArrayList<>();

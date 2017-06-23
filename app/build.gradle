@@ -61,4 +61,5 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     compile project(':recycler-library')
     compile project(':toast-library')
+    compile project(':ptr-library')
 }

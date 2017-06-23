@@ -2,9 +2,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+    <cherry.android.ptr.PullToRefreshLayout
+        android:id="@+id/layout_pull_to_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </cherry.android.ptr.PullToRefreshLayout>
 
 </FrameLayout>

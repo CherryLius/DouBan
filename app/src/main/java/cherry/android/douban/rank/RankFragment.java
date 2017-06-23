@@ -19,6 +19,8 @@ import cherry.android.douban.rank.delegate.NorthHeaderDelegate;
 import cherry.android.douban.rank.delegate.NorthRankDelegate;
 import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.douban.rank.delegate.SectionDelegate;
+import cherry.android.douban.widget.JDRefreshHeader;
+import cherry.android.ptr.PullToRefreshLayout;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.router.api.Router;
 
@@ -31,6 +33,8 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
     Toolbar toolbar;
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
+    @BindView(R.id.layout_pull_to_refresh)
+    PullToRefreshLayout pullToRefreshLayout;
     private RecyclerAdapter mAdapter;
 
     private RankContract.Presenter mPresenter;
@@ -53,6 +57,13 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
     }
 
     void initView() {
+        pullToRefreshLayout.setRefreshHeader(new JDRefreshHeader(getContext(), pullToRefreshLayout));
+        pullToRefreshLayout.setOnRefreshListener(new PullToRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.loadMovies();
+            }
+        });
         final GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -67,6 +78,7 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
+        recyclerView.setVerticalScrollBarEnabled(true);
         mAdapter = new RecyclerAdapter();
         mAdapter.addDelegate(String.class, new SectionDelegate());
         mAdapter.addDelegate(Movie.class, new RankDelegate());
@@ -88,6 +100,7 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
 
     @Override
     public void showMovies(List movies) {
+        pullToRefreshLayout.notifyRefreshComplete();
         mAdapter.setItems(movies);
     }
 
