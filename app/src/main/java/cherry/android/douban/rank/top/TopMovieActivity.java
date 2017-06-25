@@ -56,6 +56,7 @@ public class TopMovieActivity extends BaseActivity implements TopContract.View, 
             }
         });
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setAdapter(mLoadMoreWrapper);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -1,5 +1,6 @@
 package cherry.android.douban;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
             list.add("item === " + i);
         }
 //        Adapter adapter = new Adapter(list);
-        RecyclerAdapter adapter = new RecyclerAdapter();
+        RecyclerAdapter adapter = new RecyclerAdapter(list);
         adapter.addDelegate(String.class).bindDelegate(new RecyclerDelegate(), new SimpleDelegate())
                 .to(new ViewChooser() {
                     @Override

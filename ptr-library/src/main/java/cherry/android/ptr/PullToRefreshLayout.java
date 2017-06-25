@@ -5,12 +5,13 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.NestedScrollingChild;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
@@ -40,10 +41,10 @@ public class PullToRefreshLayout extends FrameLayout {
 
     }
 
-    private static final float DEFAULT_OFFSET_RATIO = 2.5f;
+    private static final float DEFAULT_OFFSET_RATIO = 2.0f;
     private static final int DEFAULT_SCROLL_DURATION = 1000;
 
-    private int mTouchSlop;
+    //    private int mTouchSlop;
     private Scroller mScroller;
     private IRefreshHeader mRefreshHeader;
     @State
@@ -61,7 +62,6 @@ public class PullToRefreshLayout extends FrameLayout {
     private CanChildScrollUpCallback mCallback;
     private OnRefreshListener mOnRefreshListener;
 
-
     public PullToRefreshLayout(@NonNull Context context) {
         this(context, null);
     }
@@ -76,7 +76,7 @@ public class PullToRefreshLayout extends FrameLayout {
     }
 
     private void init(Context context) {
-        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+//        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mScroller = new Scroller(context);
         mState = STATE_IDLE;
     }
@@ -90,47 +90,40 @@ public class PullToRefreshLayout extends FrameLayout {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (mRefreshHeader == null)
-            return super.onInterceptTouchEvent(ev);
-        final int action = ev.getAction();
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (mRefreshHeader == null) return super.dispatchTouchEvent(ev);
+        final int action = MotionEventCompat.getActionMasked(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mLastMotionY = ev.getY();
-                if (mState != STATE_REFRESHING)
+                if (mState != STATE_REFRESHING) {
                     setState(STATE_IDLE);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 float delta = ev.getY() - mLastMotionY;
-                if (delta > mTouchSlop
-                        && !canChildScrollUp()
-                        && mState != STATE_REFRESHING) { //下拉拦截
-                    mLastMotionY = ev.getY();
-                    return true;
+                mLastMotionY = ev.getY();
+                boolean moveDown = delta > 0;
+                if (moveDown && canChildScrollUp()) {
+                    return super.dispatchTouchEvent(ev);
                 }
-                break;
-        }
-        return super.onInterceptTouchEvent(ev);
-    }
+                if (!moveDown && mOffset <= 0)
+                    return super.dispatchTouchEvent(ev);
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (mRefreshHeader == null)
-            return super.onTouchEvent(event);
-        final int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mLastMotionY = event.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                final float delta = event.getY() - mLastMotionY;
-                mLastMotionY = event.getY();
                 offsetViewTopAndBottom((int) (delta / DEFAULT_OFFSET_RATIO));
                 return true;
-            case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                if (mOffset <= 0) {
+                    return super.dispatchTouchEvent(ev);
+                }
                 mLastScrollY = 0;
-                if (mState == STATE_RELEASE_TO_REFRESH) {
+                if (mState == STATE_REFRESHING) {
+                    if (mOffset > mRefreshHeader.getRefreshThreshold())
+                        mScroller.startScroll(0, 0, 0, mOffset - mRefreshHeader.getRefreshThreshold(), DEFAULT_SCROLL_DURATION);
+                    else
+                        mScroller.startScroll(0, 0, 0, mOffset, DEFAULT_SCROLL_DURATION);
+                } else if (mState == STATE_RELEASE_TO_REFRESH) {
                     setState(STATE_REFRESHING);
                     mScroller.startScroll(0, 0, 0, mOffset - mRefreshHeader.getRefreshThreshold(), DEFAULT_SCROLL_DURATION);
                 } else {
@@ -139,12 +132,15 @@ public class PullToRefreshLayout extends FrameLayout {
                 postInvalidate();
                 return true;
         }
-
-        return super.onTouchEvent(event);
+        return super.dispatchTouchEvent(ev);
     }
 
     private void offsetViewTopAndBottom(int offset) {
         mOffset += offset;
+        if (mOffset <= 0) {
+            mOffset = 0;
+            return;
+        }
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
@@ -152,7 +148,7 @@ public class PullToRefreshLayout extends FrameLayout {
         }
         requestLayout();
         if (mState != STATE_REFRESHING && mState != STATE_COMPLETE) {
-            if (mOffset <= mRefreshHeader.getRefreshThreshold()) {
+            if (mOffset < mRefreshHeader.getRefreshThreshold()) {
                 setState(STATE_PULL_TO_REFRESH);
             } else {
                 setState(STATE_RELEASE_TO_REFRESH);
@@ -163,12 +159,9 @@ public class PullToRefreshLayout extends FrameLayout {
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        Log.d("Test", "requestDisallowInterceptTouchEvent");
-        Log.d("Test", "target=" + mTarget + ",nested=" + !ViewCompat.isNestedScrollingEnabled(mTarget));
         if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
                 || (mTarget != null && !ViewCompat.isNestedScrollingEnabled(mTarget))) {
             // Nope.
-            Log.d("Test", "request");
         } else {
             super.requestDisallowInterceptTouchEvent(disallowIntercept);
         }
@@ -249,26 +242,10 @@ public class PullToRefreshLayout extends FrameLayout {
     private void onStateChanged(@State int state) {
         if (mOnRefreshListener != null && mState == STATE_REFRESHING)
             mOnRefreshListener.onRefresh();
-        if (mRefreshHeader == null || mRefreshHeader.getRefreshingListener() == null)
+        if (mRefreshHeader == null || mRefreshHeader.getStateChangedListener() == null)
             return;
-        final IRefreshListener headerRefreshingListener = mRefreshHeader.getRefreshingListener();
-        switch (state) {
-            case STATE_IDLE:
-                headerRefreshingListener.onIdle();
-                break;
-            case STATE_PULL_TO_REFRESH:
-                headerRefreshingListener.onPullToRefresh();
-                break;
-            case STATE_RELEASE_TO_REFRESH:
-                headerRefreshingListener.onReleaseToRefresh();
-                break;
-            case STATE_REFRESHING:
-                headerRefreshingListener.onRefreshing();
-                break;
-            case STATE_COMPLETE:
-                headerRefreshingListener.onComplete();
-                break;
-        }
+        final OnStateChangedListener listener = mRefreshHeader.getStateChangedListener();
+        listener.onStateChanged(state);
     }
 
     public void notifyRefreshComplete() {

@@ -1,6 +1,7 @@
 package cherry.android.douban.web;
 
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
-import cherry.android.douban.widget.FixedSwipeRefreshLayout;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
@@ -31,7 +31,7 @@ public class WebActivity extends BaseActivity {
     @RouteField(name = "ticket_url")
     String ticketUrl;
     @BindView(R.id.swipe_refresh)
-    FixedSwipeRefreshLayout refreshLayout;
+    SwipeRefreshLayout refreshLayout;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.web_view)
@@ -108,9 +108,10 @@ public class WebActivity extends BaseActivity {
                 refreshLayout.setRefreshing(false);
             }
         });
-        refreshLayout.setCanChildScrollUpCallback(new FixedSwipeRefreshLayout.ChildScrollUpCallback() {
+
+        refreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
             @Override
-            public boolean canChildScrollUp() {
+            public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
                 return webView.getScrollY() > 0;
             }
         });

@@ -17,7 +17,7 @@ import java.util.Date;
  * Created by Administrator on 2017/6/23.
  */
 
-public class DefaultRefreshHeader extends AbstractRefreshHeader implements IRefreshListener {
+public class DefaultRefreshHeader extends AbstractRefreshHeader{
 
     private static final int ROTATE_ANIM_DURATION = 150;
     private SimpleDateFormat mDateFormat;
@@ -58,7 +58,7 @@ public class DefaultRefreshHeader extends AbstractRefreshHeader implements IRefr
     }
 
     @Override
-    public IRefreshListener getRefreshingListener() {
+    public OnStateChangedListener getStateChangedListener() {
         return this;
     }
 

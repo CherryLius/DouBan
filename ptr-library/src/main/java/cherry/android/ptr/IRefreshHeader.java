@@ -13,7 +13,7 @@ public interface IRefreshHeader {
 
     int getRefreshThreshold();
 
-    IRefreshListener getRefreshingListener();
+    OnStateChangedListener getStateChangedListener();
 
     void onPositionChanged(float percent, @PullToRefreshLayout.State int state);
 }

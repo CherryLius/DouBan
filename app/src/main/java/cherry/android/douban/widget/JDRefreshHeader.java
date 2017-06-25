@@ -15,14 +15,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.ptr.AbstractRefreshHeader;
-import cherry.android.ptr.IRefreshListener;
+import cherry.android.ptr.OnStateChangedListener;
 import cherry.android.ptr.PullToRefreshLayout;
 
 /**
  * Created by Administrator on 2017/6/23.
  */
 
-public class JDRefreshHeader extends AbstractRefreshHeader implements IRefreshListener {
+public class JDRefreshHeader extends AbstractRefreshHeader {
 
 
     private SimpleDateFormat mDateFormat;
@@ -45,13 +45,17 @@ public class JDRefreshHeader extends AbstractRefreshHeader implements IRefreshLi
     }
 
     @Override
-    public IRefreshListener getRefreshingListener() {
+    public OnStateChangedListener getStateChangedListener() {
         return this;
     }
 
     @Override
     public void onPositionChanged(float percent, @PullToRefreshLayout.State int state) {
-        if (state != PullToRefreshLayout.STATE_COMPLETE && percent <= 1) {
+        if (percent > 1) {
+            percent = 1;
+        }
+        if (state != PullToRefreshLayout.STATE_COMPLETE
+                && state != PullToRefreshLayout.STATE_REFRESHING) {
             mHolder.goodsView.setAlpha(percent);
             mHolder.goodsView.setScaleX(percent);
             mHolder.goodsView.setScaleY(percent);
