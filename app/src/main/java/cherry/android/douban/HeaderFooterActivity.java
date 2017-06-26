@@ -74,6 +74,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
             public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
                 if (position % 5 == 0) {
                     Toaster.iError(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    startActivity(new Intent(HeaderFooterActivity.this, NestedScrollingActivity.class));
                     return;
                 }
                 if (position % 5 == 1) {

@@ -6,12 +6,13 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
@@ -46,6 +47,8 @@ public class PullToRefreshLayout extends FrameLayout {
 
     //    private int mTouchSlop;
     private Scroller mScroller;
+    private VelocityTracker mVelocityTracker;
+    private int mMaxVelocity;
     private IRefreshHeader mRefreshHeader;
     @State
     private int mState;
@@ -78,20 +81,27 @@ public class PullToRefreshLayout extends FrameLayout {
     private void init(Context context) {
 //        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mScroller = new Scroller(context);
+        mVelocityTracker = VelocityTracker.obtain();
+        mMaxVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
         mState = STATE_IDLE;
     }
 
     public void setRefreshHeader(@NonNull IRefreshHeader refreshHeader) {
         if (mRefreshHeader != null)
             removeView(mRefreshHeader.getView());
+        if (refreshHeader.getView() == null)
+            throw new NullPointerException("header view should not be Null");
         mRefreshHeader = refreshHeader;
-        addView(mRefreshHeader.getView(), 0);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        addView(mRefreshHeader.getView(), 0, params);
         ensureTarget();
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (mRefreshHeader == null) return super.dispatchTouchEvent(ev);
+        mVelocityTracker.addMovement(ev);
         final int action = MotionEventCompat.getActionMasked(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:

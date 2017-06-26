@@ -550,14 +550,6 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
     }
 
     /**
-     * @deprecated Use {@link #setColorSchemeResources(int...)}
-     */
-    @Deprecated
-    public void setColorScheme(@ColorInt int... colors) {
-        setColorSchemeResources(colors);
-    }
-
-    /**
      * Set the color resources used in the progress animation from color resources.
      * The first color will also be the color of the bar that grows in response
      * to a user swipe gesture.
@@ -703,6 +695,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d("Test", "onInterceptTouchEvent");
         ensureTarget();
 
         final int action = MotionEventCompat.getActionMasked(ev);
@@ -717,11 +710,11 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
-        Log.v(LOG_TAG, "onInter=" + action);
+        Log.v("Test", "onInter=" + action);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 setTargetOffsetTopAndBottom(mOriginalOffsetTop - mCircleView.getTop(), true);
-                Log.e(LOG_TAG, "offset=" + (mOriginalOffsetTop - mCircleView.getTop()));
+                Log.e("Test", "offset=" + (mOriginalOffsetTop - mCircleView.getTop()));
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
 
@@ -744,7 +737,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
                 }
                 final float y = ev.getY(pointerIndex);
                 startDragging(y);
-                Log.e(LOG_TAG, "move=" + mIsBeingDragged);
+                Log.e("Test", "move=" + mIsBeingDragged);
                 break;
 
             case MotionEventCompat.ACTION_POINTER_UP:
@@ -798,6 +791,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         // If we are in the middle of consuming, a scroll, then we want to move the spinner back up
         // before allowing the list to scroll
+        Log.d("Test", " dx= " + dx + ",dy=" + dy +", cons=" + consumed[0] + "--" + consumed[1]);
         if (dy > 0 && mTotalUnconsumed > 0) {
             if (dy > mTotalUnconsumed) {
                 consumed[1] = dy - (int) mTotalUnconsumed;
@@ -977,6 +971,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
 
         float rotation = (-0.25f + .4f * adjustedPercent + tensionPercent * 2) * .5f;
         mProgress.setProgressRotation(rotation);
+        Log.d("Test", "offsetTop=" + (targetY - mCurrentTargetOffsetTop));
         setTargetOffsetTopAndBottom(targetY - mCurrentTargetOffsetTop, true /* requires update */);
     }
 
@@ -1015,6 +1010,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.d("Test", "onTouchEvent");
         final int action = MotionEventCompat.getActionMasked(ev);
         int pointerIndex = -1;
 
@@ -1027,7 +1023,7 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
-        Log.e(LOG_TAG, "onTouch=" + action);
+        Log.e("Test", "onTouch=" + action);
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
