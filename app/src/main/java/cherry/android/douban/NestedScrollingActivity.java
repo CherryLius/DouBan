@@ -18,6 +18,7 @@ import java.util.Random;
 import cherry.android.douban.widget.FixedSwipeRefreshLayout;
 import cherry.android.douban.widget.JDRefreshHeader;
 import cherry.android.ptr.NestedPullRefreshLayout;
+import cherry.android.ptr.OnRefreshListener;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ViewChooser;
@@ -36,7 +37,18 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nested_scrolling);
         pullRefreshLayout = (NestedPullRefreshLayout) findViewById(R.id.layout_pull_to_refresh);
-        pullRefreshLayout.setRefreshHeader(new JDRefreshHeader(this, null));
+        pullRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pullRefreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pullRefreshLayout.refreshComplete();
+                    }
+                }, 3000);
+            }
+        });
+        pullRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerAdapter adapter = new RecyclerAdapter();

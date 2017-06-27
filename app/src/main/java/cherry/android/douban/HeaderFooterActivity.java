@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.widget.JDRefreshHeader;
+import cherry.android.ptr.OnRefreshListener;
 import cherry.android.ptr.PullToRefreshLayout;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
@@ -41,15 +42,15 @@ public class HeaderFooterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_header_footer);
         ButterKnife.bind(this);
 
-        mRefreshLayout.setRefreshHeader(new JDRefreshHeader(this, mRefreshLayout));
-        mRefreshLayout.setOnRefreshListener(new PullToRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mRefreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Toaster.iSuccess(HeaderFooterActivity.this, "刷新成功").show();
-                        mRefreshLayout.notifyRefreshComplete();
+                        mRefreshLayout.refreshComplete();
                     }
                 }, 3000);
             }

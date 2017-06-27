@@ -5,5 +5,5 @@ package cherry.android.ptr;
  */
 
 public interface OnStateChangedListener {
-    void onStateChanged(@PullToRefreshLayout.State int state);
+    void onStateChanged(@Common.State int state);
 }

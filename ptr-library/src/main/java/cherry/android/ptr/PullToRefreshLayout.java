@@ -2,7 +2,6 @@ package cherry.android.ptr;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
@@ -17,30 +16,17 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import static cherry.android.ptr.Common.STATE_COMPLETE;
+import static cherry.android.ptr.Common.STATE_IDLE;
+import static cherry.android.ptr.Common.STATE_PULL_TO_REFRESH;
+import static cherry.android.ptr.Common.STATE_REFRESHING;
+import static cherry.android.ptr.Common.STATE_RELEASE_TO_REFRESH;
 
 /**
  * Created by Administrator on 2017/6/23.
  */
 
-public class PullToRefreshLayout extends FrameLayout {
-
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_PULL_TO_REFRESH = 1;
-    public static final int STATE_RELEASE_TO_REFRESH = 2;
-    public static final int STATE_REFRESHING = 3;
-    public static final int STATE_COMPLETE = 4;
-
-    @IntDef({STATE_IDLE,
-            STATE_PULL_TO_REFRESH,
-            STATE_RELEASE_TO_REFRESH,
-            STATE_REFRESHING,
-            STATE_COMPLETE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
-
-    }
+public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
 
     private static final float DEFAULT_OFFSET_RATIO = 2.0f;
     private static final int DEFAULT_SCROLL_DURATION = 1000;
@@ -50,7 +36,7 @@ public class PullToRefreshLayout extends FrameLayout {
     private VelocityTracker mVelocityTracker;
     private int mMaxVelocity;
     private IRefreshHeader mRefreshHeader;
-    @State
+    @Common.State
     private int mState;
 
     //滑动刷新控件
@@ -62,7 +48,7 @@ public class PullToRefreshLayout extends FrameLayout {
     // Scroll偏移量
     private int mLastScrollY;
 
-    private CanChildScrollUpCallback mCallback;
+    private OnChildScrollUpCallback<PullToRefreshLayout> mCallback;
     private OnRefreshListener mOnRefreshListener;
 
     public PullToRefreshLayout(@NonNull Context context) {
@@ -226,7 +212,7 @@ public class PullToRefreshLayout extends FrameLayout {
 
     public boolean canChildScrollUp() {
         if (mCallback != null) {
-            return mCallback.canChildScrollUp();
+            return mCallback.canChildScrollUp(this, mTarget);
         }
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (mTarget instanceof AbsListView) {
@@ -242,14 +228,14 @@ public class PullToRefreshLayout extends FrameLayout {
         }
     }
 
-    private void setState(@State int state) {
+    public void setState(@Common.State int state) {
         if (mState != state) {
             mState = state;
             onStateChanged(state);
         }
     }
 
-    private void onStateChanged(@State int state) {
+    private void onStateChanged(@Common.State int state) {
         if (mOnRefreshListener != null && mState == STATE_REFRESHING)
             mOnRefreshListener.onRefresh();
         if (mRefreshHeader == null || mRefreshHeader.getStateChangedListener() == null)
@@ -258,26 +244,18 @@ public class PullToRefreshLayout extends FrameLayout {
         listener.onStateChanged(state);
     }
 
-    public void notifyRefreshComplete() {
+    public void refreshComplete() {
         setState(STATE_COMPLETE);
         mLastScrollY = 0;
         mScroller.startScroll(0, 0, 0, mOffset, DEFAULT_SCROLL_DURATION);
         postInvalidate();
     }
 
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        mOnRefreshListener = listener;
-    }
-
-    public void setCanChildScrollUpCallback(CanChildScrollUpCallback callback) {
+    public void setOnChildScrollUpCallback(OnChildScrollUpCallback callback) {
         mCallback = callback;
     }
 
-    public interface CanChildScrollUpCallback {
-        boolean canChildScrollUp();
-    }
-
-    public interface OnRefreshListener {
-        void onRefresh();
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        mOnRefreshListener = listener;
     }
 }

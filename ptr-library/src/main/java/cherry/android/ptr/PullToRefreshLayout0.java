@@ -280,7 +280,7 @@
 //        }
 //    }
 //
-//    public void notifyRefreshComplete() {
+//    public void refreshComplete() {
 //        setState(STATE_COMPLETE);
 //        mLastScrollY = 0;
 //        mScroller.startScroll(0, 0, 0, mOffset, DEFAULT_SCROLL_DURATION);

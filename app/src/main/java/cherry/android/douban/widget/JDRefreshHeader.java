@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,8 +14,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.ptr.AbstractRefreshHeader;
+import cherry.android.ptr.Common;
 import cherry.android.ptr.OnStateChangedListener;
-import cherry.android.ptr.PullToRefreshLayout;
+
+import static cherry.android.ptr.Common.STATE_COMPLETE;
+import static cherry.android.ptr.Common.STATE_REFRESHING;
 
 /**
  * Created by Administrator on 2017/6/23.
@@ -29,8 +31,8 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
     private JDHolder mHolder;
     private AnimationDrawable mAnimation;
 
-    public JDRefreshHeader(@NonNull Context context, @NonNull ViewGroup parent) {
-        super(context, parent, R.layout.layout_jd_refresh_header);
+    public JDRefreshHeader(@NonNull Context context) {
+        super(context, R.layout.layout_jd_refresh_header);
         mDateFormat = new SimpleDateFormat("MM-dd HH:mm");
         mHolder = new JDHolder(mHeaderView);
         mHolder.timeView.setText(context.getString(cherry.android.ptr.R.string.recent_refresh,
@@ -50,12 +52,12 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
     }
 
     @Override
-    public void onPositionChanged(float percent, @PullToRefreshLayout.State int state) {
+    public void onPositionChanged(float percent, @Common.State int state) {
         if (percent > 1) {
             percent = 1;
         }
-        if (state != PullToRefreshLayout.STATE_COMPLETE
-                && state != PullToRefreshLayout.STATE_REFRESHING) {
+        if (state != STATE_COMPLETE
+                && state != STATE_REFRESHING) {
             mHolder.goodsView.setAlpha(percent);
             mHolder.goodsView.setScaleX(percent);
             mHolder.goodsView.setScaleY(percent);
@@ -66,6 +68,7 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
             mHolder.peopleView.setTranslationX(-100 * (1 - percent));
         }
     }
+
 
     @Override
     public void onIdle() {

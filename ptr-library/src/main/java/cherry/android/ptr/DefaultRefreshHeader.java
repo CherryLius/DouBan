@@ -3,7 +3,6 @@ package cherry.android.ptr;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -17,7 +16,7 @@ import java.util.Date;
  * Created by Administrator on 2017/6/23.
  */
 
-public class DefaultRefreshHeader extends AbstractRefreshHeader{
+public class DefaultRefreshHeader extends AbstractRefreshHeader {
 
     private static final int ROTATE_ANIM_DURATION = 150;
     private SimpleDateFormat mDateFormat;
@@ -26,8 +25,8 @@ public class DefaultRefreshHeader extends AbstractRefreshHeader{
     private Animation mRotateDownAnimation;
 
 
-    public DefaultRefreshHeader(Context context, ViewGroup parent) {
-        super(context, parent, R.layout.layout_default_header);
+    public DefaultRefreshHeader(Context context) {
+        super(context, R.layout.layout_default_header);
         mContext = context;
         mDateFormat = new SimpleDateFormat("MM-dd HH:mm");
         mViewHolder = new HeaderViewHolder();
@@ -63,7 +62,7 @@ public class DefaultRefreshHeader extends AbstractRefreshHeader{
     }
 
     @Override
-    public void onPositionChanged(float percent, @PullToRefreshLayout.State int state) {
+    public void onPositionChanged(float percent, @Common.State int state) {
 
     }
 
