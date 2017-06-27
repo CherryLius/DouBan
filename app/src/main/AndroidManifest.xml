@@ -16,11 +16,11 @@
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/AppTheme.NoTitle">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".detail.MovieDetailActivity"
@@ -31,11 +31,11 @@
         <activity android:name=".rank.top.TopMovieActivity" />
         <activity android:name=".web.WebActivity" />
         <activity android:name=".HeaderFooterActivity">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity android:name=".LoadMoreActivity">
 

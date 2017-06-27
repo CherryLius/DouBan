@@ -48,7 +48,7 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
     // Scroll偏移量
     private int mLastScrollY;
 
-    private OnChildScrollUpCallback<PullToRefreshLayout> mCallback;
+    private OnChildScrollCallback<PullToRefreshLayout> mCallback;
     private OnRefreshListener mOnRefreshListener;
 
     public PullToRefreshLayout(@NonNull Context context) {
@@ -251,10 +251,12 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
         postInvalidate();
     }
 
-    public void setOnChildScrollUpCallback(OnChildScrollUpCallback callback) {
+    @Override
+    public void setOnChildScrollCallback(OnChildScrollCallback callback) {
         mCallback = callback;
     }
 
+    @Override
     public void setOnRefreshListener(OnRefreshListener listener) {
         mOnRefreshListener = listener;
     }

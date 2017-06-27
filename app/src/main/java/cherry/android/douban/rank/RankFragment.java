@@ -77,7 +77,6 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
                 return 1;
             }
         });
-        recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setVerticalScrollBarEnabled(true);

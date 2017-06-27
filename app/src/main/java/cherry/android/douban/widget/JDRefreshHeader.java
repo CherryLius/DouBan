@@ -3,6 +3,7 @@ package cherry.android.douban.widget;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,11 +54,10 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
 
     @Override
     public void onPositionChanged(float percent, @Common.State int state) {
-        if (percent > 1) {
+        if (percent > 1 || state == STATE_REFRESHING) {
             percent = 1;
         }
-        if (state != STATE_COMPLETE
-                && state != STATE_REFRESHING) {
+        if (state != STATE_COMPLETE) {
             mHolder.goodsView.setAlpha(percent);
             mHolder.goodsView.setScaleX(percent);
             mHolder.goodsView.setScaleY(percent);
@@ -72,6 +72,7 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
 
     @Override
     public void onIdle() {
+        Log.d("JDRefresh", "onIdle");
         mHolder.peopleView.setImageResource(R.mipmap.ic_jd_people_0);
         mHolder.goodsView.setVisibility(View.VISIBLE);
     }
@@ -88,6 +89,7 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
 
     @Override
     public void onRefreshing() {
+        Log.d("JDRefresh", "onRefreshing");
         mHolder.statusView.setText("刷新中");
         mHolder.goodsView.setVisibility(View.GONE);
         mHolder.peopleView.setImageResource(R.drawable.anim_jd_runing_man);
@@ -99,6 +101,7 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
 
     @Override
     public void onComplete() {
+        Log.d("JDRefresh", "onComplete");
         mHolder.statusView.setText("更新完成");
         mHolder.timeView.setText(mContext.getString(cherry.android.ptr.R.string.recent_refresh,
                 formatDateTime(System.currentTimeMillis())));

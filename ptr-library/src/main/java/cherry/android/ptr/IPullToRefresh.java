@@ -14,7 +14,7 @@ interface IPullToRefresh {
 
     void refreshComplete();
 
-    void setOnChildScrollUpCallback(OnChildScrollUpCallback callback);
+    void setOnChildScrollCallback(OnChildScrollCallback callback);
 
     void setOnRefreshListener(OnRefreshListener listener);
 }

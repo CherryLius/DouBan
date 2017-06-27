@@ -27,7 +27,7 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
 
     RecyclerView recyclerView;
     NestedPullRefreshLayout pullRefreshLayout;
-    Button button1, button2;
+    RecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +42,13 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
                     public void run() {
                         pullRefreshLayout.refreshComplete();
                     }
-                }, 10000);
+                }, 3000);
             }
         });
         pullRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerAdapter adapter = new RecyclerAdapter();
+        adapter = new RecyclerAdapter();
         adapter.addDelegate(String.class)
                 .bindDelegate(new DefaultItemViewDelegate(), new DefaultItemViewDelegate1())
                 .to(new ViewChooser() {
@@ -80,39 +80,48 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
                 items.add("item=" + i);
             }
         }
-        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
-                if (position == 0) {
-                    pullRefreshLayout.setOverScrollEnable(true);
-                } else if (position == 1) {
-                    pullRefreshLayout.setOverScrollTopShow(true);
-                }
-            }
-        });
         adapter.setItems(items);
         recyclerView.setAdapter(adapter);
 
 
-        button1 = (Button) findViewById(R.id.btn1);
-        button2 = (Button) findViewById(R.id.btn2);
-        button1.setOnClickListener(this);
-        button2.setOnClickListener(this);
+        findViewById(R.id.btn1).setOnClickListener(this);
+        findViewById(R.id.btn2).setOnClickListener(this);
+        findViewById(R.id.btn3).setOnClickListener(this);
+        findViewById(R.id.btn4).setOnClickListener(this);
+        findViewById(R.id.btn5).setOnClickListener(this);
+        findViewById(R.id.btn6).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn1:
-                //Settings.System.putInt(getContentResolver(),Settings.System.SCREEN_OFF_TIMEOUT, 1000);
-//                swipeRefreshLayout.setVisibility(View.GONE);
-//                pullRefreshLayout.setVisibility(View.VISIBLE);
-                pullRefreshLayout.setOverScrollEnable(false);
+                pullRefreshLayout.autoRefresh();
+                pullRefreshLayout.setOverScrollEnable(true);
                 break;
             case R.id.btn2:
-//                swipeRefreshLayout.setVisibility(View.VISIBLE);
-//                pullRefreshLayout.setVisibility(View.GONE);
+                pullRefreshLayout.setOverScrollEnable(false);
+                break;
+            case R.id.btn3:
+                pullRefreshLayout.setOverScrollTopShow(true);
+                break;
+            case R.id.btn4:
                 pullRefreshLayout.setOverScrollTopShow(false);
+                break;
+            case R.id.btn5:
+                adapter.setItems(null);
+                break;
+            case R.id.btn6:
+                Random random = new Random();
+                List<Object> items = new ArrayList<>();
+                for (int i = 0; i < 30; i++) {
+                    if (random.nextInt(2) == 0) {
+                        items.add(i);
+                    } else {
+                        items.add("item=" + i);
+                    }
+                }
+                adapter.setItems(items);
                 break;
         }
     }

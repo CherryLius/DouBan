@@ -17,7 +17,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AbsListView;
+import android.widget.ScrollView;
 import android.widget.Scroller;
 
 import static cherry.android.ptr.Common.STATE_COMPLETE;
@@ -31,7 +33,8 @@ import static cherry.android.ptr.NestedPullRefreshLayout.OverScrollHandler.MSG_S
  * Created by LHEE on 2017/6/25.
  */
 
-public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild, IPullToRefresh {
+public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild,
+        IPullToRefresh {
 
     private static final String TAG = "NestedPullRefreshLayout";
     private static final int DEFAULT_SCROLL_DURATION = 1000;
@@ -59,7 +62,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private final int[] mParentScrollConsumed = new int[2];
     private final int[] mParentOffsetInWindow = new int[2];
 
-    private OnChildScrollUpCallback<NestedPullRefreshLayout> mOnChildScrollUpCallback;
+    private OnChildScrollCallback<NestedPullRefreshLayout> mOnChildScrollCallback;
     private OnRefreshListener mOnRefreshListener;
 
     private OverScrollHandler mHandler = new OverScrollHandler(this);
@@ -111,6 +114,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         //layout offset
         child.layout(childLeft, childTop + offset, childWidth, childHeight + offset);
         if (mRefreshHeader != null && mRefreshHeader.getView() != null) {
+            if (mOverScrollAnimator.isRunning() && !mOverScrollTopShow)
+                return;
             final View header = mRefreshHeader.getView();
             final int headerWidth = header.getMeasuredWidth();
             final int headerHeight = header.getMeasuredHeight();
@@ -253,12 +258,16 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         //处理Fling事件 velocityY > 0 向上快速滑动
-        Log.d(TAG, "[onNestedPreFling] = " + target + ", velocityX=" + velocityX + ",velocityY=" + velocityY);
+        Log.d(TAG, "[onNestedPreFling]" + "velocityX=" + velocityX + ",velocityY=" + velocityY);
         Log.d(TAG, "mTouchDistance=" + mTouchDistance + " && slop=" + mTouchSlop);
+        Log.d(TAG, "canChildScrollUp=" + canChildScrollUp());
+        Log.d(TAG, "canChildScrollDown=" + canChildScrollDown());
         if (Math.abs(mTouchDistance) > mTouchSlop) {
             if (!mOverScrollEnable)
                 return dispatchNestedPreFling(velocityX, velocityY);
             if (velocityY < 0 && !canChildScrollUp())
+                return dispatchNestedPreFling(velocityX, velocityY);
+            if (velocityY > 0 && !canChildScrollDown())
                 return dispatchNestedPreFling(velocityX, velocityY);
             if (Math.abs(velocityY) > OVER_SCROLL_MIN_VX)
                 mHandler.obtainMessage(MSG_START_COMPUTE_SCROLL, velocityY).sendToTarget();
@@ -340,11 +349,14 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
                 }
             }
         }
+        if (mTarget != null) {
+            mTarget.setOverScrollMode(mOverScrollEnable ? OVER_SCROLL_NEVER : OVER_SCROLL_ALWAYS);
+        }
     }
 
-    protected boolean canChildScrollUp() {
-        if (mOnChildScrollUpCallback != null) {
-            return mOnChildScrollUpCallback.canChildScrollUp(this, mTarget);
+    public boolean canChildScrollUp() {
+        if (mOnChildScrollCallback != null) {
+            return mOnChildScrollCallback.canChildScrollUp(this, mTarget);
         }
         if (android.os.Build.VERSION.SDK_INT < 14) {
             if (mTarget instanceof AbsListView) {
@@ -358,6 +370,30 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         } else {
             return ViewCompat.canScrollVertically(mTarget, -1);
         }
+    }
+
+    public boolean canChildScrollDown() {
+        if (mTarget instanceof AbsListView) {
+            final AbsListView absListView = (AbsListView) mTarget;
+            final int childCount = absListView.getChildCount();
+            return ViewCompat.canScrollVertically(mTarget, 1)
+                    || (childCount > 0
+                    && absListView.getLastVisiblePosition() < childCount - 1);
+        } else if (mTarget instanceof WebView) {
+            final WebView webView = (WebView) mTarget;
+            return ViewCompat.canScrollVertically(mTarget, 1)
+                    || (webView.getContentHeight() * webView.getScaleY()
+                    != webView.getHeight() + webView.getScrollY());
+        } else if (mTarget instanceof ScrollView) {
+            ScrollView scrollView = (ScrollView) mTarget;
+            View childView = scrollView.getChildAt(0);
+            if (childView != null) {
+                return ViewCompat.canScrollVertically(childView, 1)
+                        || (scrollView.getScrollY() != childView.getHeight()
+                        - scrollView.getHeight());
+            }
+        }
+        return ViewCompat.canScrollVertically(mTarget, 1);
     }
 
 
@@ -432,13 +468,13 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 //        mTarget.clearAnimation();
     }
 
-    private void overScroll(float velocityY, long delay) {
+    private void overScroll(float velocityY, long delay, boolean scrollToTop) {
         final int headerThreshold = getThresholdDistance();
         int overHeight = (int) Math.abs(velocityY / delay / 2);
         final int realOverHeight = overHeight > headerThreshold ? headerThreshold : overHeight;
         final int duration = realOverHeight < 50 ? 300 : (int) (0.8f * realOverHeight + 200);
         Log.e(TAG, "[overScroll] " + realOverHeight + ", duration=" + duration);
-        mOverScrollAnimator.setIntValues(0, realOverHeight);
+        mOverScrollAnimator.setIntValues(0, scrollToTop ? realOverHeight : -realOverHeight);
         mOverScrollAnimator.setDuration(duration);
         mOverScrollAnimator.start();
 //        TranslateAnimation ta = new TranslateAnimation(0, 0, 0, realOverHeight);
@@ -496,8 +532,19 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         postInvalidate();
     }
 
-    public void setOnChildScrollUpCallback(OnChildScrollUpCallback callback) {
-        this.mOnChildScrollUpCallback = callback;
+    public void autoRefresh() {
+        if (mState != STATE_REFRESHING) {
+            setState(STATE_IDLE);
+            mLastScrollY = 0;
+            mScroller.startScroll(0, 0, 0, -getThresholdDistance(), DEFAULT_SCROLL_DURATION / 2);
+            postInvalidate();
+            setState(STATE_REFRESHING);
+        }
+    }
+
+    @Override
+    public void setOnChildScrollCallback(OnChildScrollCallback callback) {
+        this.mOnChildScrollCallback = callback;
     }
 
     public void setOnRefreshListener(OnRefreshListener listener) {
@@ -506,6 +553,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 
     public void setOverScrollEnable(boolean overScrollEnable) {
         this.mOverScrollEnable = overScrollEnable;
+        if (mTarget != null) {
+            mTarget.setOverScrollMode(mOverScrollEnable ? OVER_SCROLL_NEVER : OVER_SCROLL_ALWAYS);
+        }
     }
 
     public void setOverScrollTopShow(boolean overScrollTopShow) {
@@ -542,7 +592,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
                 case MSG_CONTINUE_COMPUTE_SCROLL:
                     currentDelayTime++;
                     if (!layout.canChildScrollUp()) {
-                        layout.overScroll(velocityY, currentDelayTime);
+                        layout.overScroll(velocityY, currentDelayTime, true/*scroll To Top*/);
+                        currentDelayTime = DEFAULT_DELAY;
+                    }
+                    if (!layout.canChildScrollDown()) {
+                        layout.overScroll(velocityY, currentDelayTime, false/*scroll To Bottom*/);
                         currentDelayTime = DEFAULT_DELAY;
                     }
                     if (currentDelayTime < DEFAULT_DELAY)
