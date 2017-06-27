@@ -1,5 +1,6 @@
 package cherry.android.ptr;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -16,8 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.Scroller;
 
@@ -36,6 +35,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 
     private static final String TAG = "NestedPullRefreshLayout";
     private static final int DEFAULT_SCROLL_DURATION = 1000;
+    private static final float DEFAULT_OFFSET_RATIO = 3.0f;
     private static final int OVER_SCROLL_MIN_VX = 3000;
 
     @Common.State
@@ -62,6 +62,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private OnChildScrollUpCallback<NestedPullRefreshLayout> mOnChildScrollUpCallback;
     private OnRefreshListener mOnRefreshListener;
 
+    private OverScrollHandler mHandler = new OverScrollHandler(this);
+    private ValueAnimator mOverScrollAnimator;
+
+    private boolean mOverScrollEnable;
+    private boolean mOverScrollTopShow;
+
     public NestedPullRefreshLayout(Context context) {
         this(context, null);
     }
@@ -77,6 +83,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
         mScroller = new Scroller(context);
+        mOverScrollAnimator = ValueAnimator.ofInt(0, 0);
+        mOverScrollAnimator.setInterpolator(new OverScrollInterpolator());
+        mOverScrollAnimator.addUpdateListener(mOverScrollAnimatorListener);
+        mOverScrollEnable = true;
+        mOverScrollTopShow = true;
         setState(STATE_IDLE);
         onStateChanged(mState);
     }
@@ -130,8 +141,10 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         if (mScroller.computeScrollOffset()) {
             int offset = mLastScrollY - mScroller.getCurrY();
             mLastScrollY = mScroller.getCurrY();
+            Log.v("Test", "before=" + mCurrentOffset + ", currentY=" + mScroller.getCurrY());
             mCurrentOffset += offset;
-            mTotalUnconsumed = mCurrentOffset * 2.0f;
+            mTotalUnconsumed = mCurrentOffset * DEFAULT_OFFSET_RATIO;
+            Log.d("Test", "[computeScroll]" + mCurrentOffset + ", total=" + mTotalUnconsumed);
             offsetViewTopAndBottom(offset);
             ensureState();
             ViewCompat.postInvalidateOnAnimation(this);
@@ -176,6 +189,10 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         Log.i("Test", "onPreScroll=" + mTotalUnconsumed + ",dy=" + dy);
         //上滑时的处理
         if (dy > 0 && mTotalUnconsumed > 0) {
+            if (!mScroller.isFinished())
+                mScroller.forceFinished(true);
+            if (mOverScrollAnimator.isRunning())
+                mOverScrollAnimator.end();
             if (dy > mTotalUnconsumed) {
                 consumed[1] = (int) (dy - mTotalUnconsumed);
                 mTotalUnconsumed = 0;
@@ -204,8 +221,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         Log.d("Test", dyUnconsumed + "====dy=" + dy + ", !canChildScrollUp=" + (!canChildScrollUp()));
         if (dy < 0 && !canChildScrollUp()) {
+            if (!mScroller.isFinished())
+                mScroller.forceFinished(true);
+            if (mOverScrollAnimator.isRunning())
+                mOverScrollAnimator.end();
             Log.e(TAG, "startDrag " + mTotalUnconsumed);
-            Log.d("Test", "onNestedScroll:: " + mTotalUnconsumed + ", dy=" + dy);
             mTotalUnconsumed += (-dy);
             startDragTarget(mTotalUnconsumed);
             ensureState();
@@ -218,7 +238,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         Log.d(TAG, "[onStopNestedScroll]");
         mNestedScrollingParentHelper.onStopNestedScroll(target);
         mLastScrollY = 0;
-        if (mTotalUnconsumed > 0) {
+        if (mCurrentOffset > 0) {
+            Log.e("Test", "finish " + mCurrentOffset);
             finishDragTarget();
         }
         stopNestedScroll();
@@ -235,6 +256,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         Log.d(TAG, "[onNestedPreFling] = " + target + ", velocityX=" + velocityX + ",velocityY=" + velocityY);
         Log.d(TAG, "mTouchDistance=" + mTouchDistance + " && slop=" + mTouchSlop);
         if (Math.abs(mTouchDistance) > mTouchSlop) {
+            if (!mOverScrollEnable)
+                return dispatchNestedPreFling(velocityX, velocityY);
             if (velocityY < 0 && !canChildScrollUp())
                 return dispatchNestedPreFling(velocityX, velocityY);
             if (Math.abs(velocityY) > OVER_SCROLL_MIN_VX)
@@ -339,12 +362,16 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 
 
     private void startDragTarget(float overScrollTop) {
-        mCurrentOffset = overScrollTop / 2.0f;
+        mCurrentOffset = overScrollTop / DEFAULT_OFFSET_RATIO;
         final int offset = (int) (mCurrentOffset - mTarget.getTop());
         offsetViewTopAndBottom(offset);
     }
 
     private void offsetViewTopAndBottom(int offset) {
+//        if (mCurrentOffset < 0) {
+//            mCurrentOffset = 0;
+//            mTotalUnconsumed = 0;
+//        }
         mRefreshHeader.getView().bringToFront();
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -354,6 +381,18 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         requestLayout();
         Log.e("Test", "current offset=" + mCurrentOffset
                 + ", total=" + mTotalUnconsumed);
+        mRefreshHeader.onPositionChanged(mCurrentOffset / (float) getThresholdDistance(), mState);
+    }
+
+    private void overScrollOffsetTopAndBottom(final int value) {
+        final int offset = (int) (value - mCurrentOffset);
+        mRefreshHeader.getView().bringToFront();
+        if (mOverScrollTopShow)
+            ViewCompat.offsetTopAndBottom(mRefreshHeader.getView(), offset);
+        ViewCompat.offsetTopAndBottom(mTarget, offset);
+        mCurrentOffset = value;
+        mTotalUnconsumed = mCurrentOffset * DEFAULT_OFFSET_RATIO;
+        mRefreshHeader.onPositionChanged(mCurrentOffset / (float) getThresholdDistance(), mState);
     }
 
     private void finishDragTarget() {
@@ -390,24 +429,22 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 
     private void reset() {
         mHandler.removeCallbacksAndMessages(getWindowToken());
-        mTarget.clearAnimation();
+//        mTarget.clearAnimation();
     }
 
     private void overScroll(float velocityY, long delay) {
         final int headerThreshold = getThresholdDistance();
         int overHeight = (int) Math.abs(velocityY / delay / 2);
         final int realOverHeight = overHeight > headerThreshold ? headerThreshold : overHeight;
-        final int duration = realOverHeight < 50 ? 345 : (int) (0.9f * realOverHeight + 300);
+        final int duration = realOverHeight < 50 ? 300 : (int) (0.8f * realOverHeight + 200);
         Log.e(TAG, "[overScroll] " + realOverHeight + ", duration=" + duration);
-        TranslateAnimation ta = new TranslateAnimation(0, 0, 0, realOverHeight);
-        ta.setDuration(duration);
-        ta.setInterpolator(new Interpolator() {
-            @Override
-            public float getInterpolation(float input) {
-                return (float) (1.2f * Math.sin(input * Math.PI));
-            }
-        });
-        mTarget.startAnimation(ta);
+        mOverScrollAnimator.setIntValues(0, realOverHeight);
+        mOverScrollAnimator.setDuration(duration);
+        mOverScrollAnimator.start();
+//        TranslateAnimation ta = new TranslateAnimation(0, 0, 0, realOverHeight);
+//        ta.setDuration(duration);
+//        ta.setInterpolator(new OverScrollInterpolator());
+//        mTarget.startAnimation(ta);
         //mRefreshHeader.getView().startAnimation(ta);
     }
 
@@ -467,7 +504,21 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         this.mOnRefreshListener = listener;
     }
 
-    private OverScrollHandler mHandler = new OverScrollHandler(this);
+    public void setOverScrollEnable(boolean overScrollEnable) {
+        this.mOverScrollEnable = overScrollEnable;
+    }
+
+    public void setOverScrollTopShow(boolean overScrollTopShow) {
+        this.mOverScrollTopShow = overScrollTopShow;
+    }
+
+    private ValueAnimator.AnimatorUpdateListener mOverScrollAnimatorListener = new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            final int val = (int) animation.getAnimatedValue();
+            overScrollOffsetTopAndBottom(val);
+        }
+    };
 
     static class OverScrollHandler extends Handler {
         static final int MSG_START_COMPUTE_SCROLL = 0;

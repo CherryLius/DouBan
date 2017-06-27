@@ -14,18 +14,6 @@
             android:overScrollMode="never" />
     </cherry.android.ptr.NestedPullRefreshLayout>
 
-    <cherry.android.douban.widget.FixedSwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_0"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never" />
-    </cherry.android.douban.widget.FixedSwipeRefreshLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

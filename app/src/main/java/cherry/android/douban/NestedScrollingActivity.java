@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cherry.android.douban.widget.FixedSwipeRefreshLayout;
 import cherry.android.douban.widget.JDRefreshHeader;
 import cherry.android.ptr.NestedPullRefreshLayout;
 import cherry.android.ptr.OnRefreshListener;
@@ -28,8 +27,6 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
 
     RecyclerView recyclerView;
     NestedPullRefreshLayout pullRefreshLayout;
-    FixedSwipeRefreshLayout swipeRefreshLayout;
-    RecyclerView recyclerView1;
     Button button1, button2;
 
     @Override
@@ -45,7 +42,7 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
                     public void run() {
                         pullRefreshLayout.refreshComplete();
                     }
-                }, 3000);
+                }, 10000);
             }
         });
         pullRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
@@ -83,32 +80,24 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
                 items.add("item=" + i);
             }
         }
+        adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
+                if (position == 0) {
+                    pullRefreshLayout.setOverScrollEnable(true);
+                } else if (position == 1) {
+                    pullRefreshLayout.setOverScrollTopShow(true);
+                }
+            }
+        });
         adapter.setItems(items);
         recyclerView.setAdapter(adapter);
 
-
-        swipeRefreshLayout = (FixedSwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new FixedSwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                swipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 3000);
-            }
-        });
-        recyclerView1 = (RecyclerView) findViewById(R.id.recycler_0);
-        recyclerView1.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView1.setAdapter(adapter);
 
         button1 = (Button) findViewById(R.id.btn1);
         button2 = (Button) findViewById(R.id.btn2);
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
-        swipeRefreshLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -116,12 +105,14 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
         switch (v.getId()) {
             case R.id.btn1:
                 //Settings.System.putInt(getContentResolver(),Settings.System.SCREEN_OFF_TIMEOUT, 1000);
-                swipeRefreshLayout.setVisibility(View.GONE);
-                pullRefreshLayout.setVisibility(View.VISIBLE);
+//                swipeRefreshLayout.setVisibility(View.GONE);
+//                pullRefreshLayout.setVisibility(View.VISIBLE);
+                pullRefreshLayout.setOverScrollEnable(false);
                 break;
             case R.id.btn2:
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
-                pullRefreshLayout.setVisibility(View.GONE);
+//                swipeRefreshLayout.setVisibility(View.VISIBLE);
+//                pullRefreshLayout.setVisibility(View.GONE);
+                pullRefreshLayout.setOverScrollTopShow(false);
                 break;
         }
     }
