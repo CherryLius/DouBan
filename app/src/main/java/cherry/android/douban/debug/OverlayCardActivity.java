@@ -1,4 +1,4 @@
-package cherry.android.douban;
+package cherry.android.douban.debug;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cherry.android.douban.R;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.layout.OverlayCardLayoutManager;
@@ -24,7 +25,7 @@ public class OverlayCardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_header_footer);
+        setContentView(R.layout.activity_debug_header_footer);
         ButterKnife.bind(this);
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {

@@ -1,4 +1,4 @@
-package cherry.android.douban;
+package cherry.android.douban.debug;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cherry.android.douban.widget.JDRefreshHeader;
-import cherry.android.ptr.OnRefreshListener;
-import cherry.android.ptr.PullToRefreshLayout;
+import cherry.android.douban.R;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
@@ -31,30 +29,30 @@ public class HeaderFooterActivity extends AppCompatActivity {
 
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
-    @BindView(R.id.layout_pull_to_refresh)
-    PullToRefreshLayout mRefreshLayout;
+//    @BindView(R.id.layout_pull_to_refresh)
+//    PullToRefreshLayout mRefreshLayout;
 
     private HeaderAndFooterWrapper mWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_header_footer);
+        setContentView(R.layout.activity_debug_header_footer);
         ButterKnife.bind(this);
 
-        mRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
-        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toaster.iSuccess(HeaderFooterActivity.this, "刷新成功").show();
-                        mRefreshLayout.refreshComplete();
-                    }
-                }, 3000);
-            }
-        });
+//        mRefreshLayout.setRefreshHeader(new JDRefreshHeader(this));
+//        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mRefreshLayout.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toaster.iSuccess(HeaderFooterActivity.this, "刷新成功").show();
+//                        mRefreshLayout.refreshComplete();
+//                    }
+//                }, 3000);
+//            }
+//        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         List<String> list = new ArrayList<>();
@@ -80,6 +78,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
                 }
                 if (position % 5 == 1) {
                     Toaster.iInfo(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    startActivity(new Intent(HeaderFooterActivity.this, ListViewActivity.class));
                     return;
                 }
                 if (position % 5 == 2) {

@@ -228,7 +228,7 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
         }
     }
 
-    public void setState(@Common.State int state) {
+    protected void setState(@Common.State int state) {
         if (mState != state) {
             mState = state;
             onStateChanged(state);

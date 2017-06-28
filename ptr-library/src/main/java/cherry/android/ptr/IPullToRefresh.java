@@ -10,8 +10,6 @@ interface IPullToRefresh {
 
     void setRefreshHeader(@NonNull IRefreshHeader refreshHeader);
 
-    void setState(@Common.State int state);
-
     void refreshComplete();
 
     void setOnChildScrollCallback(OnChildScrollCallback callback);

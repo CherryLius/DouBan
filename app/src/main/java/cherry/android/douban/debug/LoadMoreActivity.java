@@ -1,4 +1,4 @@
-package cherry.android.douban;
+package cherry.android.douban.debug;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +13,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cherry.android.douban.R;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
@@ -29,7 +30,7 @@ public class LoadMoreActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_header_footer);
+        setContentView(R.layout.activity_debug_header_footer);
         ButterKnife.bind(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final List<Integer> list = new ArrayList<>();

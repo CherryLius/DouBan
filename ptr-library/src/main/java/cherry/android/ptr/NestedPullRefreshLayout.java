@@ -14,6 +14,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -47,13 +48,17 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private IRefreshHeader mRefreshHeader;
     private View mTarget;
     private Scroller mScroller;
+    private VelocityTracker mVelocityTracker;
 
     private int mLastScrollY = 0;
     private float mCurrentOffset;
     private float mTouchDistance;
     private float mMotionDownY;
+    private float mLastMotionY;
 
     private int mTouchSlop;
+    private int mMaximumFlingVelocity;
+    private int mMinimumFlingVelocity;
 
     private float mTotalUnconsumed;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -71,6 +76,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private boolean mOverScrollEnable;
     private boolean mOverScrollTopShow;
 
+    private MotionEvent mLastMoveEvent;
+    private boolean mNestedScrollInProgress;
+
     public NestedPullRefreshLayout(Context context) {
         this(context, null);
     }
@@ -82,6 +90,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     public NestedPullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        mMaximumFlingVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
+        mMinimumFlingVelocity = ViewConfiguration.get(context).getScaledMinimumFlingVelocity();
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
@@ -93,6 +103,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         mOverScrollTopShow = true;
         setState(STATE_IDLE);
         onStateChanged(mState);
+        setRefreshHeader(new DefaultRefreshHeader(context));
     }
 
     @Override
@@ -146,10 +157,10 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         if (mScroller.computeScrollOffset()) {
             int offset = mLastScrollY - mScroller.getCurrY();
             mLastScrollY = mScroller.getCurrY();
-            Log.v("Test", "before=" + mCurrentOffset + ", currentY=" + mScroller.getCurrY());
+            Log.v(TAG, "[computeScroll]offset before=" + mCurrentOffset + ", currentY=" + mScroller.getCurrY());
             mCurrentOffset += offset;
             mTotalUnconsumed = mCurrentOffset * DEFAULT_OFFSET_RATIO;
-            Log.d("Test", "[computeScroll]" + mCurrentOffset + ", total=" + mTotalUnconsumed);
+            Log.d(TAG, "[computeScroll]" + mCurrentOffset + ", total=" + mTotalUnconsumed);
             offsetViewTopAndBottom(offset);
             ensureState();
             ViewCompat.postInvalidateOnAnimation(this);
@@ -158,17 +169,258 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "[dispatchTouchEvent] action=" + MotionEventCompat.getActionMasked(ev));
+        dealFling(ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private void dealFling(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 reset();
-                mMotionDownY = ev.getY();
+                mLastMotionY = mMotionDownY = ev.getY();
                 break;
             case MotionEvent.ACTION_UP:
                 mTouchDistance = ev.getY() - mMotionDownY;
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                float velocityY = mVelocityTracker.getYVelocity();
+                float velocityX = mVelocityTracker.getXVelocity();
+                if (Math.abs(velocityX) > mMinimumFlingVelocity
+                        || Math.abs(velocityY) > mMinimumFlingVelocity) {
+                    onFling(velocityX, velocityY);
+                }
+                releaseVelocity();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                releaseVelocity();
                 break;
         }
-        return super.dispatchTouchEvent(ev);
+    }
+
+    private void releaseVelocity() {
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
+    }
+
+    private void onFling(final float velocityX, final float velocityY) {
+        // velocity < 0 手势向上
+        Log.d(TAG, "[onFling] velocityX= " + velocityX + ", velocityY=" + velocityY);
+        if (mNestedScrollInProgress)
+            return;
+        if (Math.abs(mTouchDistance) > mTouchSlop) {
+            if (!mOverScrollEnable)
+                return;
+            if (mCurrentOffset != 0)
+                return;
+            if (velocityY > 0 && !canChildScrollUp())
+                return;
+            if (velocityY < 0 && !canChildScrollDown())
+                return;
+            if (Math.abs(velocityY) > OVER_SCROLL_MIN_VX) {
+                Log.e(TAG, "OverScroll Fling");
+                mHandler.obtainMessage(MSG_START_COMPUTE_SCROLL, -velocityY).sendToTarget();
+            }
+        }
+    }
+
+    /**
+     * 解决未实现NestScrollingChild的Target的下拉刷新
+     * 两种方案：
+     * A. 重写dispatchTouchEvent
+     * B. 重写onInterceptTouchEvent、onTouchEvent、requestDisallowInterceptTouchEvent
+     */
+
+    /***    A.START:{   ***/
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        final int action = MotionEventCompat.getActionMasked(ev);
+//        Log.e(TAG, "[dispatchTouchEvent] action=" + action);
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN:
+//                reset();
+//                mLastMotionY = mMotionDownY = ev.getY();
+//                if (mState != STATE_REFRESHING)
+//                    setState(STATE_IDLE);
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                mTouchDistance = ev.getY() - mMotionDownY;
+//            case MotionEvent.ACTION_CANCEL:
+//                if (mNestedScrollInProgress)
+//                    return super.dispatchTouchEvent(ev);
+//                mLastScrollY = 0;
+//                if (mCurrentOffset > 0) {
+//                    finishDragTarget();
+//                    return true;
+//                }
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                if (mNestedScrollInProgress)
+//                    return super.dispatchTouchEvent(ev);
+//                mLastMoveEvent = ev;
+//                float distance = ev.getY() - mMotionDownY;
+//                float dy = ev.getY() - mLastMotionY;
+//                mLastMotionY = ev.getY();
+//                Log.d(TAG, "distance=" + distance + ",dy=" + dy + ", current=" + mCurrentOffset);
+//                //上滑
+//                if (dy < 0 && mCurrentOffset <= 0) {
+//                    mCurrentOffset = mTotalUnconsumed = 0;
+//                    return super.dispatchTouchEvent(ev);
+//                }
+//                //下滑
+//                if (dy > 0 && canChildScrollUp())
+//                    return super.dispatchTouchEvent(ev);
+//                Log.e(TAG, "not return");
+//                float offset = dy / DEFAULT_OFFSET_RATIO;
+//                if (!mScroller.isFinished())
+//                    mScroller.forceFinished(true);
+//                if (mOverScrollAnimator.isRunning())
+//                    mOverScrollAnimator.end();
+//                if (offset < 0 && mCurrentOffset > 0) {
+//                    if (Math.abs(offset) > mCurrentOffset) {
+//                        sendCancelEvent();
+//                        offsetViewTopAndBottom((int) mCurrentOffset);
+//                        mCurrentOffset = 0;
+//                        ensureState();
+//                        sendDownEvent();
+//                        if (!mNestedScrollInProgress) {
+//                            super.dispatchTouchEvent(ev);
+//                        }
+//                        return true;
+//                    }
+//                }
+//                mCurrentOffset += offset;
+//                offsetViewTopAndBottom((int) offset);
+//                ensureState();
+//                sendCancelEvent();
+//                if (!mNestedScrollInProgress) {
+//                    super.dispatchTouchEvent(ev);
+//                }
+//                return true;
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
+    /***    A.END:}   ***/
+    /***    B.START:{   ***/
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.e(TAG, "[onInterceptTouchEvent] action=" + ev.getAction());
+        if (mRefreshHeader == null) {
+            return super.onInterceptTouchEvent(ev);
+        }
+        if (mNestedScrollInProgress)
+            return super.onInterceptTouchEvent(ev);
+        final int action = MotionEventCompat.getActionMasked(ev);
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                if (mState != STATE_REFRESHING)
+                    setState(STATE_IDLE);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float distance = ev.getY() - mMotionDownY;
+                float dy = ev.getY() - mLastMotionY;
+                mLastMotionY = ev.getY();
+                if (mScroller.isFinished() && mState != STATE_REFRESHING) {
+                    mCurrentOffset = mTotalUnconsumed = 0;
+                }
+                Log.d(TAG, "distance=" + distance + ",dy=" + dy + ", offset=" + mCurrentOffset);
+                //上滑
+                if (dy < 0 && mCurrentOffset <= 0)
+                    return super.onInterceptTouchEvent(ev);
+                //下滑
+                if (dy > 0 && canChildScrollUp())
+                    return super.onInterceptTouchEvent(ev);
+                return true;
+        }
+        return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.v(TAG, "[onTouchEvent] action=" + event.getAction());
+        if (mRefreshHeader == null) {
+            return super.onTouchEvent(event);
+        }
+        if (mNestedScrollInProgress)
+            return super.onTouchEvent(event);
+        final int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_MOVE:
+                mLastMoveEvent = event;
+                float dy = event.getY() - mLastMotionY;
+                mLastMotionY = event.getY();
+                if ((dy < 0 && mCurrentOffset <= 0)//上滑
+                        || (dy > 0 && canChildScrollUp())) {//下滑
+                    return super.onTouchEvent(event);
+                }
+                float offset = dy / DEFAULT_OFFSET_RATIO;
+                if (!mScroller.isFinished())
+                    mScroller.forceFinished(true);
+                if (mOverScrollAnimator.isRunning())
+                    mOverScrollAnimator.end();
+                if (offset < 0 && mCurrentOffset > 0) {
+                    if (Math.abs(offset) > mCurrentOffset) {
+                        offsetViewTopAndBottom((int) mCurrentOffset);
+                        mCurrentOffset = 0;
+                        ensureState();
+                        sendDownEvent();
+                        return true;
+                    }
+                }
+                mCurrentOffset += offset;
+                offsetViewTopAndBottom((int) offset);
+                ensureState();
+                return true;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mLastScrollY = 0;
+                if (mCurrentOffset > 0) {
+                    finishDragTarget();
+                    return true;
+                }
+                break;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // if this is a List < L or another view that doesn't support nested
+        // scrolling, ignore this request so that the vertical scroll event
+        // isn't stolen
+        if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
+                || (mTarget != null && !ViewCompat.isNestedScrollingEnabled(mTarget))) {
+            // Nope.
+            Log.d(TAG, "request Nope");
+        } else {
+            //Log.d(LOG_TAG, "super request");
+            super.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
+    }
+
+    /***    B.END:}   ***/
+
+    //发送cancel事件解决selection问题
+    private void sendCancelEvent() {
+        if (mLastMoveEvent == null) {
+            return;
+        }
+        MotionEvent last = mLastMoveEvent;
+        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime() + ViewConfiguration.getLongPressTimeout(), MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
+        super.dispatchTouchEvent(e);
+    }
+
+    private void sendDownEvent() {
+        final MotionEvent last = mLastMoveEvent;
+        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime(), MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
+        super.dispatchTouchEvent(e);
     }
 
     //NestedScrollingParent
@@ -183,6 +435,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
         startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
+        mNestedScrollInProgress = true;
         if (mState != STATE_REFRESHING)
             setState(STATE_IDLE);
     }
@@ -191,7 +444,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         Log.i(TAG, "onNestedPreScroll: " + dx + ", " + dy);
         Log.i(TAG, "consumed=" + consumed[0] + ", " + consumed[1]);
-        Log.i("Test", "onPreScroll=" + mTotalUnconsumed + ",dy=" + dy);
+        Log.i(TAG, "onPreScroll=" + mTotalUnconsumed + ",dy=" + dy);
         //上滑时的处理
         if (dy > 0 && mTotalUnconsumed > 0) {
             if (!mScroller.isFinished())
@@ -224,7 +477,6 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
         //下滑时处理
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        Log.d("Test", dyUnconsumed + "====dy=" + dy + ", !canChildScrollUp=" + (!canChildScrollUp()));
         if (dy < 0 && !canChildScrollUp()) {
             if (!mScroller.isFinished())
                 mScroller.forceFinished(true);
@@ -242,9 +494,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     public void onStopNestedScroll(View target) {
         Log.d(TAG, "[onStopNestedScroll]");
         mNestedScrollingParentHelper.onStopNestedScroll(target);
+        mNestedScrollInProgress = false;
         mLastScrollY = 0;
         if (mCurrentOffset > 0) {
-            Log.e("Test", "finish " + mCurrentOffset);
             finishDragTarget();
         }
         stopNestedScroll();
@@ -313,7 +565,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     }
 
     @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed,
+                                           int[] offsetInWindow) {
         return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 
@@ -354,6 +607,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         }
     }
 
+    /**
+     * Target 是否到顶部
+     *
+     * @return
+     */
     public boolean canChildScrollUp() {
         if (mOnChildScrollCallback != null) {
             return mOnChildScrollCallback.canChildScrollUp(this, mTarget);
@@ -372,6 +630,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         }
     }
 
+    /**
+     * Target 是否到底部
+     *
+     * @return
+     */
     public boolean canChildScrollDown() {
         if (mTarget instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) mTarget;
@@ -415,7 +678,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
             ViewCompat.offsetTopAndBottom(child, offset);
         }
         requestLayout();
-        Log.e("Test", "current offset=" + mCurrentOffset
+        Log.e(TAG, "current offset=" + mCurrentOffset
                 + ", total=" + mTotalUnconsumed);
         mRefreshHeader.onPositionChanged(mCurrentOffset / (float) getThresholdDistance(), mState);
     }
@@ -495,7 +758,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         }
     }
 
-    public void setState(@Common.State int state) {
+    protected void setState(@Common.State int state) {
         if (mState != state) {
             mState = state;
             onStateChanged(mState);

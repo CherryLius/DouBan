@@ -1,4 +1,4 @@
-package cherry.android.douban;
+package cherry.android.douban.debug;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,13 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cherry.android.douban.R;
 import cherry.android.douban.widget.JDRefreshHeader;
 import cherry.android.ptr.NestedPullRefreshLayout;
 import cherry.android.ptr.OnRefreshListener;
@@ -32,7 +32,7 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nested_scrolling);
+        setContentView(R.layout.activity_debug_nested_scrolling);
         pullRefreshLayout = (NestedPullRefreshLayout) findViewById(R.id.layout_pull_to_refresh);
         pullRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override

@@ -1009,6 +1009,12 @@ public class FixedSwipeRefreshLayout extends ViewGroup implements NestedScrollin
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.d("Test", "dispatchTouchEvent");
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent ev) {
         Log.d("Test", "onTouchEvent");
         final int action = MotionEventCompat.getActionMasked(ev);
