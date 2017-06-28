@@ -3,6 +3,9 @@ package cherry.android.douban.celebrity;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cherry.android.douban.base.RxPresenterImpl;
 import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.network.Network;
@@ -12,6 +15,7 @@ import cherry.android.douban.rx.RxHelper;
 import cherry.android.douban.util.Logger;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -19,6 +23,8 @@ import io.reactivex.disposables.Disposable;
 
 public class CelebrityPresenter extends RxPresenterImpl<CelebrityContract.View, CelebrityContract.Presenter, ActivityEvent>
         implements CelebrityContract.Presenter {
+
+    private List<Object> mList = new ArrayList<>();
 
     public CelebrityPresenter(@NonNull CelebrityContract.View view,
                               @NonNull IRxLifecycleBinding<ActivityEvent> lifecycle) {
@@ -32,15 +38,27 @@ public class CelebrityPresenter extends RxPresenterImpl<CelebrityContract.View, 
         Network.get().getMovieApi().celebrityInfo(id)
                 .compose(RxHelper.<MovieCelebrity>mainIO())
                 .compose(mRxLifecycle.<MovieCelebrity>bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(new Observer<MovieCelebrity>() {
+                .map(new Function<MovieCelebrity, List<MovieCelebrity.Works>>() {
+                    @Override
+                    public List<MovieCelebrity.Works> apply(@io.reactivex.annotations.NonNull MovieCelebrity movieCelebrity) throws Exception {
+                        mView.showCelebrityInfo(movieCelebrity);
+                        return movieCelebrity.getWorks();
+                    }
+                })
+                .subscribe(new Observer<List<MovieCelebrity.Works>>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.annotations.NonNull MovieCelebrity movieCelebrity) {
-                        mView.showCelebrityInfo(movieCelebrity);
+                    public void onNext(@io.reactivex.annotations.NonNull List<MovieCelebrity.Works> works) {
+                        if (works != null && works.size() > 0) {
+                            mList.clear();
+                            mList.add("电影作品(" + works.size() + ")");
+                            mList.addAll(works);
+                            mView.showWorks(mList);
+                        }
                     }
 
                     @Override
@@ -53,6 +71,11 @@ public class CelebrityPresenter extends RxPresenterImpl<CelebrityContract.View, 
 
                     }
                 });
+    }
+
+    @Override
+    public List getCurrentData() {
+        return mList;
     }
 
     @NonNull

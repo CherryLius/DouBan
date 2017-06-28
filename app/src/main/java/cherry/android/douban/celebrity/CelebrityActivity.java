@@ -8,9 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,13 +22,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
+import cherry.android.douban.celebrity.delegate.WorksItemDelegate;
 import cherry.android.douban.celebrity.header.CelebrityHeader;
 import cherry.android.douban.celebrity.header.CelebritySummaryHeader;
+import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.PaletteHelper;
 import cherry.android.recycler.CommonAdapter;
+import cherry.android.recycler.ItemViewDelegate;
+import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Route;
@@ -37,7 +43,7 @@ import cherry.android.router.api.Router;
  * Created by Administrator on 2017/6/7.
  */
 @Route("movie://activity/celebrity/detail")
-public class CelebrityActivity extends BaseActivity implements CelebrityContract.View {
+public class CelebrityActivity extends BaseActivity implements CelebrityContract.View, RecyclerAdapter.OnItemClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tv_tool_title)
@@ -53,6 +59,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     String mImageUrl;
     private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
+    private RecyclerAdapter mAdapter;
     private CelebrityHeader mCelebrityHeader;
     private CelebritySummaryHeader mSummaryHeader;
 
@@ -63,28 +70,18 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new CelebrityPresenter(this, this);
-        checkNonNull(mCelebrityId, "mCelebrityId", "CelebrityActivity");
-        Logger.i("Test", "id=" + mCelebrityId);
         mPresenter.loadCelebrityInfo(mCelebrityId);
-    }
-
-    public static void checkNonNull(Object object, String name, String className) {
-        if(object == null) {
-            Logger.e("Test", " check null!!!!");
-            throw new NullPointerException(String.format("field \'%s\' in \'%s\' is nonNull", new Object[]{name, className}));
-        }
     }
 
     void initView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            list.add("item === " + i);
-        }
-        Adapter adapter = new Adapter(list);
-        mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(adapter);
+        mAdapter = new RecyclerAdapter();
+        mAdapter.addDelegate(String.class, new SimpleItemDelegate());
+        mAdapter.addDelegate(MovieCelebrity.Works.class, new WorksItemDelegate());
+        mHeaderAndFooterWrapper = new HeaderAndFooterWrapper(mAdapter);
         initHeader();
         recyclerView.setAdapter(mHeaderAndFooterWrapper);
+        mAdapter.setOnItemClickListener(this);
     }
 
     void initHeader() {
@@ -187,20 +184,40 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         mSummaryHeader.updateHeader(celebrity);
     }
 
-    static class Adapter extends CommonAdapter<String, ViewHolder> {
-        public Adapter(List<String> data) {
-            super(data, android.R.layout.simple_list_item_1);
-        }
+    @Override
+    public void showWorks(List<?> works) {
+        mAdapter.setItems(works);
+        mAdapter.notifyDataSetChanged();
+    }
 
-        @Override
-        protected void convert(ViewHolder holder, String s, int position) {
-            TextView textView = holder.findView(android.R.id.text1);
-            textView.setText(s);
+    @Override
+    public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
+        int realPosition = position - mHeaderAndFooterWrapper.getHeaderCount();
+        List<Object> list = mPresenter.getCurrentData();
+        Object object = list.get(realPosition);
+        if (object instanceof MovieCelebrity.Works) {
+            MovieCelebrity.Works work = (MovieCelebrity.Works) object;
+            final Movie movie = work.getSubject();
+            String url = "movie://activity/movie/detail?id=" + movie.getId()
+                    + "&name=" + movie.getTitle()
+                    + "&imageUrl=" + movie.getImages().getLarge();
+            Router.build(url).open(this);
         }
+    }
 
+    private class SimpleItemDelegate implements ItemViewDelegate<String, ViewHolder> {
+
+        @NonNull
         @Override
-        protected ViewHolder createDefaultViewHolder(View itemView) {
+        public ViewHolder createViewHolder(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+            View itemView = inflater.inflate(R.layout.layout_simple_text_view, parent, false);
             return new ViewHolder(itemView);
+        }
+
+        @Override
+        public void convert(@NonNull ViewHolder holder, String s, int position) {
+            TextView textView = holder.findView(R.id.tv_simple);
+            textView.setText(s);
         }
     }
 }

@@ -20,4 +20,10 @@
         android:layout_marginTop="@dimen/layout_margin"
         app:expandColor="@color/colorIndigo_300"
         app:maxLines="6" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:background="@color/colorGrey_300" />
 </LinearLayout>

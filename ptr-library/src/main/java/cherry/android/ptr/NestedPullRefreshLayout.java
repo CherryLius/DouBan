@@ -737,6 +737,8 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         final int realOverHeight = overHeight > headerThreshold ? headerThreshold : overHeight;
         final int duration = realOverHeight < 50 ? 300 : (int) (0.8f * realOverHeight + 200);
         Log.e(TAG, "[overScroll] " + realOverHeight + ", duration=" + duration);
+        if (!mScroller.isFinished())
+            mScroller.abortAnimation();
         mOverScrollAnimator.setIntValues(0, scrollToTop ? realOverHeight : -realOverHeight);
         mOverScrollAnimator.setDuration(duration);
         mOverScrollAnimator.start();

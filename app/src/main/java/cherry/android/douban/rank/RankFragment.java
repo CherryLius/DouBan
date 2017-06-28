@@ -54,7 +54,6 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         initView();
-        mPresenter.loadMovies();
     }
 
     void initView() {
@@ -87,6 +86,7 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         mAdapter.addDelegate(NorthAmericaMovie.Subjects.class, new NorthRankDelegate());
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
+        pullToRefreshLayout.autoRefresh();
     }
 
     @Override
