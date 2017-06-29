@@ -134,7 +134,7 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     @Override
     public void showError() {
         refreshLayout.setRefreshing(false);
-        Toaster.iError(getContext(), "加载出错了");
+        Toaster.iError(getContext(), "加载出错了").show();
     }
 
     @Override
