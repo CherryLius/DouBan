@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.home.HomeFragment;
+import cherry.android.douban.mine.MineFragment;
 import cherry.android.douban.rank.RankFragment;
 import cherry.android.router.annotations.Route;
 import cherry.android.toast.Toaster;
@@ -60,7 +61,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new HomeFragment());
         mFragmentList.add(new RankFragment());
-        mFragmentList.add(new EmptyFragment());
+        mFragmentList.add(new MineFragment());
     }
 
     @Override
