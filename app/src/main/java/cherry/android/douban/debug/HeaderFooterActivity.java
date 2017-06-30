@@ -83,6 +83,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
                 }
                 if (position % 5 == 2) {
                     Toaster.iSuccess(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    startActivity(new Intent(HeaderFooterActivity.this, CustomGridActivity.class));
                     return;
                 }
                 if (position % 5 == 3) {

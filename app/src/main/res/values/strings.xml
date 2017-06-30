@@ -29,6 +29,15 @@
     <string name="label_collection">收藏</string>
     <string name="label_celebrity_summary">个人简介</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prefix_money"><xliff:g id="money">%1$d</xliff:g>元</string>
+    <string name="prefix_pieces"><xliff:g id="piece">%1$d</xliff:g>张</string>
+    <string name="prefix_score"><xliff:g id="score">%1$d</xliff:g>分</string>
+
+    <string name="label_e_wallet">电子钱包</string>
+    <string name="label_coupon">优惠券</string>
+    <string name="label_accumulate">积分</string>
+
+    <string name="label_wait_to_pay">待付款</string>
+    <string name="label_wait_to_take">待收货</string>
+    <string name="label_wait_to_comment">待评价</string>
 </resources>
