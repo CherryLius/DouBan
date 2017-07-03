@@ -69,6 +69,16 @@
         <item name="android:typeface">serif</item>
     </style>
 
+    <style name="TextView.Mine">
+        <item name="android:textColor">@color/colorGrey_800</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.MineCate">
+        <item name="android:textColor">@color/colorGrey_800</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="RatingBar" parent="Widget.AppCompat.RatingBar.Small">
         <!--<item name="android:progressDrawable">@drawable/ic_ratingbar_small_material</item>-->
     </style>

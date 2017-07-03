@@ -37,7 +37,27 @@
     <string name="label_coupon">优惠券</string>
     <string name="label_accumulate">积分</string>
 
+    <string name="label_my_order">我的订单</string>
+    <string name="label_all_order">查看全部</string>
+
     <string name="label_wait_to_pay">待付款</string>
     <string name="label_wait_to_take">待收货</string>
     <string name="label_wait_to_comment">待评价</string>
+
+    <string name="label_other_order">其他订单</string>
+    <string name="label_order_movie">电影订单</string>
+    <string name="label_order_play">玩乐订单</string>
+
+    <string name="label_ticket_wallet">我的票夹</string>
+
+    <string name="label_never_used">未使用</string>
+    <string name="label_roll_in">转入</string>
+    <string name="label_roll_out">转出</string>
+
+    <string name="address_manage">地址管理</string>
+    <string name="vip_center">会员中心</string>
+    <string name="frequently_actor">常用观演人</string>
+    <string name="subscribe">订阅</string>
+    <string name="collection">收藏</string>
+    <string name="online_server">在线客服</string>
 </resources>

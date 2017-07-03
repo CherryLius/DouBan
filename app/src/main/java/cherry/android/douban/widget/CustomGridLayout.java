@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * TODO: document your custom view class.
@@ -48,7 +49,7 @@ public class CustomGridLayout extends ViewGroup {
             removeView(mHeaderView);
         }
         mHeaderView = view;
-        addView(mHeaderView, 0);
+        addView(mHeaderView, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
     @Override
@@ -87,11 +88,13 @@ public class CustomGridLayout extends ViewGroup {
             maxChildHeight = Math.max(maxChildHeight, child.getMeasuredHeight() + extraH);
         }
         boolean hasHeader = mHeaderView != null && mHeaderView.getVisibility() != GONE;
+        if (mHeaderView != null)
+            Log.d("Test", "header::w=" + mHeaderView.getMeasuredWidth() + ", " + mHeaderView.getMeasuredHeight());
         validChildCount = !hasHeader ? validChildCount : validChildCount - 1;
         int rows = getRow(validChildCount);
         int calH = maxChildHeight * rows + (hasHeader ? mHeaderView.getMeasuredHeight() : 0);
-        int width = Math.max(maxChildWidth * mColumn, getSuggestedMinimumWidth());
-        int height = Math.max(calH, getSuggestedMinimumHeight());
+        int width = Math.max(maxChildWidth * mColumn + getPaddingLeft() + getPaddingRight(), getSuggestedMinimumWidth());
+        int height = Math.max(calH + getPaddingTop() + getPaddingBottom(), getSuggestedMinimumHeight());
         setMeasuredDimension(measureDimen(width, widthMeasureSpec), measureDimen(height, heightMeasureSpec));
     }
 
@@ -115,12 +118,15 @@ public class CustomGridLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d("Test", "onLayout");
         final int childCount = getChildCount();
         int validCount = childCount;
         boolean hasHeader = mHeaderView != null && mHeaderView.getVisibility() != GONE;
         if (hasHeader) {
-            mHeaderView.layout(l, t, r, mHeaderView.getMeasuredHeight());
+            Log.d("Test", "onLayout :: l=" + l + ",t=" + t + ",r=" + r + ",=" + mHeaderView.getMeasuredHeight());
+            Log.d("Test", "Top=" + getPaddingTop());
+            mHeaderView.layout(getPaddingLeft(), getPaddingTop(),
+                    getPaddingLeft() + getMeasuredWidth() - getPaddingRight(),
+                    getPaddingLeft() + mHeaderView.getMeasuredHeight());
             validCount--;
         }
         for (int i = 0; i < childCount; i++) {
