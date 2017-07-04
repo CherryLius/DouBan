@@ -16,11 +16,11 @@
         <activity
             android:name=".main.MainActivity"
             android:theme="@style/AppTheme.NoTitle">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".detail.MovieDetailActivity"
@@ -31,17 +31,18 @@
         <activity android:name=".rank.top.TopMovieActivity" />
         <activity android:name=".web.WebActivity" />
         <activity android:name=".debug.HeaderFooterActivity">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity android:name=".debug.LoadMoreActivity" />
         <activity android:name=".debug.OverlayCardActivity" />
         <activity android:name=".debug.NestedScrollingActivity" />
         <activity android:name=".debug.ListViewActivity" />
-        <activity android:name=".debug.CustomGridActivity"/>
+        <activity android:name=".debug.CustomGridActivity" />
+        <activity android:name=".debug.BannerActivity" />
     </application>
 
 </manifest>

@@ -41,6 +41,7 @@ dependencies {
     //Router
     //retrofit
     //rxjava
+    compile project(':banner-library')
     compile project(':recycler-library')
     compile project(':toast-library')
     compile project(':ptr-library')

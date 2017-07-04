@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.widget.Scroller;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,26 @@ public class LoopViewPager extends ViewPager {
     public LoopViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         super.addOnPageChangeListener(mWrapperPageChangeListener);
+    }
+
+    public LoopViewPager(Context context, int scrollDuration) {
+        this(context, null);
+        PagerScroller scroller = new PagerScroller(context, this);
+        scroller.setScrollDuration(scrollDuration);
+        setPagerScroller(scroller);
+    }
+
+    private void setPagerScroller(Scroller scroller) {
+        try {
+            Field field = ViewPager.class.getDeclaredField("mScroller");
+            field.setAccessible(true);
+            field.set(this, scroller);
+            field.setAccessible(false);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setBoundaryCaching(boolean flag) {
@@ -61,7 +83,7 @@ public class LoopViewPager extends ViewPager {
 
     @Override
     public void setCurrentItem(int item, boolean smoothScroll) {
-        int realItem = mAdapterWrapper.toRealPosition(item);
+        int realItem = mAdapterWrapper.toInnerPosition(item);
         super.setCurrentItem(realItem, smoothScroll);
     }
 

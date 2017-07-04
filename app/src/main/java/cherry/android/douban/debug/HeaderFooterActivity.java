@@ -71,6 +71,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
+                position -= mWrapper.getHeaderCount();
                 if (position % 5 == 0) {
                     Toaster.iError(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
                     startActivity(new Intent(HeaderFooterActivity.this, NestedScrollingActivity.class));
@@ -88,6 +89,7 @@ public class HeaderFooterActivity extends AppCompatActivity {
                 }
                 if (position % 5 == 3) {
                     Toaster.iWarning(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
+                    startActivity(new Intent(HeaderFooterActivity.this, BannerActivity.class));
                     return;
                 }
                 if (position % 5 == 4) {
