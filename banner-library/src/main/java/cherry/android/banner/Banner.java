@@ -1,14 +1,21 @@
 package cherry.android.banner;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,17 +58,35 @@ public class Banner extends ViewGroup {
 
     private LinearLayout mTitleLayout;
     private TextView mTitleView;
+    private TextView mNumberIndicator;
 
     private CircleIndicator mCircleIndicator;
     private int mBannerDuration = 2000;
 
-    private int mTitleHeight = 64;
+    private int mTitleHeight = 80;
+    private int mTitlePadding = 10;
+    @DrawableRes
+    private int mTitleBackground = R.drawable.drawable_white_44;
+    private int mNumberIndicatorSize = 80;
+    @DrawableRes
+    private int mNumberIndicatorBackground = R.drawable.ic_default_number_indicator;
+    private int mPagerScrollDuration = 800;
+    @ColorInt
+    private int mTextColor = Color.WHITE;
+    private int mTextSize = 14;
+
+    private int mIndicatorGap = 5;
+    private int mIndicatorPadding = 10;
+    private int mIndicatorWidth = 10;
+    private int mIndicatorHeight = 10;
+    @DrawableRes
+    private int mIndicatorDrawableRes = R.drawable.ic_default_indicator;
 
     private boolean mIsAutoPlay;
     private Handler mHandler = new Handler();
 
     @IndicatorStyle
-    private int mIndicatorStyle;
+    private int mIndicatorStyle = CIRCLE_INDICATOR;
 
     public Banner(Context context) {
         this(context, null);
@@ -73,17 +98,43 @@ public class Banner extends ViewGroup {
 
     public Banner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+//        setChildrenDrawingOrderEnabled(true);
+        initAttrs(context, attrs);
         init();
+        setIndicatorStyle(mIndicatorStyle);
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.Banner);
+        if (ta != null) {
+            mIndicatorGap = ta.getDimensionPixelSize(R.styleable.Banner_indicatorGap, mIndicatorGap);
+            mIndicatorPadding = ta.getDimensionPixelSize(R.styleable.Banner_indicatorPadding, mIndicatorPadding);
+            mIndicatorWidth = ta.getDimensionPixelSize(R.styleable.Banner_indicatorWidth, mIndicatorWidth);
+            mIndicatorHeight = ta.getDimensionPixelSize(R.styleable.Banner_indicatorHeight, mIndicatorHeight);
+            mIndicatorDrawableRes = ta.getResourceId(R.styleable.Banner_indicatorDrawable, mIndicatorDrawableRes);
+
+            mNumberIndicatorSize = ta.getDimensionPixelSize(R.styleable.Banner_numIndicatorSize, mNumberIndicatorSize);
+            mNumberIndicatorBackground = ta.getResourceId(R.styleable.Banner_numIndicatorBackground, mNumberIndicatorBackground);
+
+            mTitleHeight = ta.getDimensionPixelSize(R.styleable.Banner_titleHeight, mTitleHeight);
+            mTitlePadding = ta.getDimensionPixelSize(R.styleable.Banner_titlePadding, mTitlePadding);
+            mTitleBackground = ta.getResourceId(R.styleable.Banner_titleBackground, mTitleBackground);
+
+            mTextSize = ta.getDimensionPixelSize(R.styleable.Banner_textSize, mTextSize);
+            mTextColor = ta.getColor(R.styleable.Banner_textColor, mTextColor);
+            mPagerScrollDuration = ta.getInt(R.styleable.Banner_pagerScrollDuration, mPagerScrollDuration);
+
+            mIndicatorStyle = ta.getInt(R.styleable.Banner_indicatorStyle, mIndicatorStyle);
+            ta.recycle();
+        }
     }
 
     private void init() {
         mTitles = new ArrayList<>();
-        mCircleIndicator = new CircleIndicator(getContext());
-        mLoopViewPager = new LoopViewPager(getContext(), 800);
+        mLoopViewPager = new LoopViewPager(getContext(), mPagerScrollDuration);
         mLoopViewPager.setBoundaryCaching(true);
         mLoopViewPager.addOnPageChangeListener(mPageChangeListener);
         addView(mLoopViewPager, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        addView(mCircleIndicator, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         setAutoPlay(true);
     }
 
@@ -93,13 +144,6 @@ public class Banner extends ViewGroup {
 
     public void setAdapter(@NonNull PagerAdapter adapter) {
         mLoopViewPager.setAdapter(adapter);
-        final int count = adapter.getCount();
-        mCircleIndicator.setCount(count);
-        mLoopViewPager.setCurrentItem(0);
-        mCircleIndicator.onPageSelected(0, -1);
-        Log.d(TAG, "setAdapter");
-        if (mIsAutoPlay)
-            startAutoPlay();
     }
 
     public <T> void setTitles(@NonNull List<T> source, Function<T, String> func) {
@@ -107,12 +151,75 @@ public class Banner extends ViewGroup {
         for (int i = 0; i < source.size(); i++) {
             mTitles.add(func.apply(source.get(i)));
         }
+    }
+
+    public void setIndicatorStyle(@IndicatorStyle int style) {
+        this.mIndicatorStyle = style;
+    }
+
+    public void apply() {
+        createTitles();
+        createIndicator();
+        mLoopViewPager.setCurrentItem(0);
+        onBannerPageSelected(0, -1);
+        Log.d(TAG, "apply");
+        if (mIsAutoPlay)
+            startAutoPlay();
+    }
+
+    private void createTitles() {
         if (mTitles.size() != 0 && mTitleLayout == null) {
             mTitleLayout = new LinearLayout(getContext());
             mTitleLayout.setOrientation(LinearLayout.HORIZONTAL);
+            mTitleLayout.setBackgroundResource(mTitleBackground);
+            mTitleLayout.setPadding(mTitlePadding, 0, mTitlePadding, 0);
             addView(mTitleLayout, new LayoutParams(LayoutParams.MATCH_PARENT, mTitleHeight));
             mTitleView = new AppCompatTextView(getContext());
-            mTitleLayout.addView(mTitleView, new LayoutParams(LayoutParams.MATCH_PARENT, mTitleHeight));
+            mTitleView.setTextColor(mTextColor);
+            mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+            mTitleView.setGravity(Gravity.CENTER_VERTICAL);
+            mTitleView.setMaxLines(1);
+            mTitleView.setEllipsize(TextUtils.TruncateAt.END);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.weight = 1;
+            lp.gravity = Gravity.CENTER_VERTICAL;
+            mTitleLayout.addView(mTitleView, lp);
+        }
+    }
+
+    private void createIndicator() {
+        if (mIndicatorStyle == NUMBER_INDICATOR
+                || mIndicatorStyle == TITLE_NUMBER_INDICATOR) {
+            mNumberIndicator = new AppCompatTextView(getContext());
+            mNumberIndicator.setTextColor(mTextColor);
+            mNumberIndicator.setGravity(Gravity.CENTER);
+            if (mIndicatorStyle == NUMBER_INDICATOR) {
+                mNumberIndicator.setBackgroundResource(mNumberIndicatorBackground);
+                addView(mNumberIndicator, new LayoutParams(mNumberIndicatorSize, mNumberIndicatorSize));
+            } else {
+                mTitleLayout.addView(mNumberIndicator, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+            }
+
+            return;
+        }
+        if (mCircleIndicator == null) {
+            mCircleIndicator = new CircleIndicator(getContext());
+            mCircleIndicator.setGap(mIndicatorGap);
+            mCircleIndicator.setIndicatorPadding(mIndicatorPadding);
+            mCircleIndicator.setIndicatorWidth(mIndicatorWidth);
+            mCircleIndicator.setIndicatorHeight(mIndicatorHeight);
+            mCircleIndicator.setIndicatorDrawableRes(mIndicatorDrawableRes);
+        }
+        final int count = mLoopViewPager.getAdapter().getCount();
+        mCircleIndicator.setCount(count);
+        if (mIndicatorStyle == CIRCLE_INDICATOR
+                || mIndicatorStyle == TITLE_CIRCLE_INDICATOR) {
+            addView(mCircleIndicator, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        } else if (mIndicatorStyle == TITLE_CIRCLE_INDICATOR_INSIDE) {
+            if (mTitleLayout == null)
+                throw new IllegalStateException("cannot get a title container, please check titles");
+            mTitleLayout.addView(mCircleIndicator, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
         }
     }
 
@@ -147,25 +254,66 @@ public class Banner extends ViewGroup {
                 parentWidth - paddingRight + paddingLeft,
                 parentHeight - paddingBottom + paddingTop);
 
-        if (mTitleLayout != null) {
-            int left = paddingLeft;
-            int top = parentHeight - mTitleLayout.getMeasuredHeight() - paddingBottom;
-            int right = parentWidth - paddingRight + paddingLeft;
-            int bottom = top + mTitleLayout.getMeasuredHeight();
-            mTitleLayout.layout(left, top, right, bottom);
+        layoutIndicator();
+    }
+
+    private void layoutIndicator() {
+        if (mIndicatorStyle == NONE_INDICATOR)
+            return;
+        final int paddingLeft = getPaddingLeft();
+        //final int paddingTop = getPaddingTop();
+        final int paddingRight = getPaddingRight();
+        final int paddingBottom = getPaddingBottom();
+        final int parentWidth = getMeasuredWidth();
+        final int parentHeight = getMeasuredHeight();
+        if (mIndicatorStyle == TITLE_CIRCLE_INDICATOR
+                || mIndicatorStyle == TITLE_NUMBER_INDICATOR
+                || mIndicatorStyle == TITLE_CIRCLE_INDICATOR_INSIDE) {
+            if (mTitleLayout != null) {
+                int left = paddingLeft;
+                int top = parentHeight - mTitleLayout.getMeasuredHeight() - paddingBottom;
+                int right = parentWidth - paddingRight + paddingLeft;
+                int bottom = top + mTitleLayout.getMeasuredHeight();
+                mTitleLayout.layout(left, top, right, bottom);
+            }
+        }
+        if (mIndicatorStyle == CIRCLE_INDICATOR
+                || mIndicatorStyle == TITLE_CIRCLE_INDICATOR) {
+            int left = (parentWidth - mCircleIndicator.getMeasuredWidth()) / 2;
+            int top = parentHeight - mCircleIndicator.getMeasuredHeight() - paddingBottom;
+            int right = left + mCircleIndicator.getMeasuredWidth();
+            int bottom = top + mCircleIndicator.getMeasuredHeight();
+            if (mIndicatorStyle == TITLE_CIRCLE_INDICATOR
+                    && mTitleLayout != null) {
+                top -= mTitleLayout.getMeasuredHeight();
+                bottom = top + mCircleIndicator.getMeasuredHeight();
+            }
+            mCircleIndicator.layout(left, top, right, bottom);
         }
 
-        int left = (parentWidth - mCircleIndicator.getMeasuredWidth()) / 2;
-        int top = parentHeight - mCircleIndicator.getMeasuredHeight() - paddingBottom;
-        int right = left + mCircleIndicator.getMeasuredWidth();
-        int bottom = top + mCircleIndicator.getMeasuredHeight();
-        mCircleIndicator.layout(left, top, right, bottom);
+        if (mIndicatorStyle == NUMBER_INDICATOR) {
+            int left = parentWidth - 10 - mNumberIndicator.getMeasuredWidth();
+            int top = parentHeight - mNumberIndicator.getMeasuredHeight() - 10;
+            int right = left + mNumberIndicator.getMeasuredWidth();
+            int bottom = top + mNumberIndicator.getMeasuredHeight();
+            mNumberIndicator.layout(left, top, right, bottom);
+        }
     }
 
-    @Override
-    protected int getChildDrawingOrder(int childCount, int i) {
-        return super.getChildDrawingOrder(childCount, i);
-    }
+//    @Override
+//    protected int getChildDrawingOrder(int childCount, int i) {
+//        if (mCircleIndicator == null)
+//            return super.getChildDrawingOrder(childCount, i);
+//        final int indicatorIndex = indexOfChild(mCircleIndicator);
+//        if (indicatorIndex == -1)
+//            return super.getChildDrawingOrder(childCount, i);
+//        if (i == indicatorIndex) {
+//            return childCount - 1;
+//        } else if (i == childCount - 1) {
+//            return indicatorIndex;
+//        }
+//        return super.getChildDrawingOrder(childCount, i);
+//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -189,6 +337,18 @@ public class Banner extends ViewGroup {
         Log.e(TAG, "[onDetachedFromWindow]");
     }
 
+    private void onBannerPageSelected(int position, int oldPosition) {
+        if (mCircleIndicator != null)
+            mCircleIndicator.onPageSelected(position, oldPosition);
+        if (mTitles.size() == 0) return;
+        if (mTitleView != null)
+            mTitleView.setText(mTitles.get(position));
+        if (mNumberIndicator != null) {
+            int number = position + 1;
+            mNumberIndicator.setText(number + "/" + mLoopViewPager.getAdapter().getCount());
+        }
+    }
+
     private void startAutoPlay() {
         mHandler.removeCallbacks(mBannerRunnable);
         mHandler.postDelayed(mBannerRunnable, mBannerDuration);
@@ -209,7 +369,7 @@ public class Banner extends ViewGroup {
         @Override
         public void onPageSelected(int position) {
             Log.e(TAG, "[onPageSelected] position=" + position + ',' + oldPosition);
-            mCircleIndicator.onPageSelected(position, oldPosition);
+            onBannerPageSelected(position, oldPosition);
             oldPosition = position;
         }
 
@@ -227,14 +387,4 @@ public class Banner extends ViewGroup {
             mHandler.postDelayed(this, mBannerDuration);
         }
     };
-
-//    private static float dipSize(Context context, float size) {
-//        Resources r;
-//
-//        if (context == null)
-//            r = Resources.getSystem();
-//        else
-//            r = context.getResources();
-//        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, r.getDisplayMetrics());
-//    }
 }
