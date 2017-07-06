@@ -98,7 +98,6 @@ public class Banner extends ViewGroup {
 
     public Banner(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-//        setChildrenDrawingOrderEnabled(true);
         initAttrs(context, attrs);
         init();
         setIndicatorStyle(mIndicatorStyle);
@@ -122,7 +121,9 @@ public class Banner extends ViewGroup {
 
             mTextSize = ta.getDimensionPixelSize(R.styleable.Banner_textSize, mTextSize);
             mTextColor = ta.getColor(R.styleable.Banner_textColor, mTextColor);
+
             mPagerScrollDuration = ta.getInt(R.styleable.Banner_pagerScrollDuration, mPagerScrollDuration);
+            mBannerDuration = ta.getInt(R.styleable.Banner_bannerDuration, mBannerDuration);
 
             mIndicatorStyle = ta.getInt(R.styleable.Banner_indicatorStyle, mIndicatorStyle);
             ta.recycle();
@@ -155,6 +156,67 @@ public class Banner extends ViewGroup {
 
     public void setIndicatorStyle(@IndicatorStyle int style) {
         this.mIndicatorStyle = style;
+    }
+
+    private void setTitleHeight(int height) {
+        mTitleHeight = height;
+    }
+
+    public void setTitlePadding(int padding) {
+        mTitlePadding = padding;
+    }
+
+    public void setTitleBackground(@DrawableRes int resId) {
+        mTitleBackground = resId;
+    }
+
+    public void setNumberIndicatorSize(int size) {
+        mNumberIndicatorSize = size;
+    }
+
+    public void setNumberIndicatorBackground(@DrawableRes int resId) {
+        mNumberIndicatorBackground = resId;
+    }
+
+    public void setTextColor(@ColorInt int color) {
+        mTextColor = color;
+    }
+
+    public void setTextSize(int size) {
+        mTextSize = size;
+    }
+
+    public void setIndicatorGap(int gap) {
+        mIndicatorGap = gap;
+    }
+
+    public void setIndicatorPadding(int padding) {
+        mIndicatorPadding = padding;
+    }
+
+    public void setIndicatorWidth(int width) {
+        mIndicatorWidth = width;
+    }
+
+    public void setIndicatorHeight(int height) {
+        mIndicatorHeight = height;
+    }
+
+    public void setIndicatorDrawableRes(@DrawableRes int resId) {
+        mIndicatorDrawableRes = resId;
+    }
+
+    public void setPagerScrollDuration(int duration) {
+        mPagerScrollDuration = duration;
+        mLoopViewPager.setPagerScrollDuration(mPagerScrollDuration);
+    }
+
+    public void setBannerDuration(int duration) {
+        mBannerDuration = duration;
+    }
+
+    public void setBannerTransformer(@NonNull ViewPager.PageTransformer pageTransformer) {
+        mLoopViewPager.setPageTransformer(true, pageTransformer);
     }
 
     public void apply() {
@@ -191,12 +253,18 @@ public class Banner extends ViewGroup {
     private void createIndicator() {
         if (mIndicatorStyle == NUMBER_INDICATOR
                 || mIndicatorStyle == TITLE_NUMBER_INDICATOR) {
-            mNumberIndicator = new AppCompatTextView(getContext());
+            if (mNumberIndicator == null) {
+                mNumberIndicator = new AppCompatTextView(getContext());
+            }
             mNumberIndicator.setTextColor(mTextColor);
             mNumberIndicator.setGravity(Gravity.CENTER);
             if (mIndicatorStyle == NUMBER_INDICATOR) {
                 mNumberIndicator.setBackgroundResource(mNumberIndicatorBackground);
-                addView(mNumberIndicator, new LayoutParams(mNumberIndicatorSize, mNumberIndicatorSize));
+                if (mNumberIndicator.getParent() != null) {
+                    LayoutParams lp = mNumberIndicator.getLayoutParams();
+                    lp.width = lp.height = mNumberIndicatorSize;
+                } else
+                    addView(mNumberIndicator, new LayoutParams(mNumberIndicatorSize, mNumberIndicatorSize));
             } else {
                 mTitleLayout.addView(mNumberIndicator, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
             }
@@ -205,12 +273,12 @@ public class Banner extends ViewGroup {
         }
         if (mCircleIndicator == null) {
             mCircleIndicator = new CircleIndicator(getContext());
-            mCircleIndicator.setGap(mIndicatorGap);
-            mCircleIndicator.setIndicatorPadding(mIndicatorPadding);
-            mCircleIndicator.setIndicatorWidth(mIndicatorWidth);
-            mCircleIndicator.setIndicatorHeight(mIndicatorHeight);
-            mCircleIndicator.setIndicatorDrawableRes(mIndicatorDrawableRes);
         }
+        mCircleIndicator.setGap(mIndicatorGap);
+        mCircleIndicator.setIndicatorPadding(mIndicatorPadding);
+        mCircleIndicator.setIndicatorWidth(mIndicatorWidth);
+        mCircleIndicator.setIndicatorHeight(mIndicatorHeight);
+        mCircleIndicator.setIndicatorDrawableRes(mIndicatorDrawableRes);
         final int count = mLoopViewPager.getAdapter().getCount();
         mCircleIndicator.setCount(count);
         if (mIndicatorStyle == CIRCLE_INDICATOR
@@ -300,8 +368,21 @@ public class Banner extends ViewGroup {
         }
     }
 
-//    @Override
-//    protected int getChildDrawingOrder(int childCount, int i) {
+    /**
+     * Returns the index of the child to draw for this iteration. Override this
+     * if you want to change the drawing order of children. By default, it
+     * returns i.
+     * <p>
+     * NOTE: In order for this method to be called, you must enable child ordering
+     * first by calling {@link #setChildrenDrawingOrderEnabled(boolean)}.
+     *
+     * @param i The current iteration.
+     * @return The index of the child to draw this iteration.
+     * @see #setChildrenDrawingOrderEnabled(boolean)
+     * @see #isChildrenDrawingOrderEnabled()
+     */
+    @Override
+    protected int getChildDrawingOrder(int childCount, int i) {
 //        if (mCircleIndicator == null)
 //            return super.getChildDrawingOrder(childCount, i);
 //        final int indicatorIndex = indexOfChild(mCircleIndicator);
@@ -312,8 +393,8 @@ public class Banner extends ViewGroup {
 //        } else if (i == childCount - 1) {
 //            return indicatorIndex;
 //        }
-//        return super.getChildDrawingOrder(childCount, i);
-//    }
+        return super.getChildDrawingOrder(childCount, i);
+    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

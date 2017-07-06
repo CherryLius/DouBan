@@ -14,6 +14,7 @@
         <attr name="textColor" format="color" />
         <attr name="textSize" format="dimension" />
         <attr name="pagerScrollDuration" format="integer" />
+        <attr name="bannerDuration" format="integer" />
         <attr name="indicatorStyle" format="enum">
             <enum name="nonIndicator" value="0" />
             <enum name="circleIndicator" value="1" />

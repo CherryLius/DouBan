@@ -20,6 +20,7 @@ public class LoopViewPager extends ViewPager {
     private List<OnPageChangeListener> mOnPageChangeListeners;
     private OnPageChangeListener mOnPageChangeListener;
     private boolean mBoundaryCaching;
+    private PagerScroller mScroller;
 
     public LoopViewPager(Context context) {
         this(context, null);
@@ -32,9 +33,13 @@ public class LoopViewPager extends ViewPager {
 
     public LoopViewPager(Context context, int scrollDuration) {
         this(context, null);
-        PagerScroller scroller = new PagerScroller(context, this);
-        scroller.setScrollDuration(scrollDuration);
-        setPagerScroller(scroller);
+        mScroller = new PagerScroller(context, this);
+        mScroller.setScrollDuration(scrollDuration);
+        setPagerScroller(mScroller);
+    }
+
+    public void setPagerScrollDuration(int duration) {
+        mScroller.setScrollDuration(duration);
     }
 
     private void setPagerScroller(Scroller scroller) {

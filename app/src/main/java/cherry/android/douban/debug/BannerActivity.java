@@ -15,6 +15,7 @@ import java.util.List;
 import cherry.android.banner.Banner;
 import cherry.android.banner.Function;
 import cherry.android.banner.SimpleBannerAdapter;
+import cherry.android.banner.transformer.ZoomOutPageTransformer;
 import cherry.android.douban.R;
 
 /**
@@ -63,6 +64,7 @@ public class BannerActivity extends AppCompatActivity {
                 return s;
             }
         });
+        banner.setBannerTransformer(new ZoomOutPageTransformer());
         banner.apply();
     }
 }

@@ -8,8 +8,8 @@
     <cherry.android.banner.Banner
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        app:indicatorStyle="titleNumberIndicator"
+        android:layout_height="180dp"
+        app:indicatorStyle="titleCircleIndicatorInside"
         app:textSize="12sp" />
 
     <TextView
