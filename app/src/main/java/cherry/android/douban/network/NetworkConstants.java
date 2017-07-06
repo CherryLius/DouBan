@@ -12,4 +12,5 @@ public final class NetworkConstants {
      * apiV2ApiSecret='981da9b09887f13f'
      */
     public static final String DOU_BAN_BASE_URL = "http://api.douban.com";
+    public static final String GANK_BASE_URL = "http://gank.io/api/";
 }

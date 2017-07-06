@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import cherry.android.douban.App;
+import cherry.android.douban.network.api.GankIOApi;
 import cherry.android.douban.network.api.MovieApi;
 import cherry.android.douban.util.Utils;
 import okhttp3.Cache;
@@ -25,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Network {
     private MovieApi mMovieApi;
+    private GankIOApi mGankIOApi;
     private static Network _instance;
     private static ReentrantLock mLock = new ReentrantLock(true);
 
@@ -59,6 +61,27 @@ public class Network {
             mMovieApi = retrofit.create(MovieApi.class);
         }
         return mMovieApi;
+    }
+
+    public GankIOApi getGankIOApi() {
+        if (mGankIOApi == null) {
+            File cacheFile = new File(App.getContext().getCacheDir(), "cache_gank_io");
+            Cache cache = new Cache(cacheFile, 10 * 1024 * 1024);
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(getInterceptor())
+                    .addNetworkInterceptor(getNetworkInterceptor())
+                    .addInterceptor(loggingInterceptor())
+                    .cache(cache)
+                    .build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(NetworkConstants.GANK_BASE_URL)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            mGankIOApi = retrofit.create(GankIOApi.class);
+        }
+        return mGankIOApi;
     }
 
     private Interceptor getInterceptor() {

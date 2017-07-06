@@ -303,6 +303,8 @@ public class Banner extends ViewGroup {
 
     @Override
     protected void onLayout(boolean b, int i, int i1, int i2, int i3) {
+        if (mLoopViewPager.getAdapter() == null)
+            return;
         final int pageCount = mLoopViewPager.getAdapter().getCount();
         if (pageCount == 0)
             return;
