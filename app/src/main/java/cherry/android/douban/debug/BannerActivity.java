@@ -3,6 +3,7 @@ package cherry.android.douban.debug;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +23,7 @@ import cherry.android.douban.R;
  * Created by Administrator on 2017/7/4.
  */
 
-public class BannerActivity extends AppCompatActivity {
+public class BannerActivity extends AppCompatActivity implements View.OnClickListener {
 
     //one piece, naruto, attack on titan, dragon ball, bleach
     private static final String[] URLS = {"http://imgsrc.baidu.com/forum/pic/item/6b254190f603738d4fcd7dadb31bb051f919ec5b.jpg",
@@ -65,6 +66,50 @@ public class BannerActivity extends AppCompatActivity {
             }
         });
         banner.setBannerTransformer(new ZoomOutPageTransformer());
-        banner.apply();
+        banner.start();
+        findViewById(R.id.btn_left).setOnClickListener(this);
+        findViewById(R.id.btn_center).setOnClickListener(this);
+        findViewById(R.id.btn_right).setOnClickListener(this);
+
+        findViewById(R.id.btn_none).setOnClickListener(this);
+        findViewById(R.id.btn_circle).setOnClickListener(this);
+        findViewById(R.id.btn_num).setOnClickListener(this);
+        findViewById(R.id.btn_num_title).setOnClickListener(this);
+        findViewById(R.id.btn_circle_title).setOnClickListener(this);
+        findViewById(R.id.btn_circle_title_inside).setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_left:
+                banner.getSettings().setIndicatorGravity(Banner.GRAVITY_LEFT).apply();
+                break;
+            case R.id.btn_center:
+                banner.getSettings().setIndicatorGravity(Banner.GRAVITY_CENTER).apply();
+                break;
+            case R.id.btn_right:
+                banner.getSettings().setIndicatorGravity(Banner.GRAVITY_RIGHT).apply();
+                break;
+            case R.id.btn_none:
+                banner.getSettings().setIndicatorStyle(Banner.NONE_INDICATOR).apply();
+                break;
+            case R.id.btn_circle:
+                banner.getSettings().setIndicatorStyle(Banner.CIRCLE_INDICATOR).apply();
+                break;
+            case R.id.btn_num:
+                banner.getSettings().setIndicatorStyle(Banner.NUMBER_INDICATOR).apply();
+                break;
+            case R.id.btn_num_title:
+                banner.getSettings().setIndicatorStyle(Banner.TITLE_NUMBER_INDICATOR).apply();
+                break;
+            case R.id.btn_circle_title:
+                banner.getSettings().setIndicatorStyle(Banner.TITLE_CIRCLE_INDICATOR).apply();
+                break;
+            case R.id.btn_circle_title_inside:
+                banner.getSettings().setIndicatorStyle(Banner.TITLE_CIRCLE_INDICATOR_INSIDE).apply();
+                break;
+        }
     }
 }

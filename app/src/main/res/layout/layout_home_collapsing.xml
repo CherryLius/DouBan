@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         app:bannerDuration="3000"
         app:indicatorDrawable="@drawable/ic_banner_indicator"
+        app:indicatorGap="5dp"
+        app:indicatorGravity="center"
         app:indicatorPadding="16dp"
         app:indicatorStyle="circleIndicator"
         app:indicatorWidth="16dp" />

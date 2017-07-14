@@ -9,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,6 +53,17 @@ public class Banner extends ViewGroup {
     @Retention(RetentionPolicy.SOURCE)
     @interface IndicatorStyle {
 
+    }
+
+    public static final int GRAVITY_LEFT = 6;
+    public static final int GRAVITY_CENTER = 7;
+    public static final int GRAVITY_RIGHT = 8;
+
+    @IntDef({GRAVITY_LEFT,
+            GRAVITY_CENTER,
+            GRAVITY_RIGHT})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface IndicatorGravity {
     }
 
     private LoopViewPager mLoopViewPager;
@@ -87,6 +100,10 @@ public class Banner extends ViewGroup {
 
     @IndicatorStyle
     private int mIndicatorStyle = CIRCLE_INDICATOR;
+    @IndicatorGravity
+    private int mIndicatorGravity = GRAVITY_CENTER;
+
+    private BannerSettings mSettings;
 
     public Banner(Context context) {
         this(context, null);
@@ -126,6 +143,7 @@ public class Banner extends ViewGroup {
             mBannerDuration = ta.getInt(R.styleable.Banner_bannerDuration, mBannerDuration);
 
             mIndicatorStyle = ta.getInt(R.styleable.Banner_indicatorStyle, mIndicatorStyle);
+            mIndicatorGravity = ta.getInt(R.styleable.Banner_indicatorGravity, mIndicatorGravity);
             ta.recycle();
         }
     }
@@ -139,10 +157,6 @@ public class Banner extends ViewGroup {
         setAutoPlay(true);
     }
 
-    public void setAutoPlay(boolean isAutoPlay) {
-        this.mIsAutoPlay = isAutoPlay;
-    }
-
     public void setAdapter(@NonNull PagerAdapter adapter) {
         mLoopViewPager.setAdapter(adapter);
     }
@@ -154,55 +168,63 @@ public class Banner extends ViewGroup {
         }
     }
 
-    public void setIndicatorStyle(@IndicatorStyle int style) {
+    private void setAutoPlay(boolean isAutoPlay) {
+        this.mIsAutoPlay = isAutoPlay;
+    }
+
+    private void setIndicatorStyle(@IndicatorStyle int style) {
         this.mIndicatorStyle = style;
+    }
+
+    private void setIndicatorGravity(@IndicatorGravity int gravity) {
+        this.mIndicatorGravity = gravity;
     }
 
     private void setTitleHeight(int height) {
         mTitleHeight = height;
     }
 
-    public void setTitlePadding(int padding) {
+    private void setTitlePadding(int padding) {
         mTitlePadding = padding;
     }
 
-    public void setTitleBackground(@DrawableRes int resId) {
+    private void setTitleBackground(@DrawableRes int resId) {
         mTitleBackground = resId;
     }
 
-    public void setNumberIndicatorSize(int size) {
+    private void setNumberIndicatorSize(int size) {
         mNumberIndicatorSize = size;
     }
 
-    public void setNumberIndicatorBackground(@DrawableRes int resId) {
+    private void setNumberIndicatorBackground(@DrawableRes int resId) {
         mNumberIndicatorBackground = resId;
     }
 
-    public void setTextColor(@ColorInt int color) {
+    private void setTextColor(@ColorInt int color) {
         mTextColor = color;
     }
 
-    public void setTextSize(int size) {
+    private void setTextSize(int size) {
         mTextSize = size;
     }
 
-    public void setIndicatorGap(int gap) {
+    private void setIndicatorGap(int gap) {
         mIndicatorGap = gap;
     }
 
-    public void setIndicatorPadding(int padding) {
+    private void setIndicatorPadding(int padding) {
         mIndicatorPadding = padding;
     }
 
-    public void setIndicatorWidth(int width) {
+    private void setIndicatorWidth(int width) {
         mIndicatorWidth = width;
     }
 
-    public void setIndicatorHeight(int height) {
+    private void setIndicatorHeight(int height) {
         mIndicatorHeight = height;
     }
 
-    public void setIndicatorDrawableRes(@DrawableRes int resId) {
+    private void setIndicatorDrawableRes(@DrawableRes int resId) {
         mIndicatorDrawableRes = resId;
     }
 
@@ -211,22 +233,34 @@ public class Banner extends ViewGroup {
         mLoopViewPager.setPagerScrollDuration(mPagerScrollDuration);
     }
 
-    public void setBannerDuration(int duration) {
-        mBannerDuration = duration;
-    }
-
     public void setBannerTransformer(@NonNull ViewPager.PageTransformer pageTransformer) {
         mLoopViewPager.setPageTransformer(true, pageTransformer);
     }
 
-    public void apply() {
+    private void setBannerDuration(int duration) {
+        mBannerDuration = duration;
+    }
+
+    public void start() {
         createTitles();
         createIndicator();
         mLoopViewPager.setCurrentItem(0);
         onBannerPageSelected(0, -1);
-        Log.d(TAG, "apply");
         if (mIsAutoPlay)
             startAutoPlay();
+    }
+
+    public BannerSettings getSettings() {
+        if (mSettings == null) {
+            mSettings = new BannerSettings(this);
+        }
+        return mSettings;
+    }
+
+    private void apply() {
+        createTitles();
+        createIndicator();
+        requestLayout();
     }
 
     private void createTitles() {
@@ -235,7 +269,7 @@ public class Banner extends ViewGroup {
             mTitleLayout.setOrientation(LinearLayout.HORIZONTAL);
             mTitleLayout.setBackgroundResource(mTitleBackground);
             mTitleLayout.setPadding(mTitlePadding, 0, mTitlePadding, 0);
-            addView(mTitleLayout, new LayoutParams(LayoutParams.MATCH_PARENT, mTitleHeight));
+
             mTitleView = new AppCompatTextView(getContext());
             mTitleView.setTextColor(mTextColor);
             mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
@@ -248,9 +282,19 @@ public class Banner extends ViewGroup {
             lp.gravity = Gravity.CENTER_VERTICAL;
             mTitleLayout.addView(mTitleView, lp);
         }
+        if (mIndicatorStyle == TITLE_NUMBER_INDICATOR
+                || mIndicatorStyle == TITLE_CIRCLE_INDICATOR
+                || mIndicatorStyle == TITLE_CIRCLE_INDICATOR_INSIDE) {
+            if (!isViewAdded(mTitleLayout))
+                addView(mTitleLayout, new LayoutParams(LayoutParams.MATCH_PARENT, mTitleHeight));
+        } else {
+            removeFromParent(mTitleLayout);
+        }
     }
 
     private void createIndicator() {
+        removeFromParent(mNumberIndicator);
+        removeFromParent(mCircleIndicator);
         if (mIndicatorStyle == NUMBER_INDICATOR
                 || mIndicatorStyle == TITLE_NUMBER_INDICATOR) {
             if (mNumberIndicator == null) {
@@ -263,9 +307,11 @@ public class Banner extends ViewGroup {
                 if (mNumberIndicator.getParent() != null) {
                     LayoutParams lp = mNumberIndicator.getLayoutParams();
                     lp.width = lp.height = mNumberIndicatorSize;
-                } else
+                } else {
                     addView(mNumberIndicator, new LayoutParams(mNumberIndicatorSize, mNumberIndicatorSize));
+                }
             } else {
+                ViewCompat.setBackground(mNumberIndicator, null);
                 mTitleLayout.addView(mNumberIndicator, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
             }
 
@@ -328,8 +374,10 @@ public class Banner extends ViewGroup {
     }
 
     private void layoutIndicator() {
-        if (mIndicatorStyle == NONE_INDICATOR)
+        if (mIndicatorStyle == NONE_INDICATOR) {
+            layoutNoneStyle();
             return;
+        }
         final int paddingLeft = getPaddingLeft();
         //final int paddingTop = getPaddingTop();
         final int paddingRight = getPaddingRight();
@@ -350,6 +398,11 @@ public class Banner extends ViewGroup {
         if (mIndicatorStyle == CIRCLE_INDICATOR
                 || mIndicatorStyle == TITLE_CIRCLE_INDICATOR) {
             int left = (parentWidth - mCircleIndicator.getMeasuredWidth()) / 2;
+            if (mIndicatorGravity == GRAVITY_LEFT) {
+                left = 0;
+            } else if (mIndicatorGravity == GRAVITY_RIGHT) {
+                left = parentWidth - mCircleIndicator.getMeasuredWidth();
+            }
             int top = parentHeight - mCircleIndicator.getMeasuredHeight() - paddingBottom;
             int right = left + mCircleIndicator.getMeasuredWidth();
             int bottom = top + mCircleIndicator.getMeasuredHeight();
@@ -369,6 +422,36 @@ public class Banner extends ViewGroup {
             mNumberIndicator.layout(left, top, right, bottom);
         }
     }
+
+    private void layoutNoneStyle() {
+        if (isViewAdded(mTitleLayout)) {
+            removeView(mTitleLayout);
+        }
+        if (isViewAdded(mCircleIndicator)) {
+            removeView(mCircleIndicator);
+        }
+        if (isViewAdded(mNumberIndicator)) {
+            removeView(mNumberIndicator);
+        }
+    }
+
+    private boolean isViewAdded(View view) {
+        if (view != null && indexOfChild(view) != -1)
+            return true;
+        return false;
+    }
+
+    private static void removeFromParent(View view) {
+        if (view == null) return;
+        ViewParent parent = view.getParent();
+        Log.e(TAG, "parent:" + parent);
+        if (parent == null) return;
+        if (parent instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) parent;
+            viewGroup.removeView(view);
+        }
+    }
+
 
     /**
      * Returns the index of the child to draw for this iteration. Override this
@@ -470,4 +553,96 @@ public class Banner extends ViewGroup {
             mHandler.postDelayed(this, mBannerDuration);
         }
     };
+
+    public static class BannerSettings {
+        private Banner banner;
+
+        private BannerSettings(@NonNull Banner banner) {
+            this.banner = banner;
+        }
+
+        public BannerSettings setAutoPlay(boolean isAutoPlay) {
+            this.banner.setAutoPlay(isAutoPlay);
+            return this;
+        }
+
+        public BannerSettings setIndicatorStyle(@IndicatorStyle int style) {
+            this.banner.setIndicatorStyle(style);
+            return this;
+        }
+
+        public BannerSettings setIndicatorGravity(@IndicatorGravity int gravity) {
+            this.banner.setIndicatorGravity(gravity);
+            return this;
+        }
+
+        public BannerSettings setTitleHeight(int height) {
+            this.banner.setTitleHeight(height);
+            return this;
+        }
+
+        public BannerSettings setTitlePadding(int padding) {
+            this.banner.setTitlePadding(padding);
+            return this;
+        }
+
+        public BannerSettings setTitleBackground(@DrawableRes int resId) {
+            this.banner.setTitleBackground(resId);
+            return this;
+        }
+
+        public BannerSettings setNumberIndicatorSize(int size) {
+            this.banner.setNumberIndicatorSize(size);
+            return this;
+        }
+
+        public BannerSettings setNumberIndicatorBackground(@DrawableRes int resId) {
+            this.banner.setNumberIndicatorBackground(resId);
+            return this;
+        }
+
+        public BannerSettings setTextColor(@ColorInt int color) {
+            this.banner.setTextColor(color);
+            return this;
+        }
+
+        public BannerSettings setTextSize(int size) {
+            this.banner.setTextSize(size);
+            return this;
+        }
+
+        public BannerSettings setIndicatorGap(int gap) {
+            this.banner.setIndicatorGap(gap);
+            return this;
+        }
+
+        public BannerSettings setIndicatorPadding(int padding) {
+            this.banner.setIndicatorPadding(padding);
+            return this;
+        }
+
+        public BannerSettings setIndicatorWidth(int width) {
+            this.banner.setIndicatorWidth(width);
+            return this;
+        }
+
+        public BannerSettings setIndicatorHeight(int height) {
+            this.banner.setIndicatorHeight(height);
+            return this;
+        }
+
+        public BannerSettings setIndicatorDrawableRes(@DrawableRes int resId) {
+            this.banner.setIndicatorDrawableRes(resId);
+            return this;
+        }
+
+        public BannerSettings setBannerDuration(int duration) {
+            this.banner.setBannerDuration(duration);
+            return this;
+        }
+
+        public void apply() {
+            banner.apply();
+        }
+    }
 }

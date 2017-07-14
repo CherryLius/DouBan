@@ -137,12 +137,6 @@ public class CircleIndicator extends ViewGroup {
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        mIndicators.clear();
-    }
-
     public void onPageSelected(int position, int oldPosition) {
         Log.d(TAG, "position=" + position + ", oldPosition=" + oldPosition + ",mIndicators =" + mIndicators.size());
         if (mIndicators.size() == 0)

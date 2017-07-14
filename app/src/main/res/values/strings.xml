@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">豆瓣影评</string>
+    <string name="app_name">我的电影</string>
     <string name="title_home">Home</string>
     <string name="title_android">Android</string>
     <string name="title_hot">热映</string>

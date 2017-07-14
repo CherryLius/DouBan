@@ -90,6 +90,6 @@ public class HomeFragment extends ToolbarFragment implements HomeContract.View {
                 Glide.with(getContext()).load(result.getUrl()).into(imageView);
             }
         });
-        banner.apply();
+        banner.start();
     }
 }
