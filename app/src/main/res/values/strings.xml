@@ -60,4 +60,17 @@
     <string name="subscribe">订阅</string>
     <string name="collection">收藏</string>
     <string name="online_server">在线客服</string>
+
+    <string name="hot_search">热搜</string>
+    <string name="history_search">搜索历史</string>
+
+    <string-array name="hot_array">
+        <item>神偷奶爸</item>
+        <item>蜘蛛侠</item>
+        <item>速度与激情</item>
+        <item>变形金刚</item>
+        <item>肖申克的救赎</item>
+        <item>阿甘正传</item>
+        <item>海贼王</item>
+    </string-array>
 </resources>

@@ -30,6 +30,7 @@
             android:theme="@style/AppTheme.NoTitle" />
         <activity android:name=".rank.top.TopMovieActivity" />
         <activity android:name=".web.WebActivity" />
+        <activity android:name=".search.SearchActivity" />
         <activity android:name=".debug.HeaderFooterActivity">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -3,6 +3,7 @@ package cherry.android.douban.network.api;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MovieCelebrity;
 import cherry.android.douban.model.NorthAmericaMovie;
+import cherry.android.douban.model.QueryMovie;
 import cherry.android.douban.model.TheaterMovie;
 import cherry.android.douban.model.NewWeeklyMovie;
 import io.reactivex.Observable;
@@ -82,11 +83,14 @@ public interface MovieApi {
 
     /*******        搜索        ********/
     @GET("/v2/movie/search")
-    Observable<ResponseBody> searchMovie(@Query("q") String query,
-                                         @Query("tag") String tag);
+    Observable<QueryMovie> searchMovie(@Query("q") String query);
 
     @GET("/v2/movie/search")
-    Observable<ResponseBody> searchMovie(@Query("q") String query,
+    Observable<QueryMovie> searchMovie(@Query("q") String query,
+                                       @Query("tag") String tag);
+
+    @GET("/v2/movie/search")
+    Observable<QueryMovie> searchMovie(@Query("q") String query,
                                          @Query("tag") String tag,
                                          @Query("start") int start,
                                          @Query("count") int count);

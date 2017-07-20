@@ -17,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cherry.android.banner.Banner;
 import cherry.android.banner.SimpleBannerAdapter;
 import cherry.android.douban.R;
@@ -25,6 +26,7 @@ import cherry.android.douban.common.Constants;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.GankData;
 import cherry.android.router.annotations.Route;
+import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -73,6 +75,18 @@ public class HomeFragment extends ToolbarFragment implements HomeContract.View {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        banner.getSettings().setAutoPlay(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        banner.getSettings().setAutoPlay(false);
+    }
+
+    @Override
     protected Toolbar getToolbar() {
         return toolbar;
     }
@@ -91,5 +105,10 @@ public class HomeFragment extends ToolbarFragment implements HomeContract.View {
             }
         });
         banner.start();
+    }
+
+    @OnClick(R.id.tv_search)
+    void onClick() {
+        Router.build("movie://activity/search").open();
     }
 }

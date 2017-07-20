@@ -65,4 +65,5 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.6.0'
     apt 'cherry.android:permissions-compiler:1.0.0'
     apt 'cherry.android:router-compiler:1.0.0'
+    compile 'com.google.android:flexbox:0.2.6'
 }
