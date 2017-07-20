@@ -11,6 +11,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cherry.android.douban.R;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.Movie;
@@ -133,5 +134,9 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
                     + "&imageUrl=" + movie.getImages().getLarge();
             Router.build(url).open(getActivity());
         }
+    }
+    @OnClick(R.id.tv_search)
+    void onClick() {
+        Router.build("movie://activity/search").open();
     }
 }

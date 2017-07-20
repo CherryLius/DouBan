@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:id="@+id/search_layout"
+    <android.support.design.widget.AppBarLayout
+        theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        app:elevation="5dp">
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/ic_search_gray_background"
-            android:drawableLeft="@drawable/ic_search_black_24dp"
-            android:drawableRight="@mipmap/ic_delete_input"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:hint="@string/search_hint"
-            android:imeOptions="actionSearch"
-            android:maxLines="1"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:singleLine="true"
-            android:textSize="12sp" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorGrey_200"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title=" ">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/tv_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="取消" />
-    </LinearLayout>
+            <include
+                layout="@layout/layout_search_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center" />
 
-    <include
-        android:id="@+id/layout_history"
-        layout="@layout/layout_search_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.ViewStubCompat
-        android:id="@+id/view_stub"
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout="@layout/layout_recycler" />
+        android:background="@color/colorGrey_200"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-</LinearLayout>
+        <include
+            android:id="@+id/layout_search_history"
+            layout="@layout/layout_search_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.ViewStubCompat
+            android:id="@+id/view_stub"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/layout_recycler" />
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cherry.android.douban.R;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.mine.holder.HeaderHolder;
@@ -20,6 +21,7 @@ import cherry.android.douban.mine.holder.SimpleItemHolder;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.widget.CustomGridItem;
 import cherry.android.douban.widget.CustomGridLayout;
+import cherry.android.router.api.Router;
 
 public class MineFragment extends ToolbarFragment {
 
@@ -147,5 +149,14 @@ public class MineFragment extends ToolbarFragment {
         otherLayout.addItem(item);
         item = new CustomGridItem(getContext(), getString(R.string.online_server), R.mipmap.ic_subnav_service_icon);
         otherLayout.addItem(item);
+    }
+
+    @OnClick({R.id.iv_search})
+    void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_search:
+                Router.build("movie://activity/search").open();
+                break;
+        }
     }
 }
