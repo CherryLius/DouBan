@@ -42,7 +42,7 @@ public class MovieDetailPresenter extends RxPresenterImpl<MovieDetailContract.Vi
     public void loadMovieDetail(String id) {
         if (TextUtils.isEmpty(id))
             return;
-        Network.get().getMovieApi().movieInfo(id, "07c78782db00a121175696889101e363")
+        Network.get().getMovieApi().movieInfo(id/*, "07c78782db00a121175696889101e363"*/)
                 .compose(RxHelper.<Movie>mainIO())
                 .compose(mRxLifecycle.<Movie>bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new Observer<Movie>() {

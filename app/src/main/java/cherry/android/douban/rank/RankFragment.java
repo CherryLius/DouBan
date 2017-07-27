@@ -20,6 +20,8 @@ import cherry.android.douban.rank.delegate.NorthHeaderDelegate;
 import cherry.android.douban.rank.delegate.NorthRankDelegate;
 import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.douban.rank.delegate.SectionDelegate;
+import cherry.android.douban.route.MovieRouter;
+import cherry.android.douban.route.RouteService;
 import cherry.android.douban.widget.JDRefreshHeader;
 import cherry.android.ptr.NestedPullRefreshLayout;
 import cherry.android.ptr.OnRefreshListener;
@@ -117,7 +119,10 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         Object item = movies.get(position);
         if (item instanceof String
                 && item.toString().contains("250")) {
-            Router.build("movie://activity/movie/top").open(getActivity());
+//            Router.build("movie://activity/movie/top").open(getActivity());
+            MovieRouter.get()
+                    .getRouteService()
+                    .startTopMovieActivity(getActivity());
             return;
         }
         Movie movie = null;
@@ -129,14 +134,22 @@ public class RankFragment extends ToolbarFragment implements RankContract.View, 
         }
         if (movie != null) {
             if (movie == null) return;
-            String url = "movie://activity/movie/detail?id=" + movie.getId()
-                    + "&name=" + movie.getTitle()
-                    + "&imageUrl=" + movie.getImages().getLarge();
-            Router.build(url).open(getActivity());
+//            String url = "movie://activity/movie/detail?id=" + movie.getId()
+//                    + "&name=" + movie.getTitle()
+//                    + "&imageUrl=" + movie.getImages().getLarge();
+//            Router.build(url).open(getActivity());
+            MovieRouter.get()
+                    .getRouteService()
+                    .startMovieDetailActivity(getActivity(),
+                            movie.getId(),
+                            movie.getTitle(),
+                            movie.getImages().getLarge());
         }
     }
+
     @OnClick(R.id.tv_search)
     void onClick() {
-        Router.build("movie://activity/search").open();
+//        Router.build("movie://activity/search").open();
+        MovieRouter.get().getRouteService().startSearchActivity();
     }
 }

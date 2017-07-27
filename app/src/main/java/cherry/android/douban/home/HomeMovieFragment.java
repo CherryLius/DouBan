@@ -18,10 +18,12 @@ import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.common.Constants;
 import cherry.android.douban.common.ui.LazyFragment;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.api.Router;
+import cherry.android.router.api.utils.Logger;
 import cherry.android.toast.Toaster;
 
 /**
@@ -141,10 +143,15 @@ public class HomeMovieFragment extends LazyFragment implements HomeMovieContract
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         List<Movie> movies = mMovieAdapter.getCurrentMovies();
         Movie movie = movies.get(position);
-        String url = "movie://activity/movie/detail?id=" + movie.getId()
-                + "&name=" + movie.getTitle()
-                + "&imageUrl=" + movie.getImages().getLarge();
-        Router.build(url).open(getActivity());
+//        String url = "movie://activity/movie/detail?id=" + movie.getId()
+//                + "&name=" + movie.getTitle()
+//                + "&imageUrl=" + movie.getImages().getLarge();
+//        Router.build(url).open(getActivity());
+        Logger.e("Test", "title=" + movie.getTitle()
+                + ",id=" + movie.getId());
+        MovieRouter.get()
+                .getRouteService()
+                .startMovieDetailActivity(movie.getId(), movie.getTitle(), movie.getImages().getLarge());
     }
 
     @Override

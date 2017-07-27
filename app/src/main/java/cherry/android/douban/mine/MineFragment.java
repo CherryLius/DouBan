@@ -18,6 +18,7 @@ import cherry.android.douban.R;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.mine.holder.HeaderHolder;
 import cherry.android.douban.mine.holder.SimpleItemHolder;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.widget.CustomGridItem;
 import cherry.android.douban.widget.CustomGridLayout;
@@ -155,7 +156,8 @@ public class MineFragment extends ToolbarFragment {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_search:
-                Router.build("movie://activity/search").open();
+//                Router.build("movie://activity/search").open();
+                MovieRouter.get().getRouteService().startSearchActivity();
                 break;
         }
     }

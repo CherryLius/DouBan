@@ -28,6 +28,7 @@ import cherry.android.douban.adapter.QueryAdapter;
 import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.util.Utils;
 import cherry.android.douban.widget.ClearTextView;
 import cherry.android.recycler.DividerItemDecoration;
@@ -39,7 +40,7 @@ import cherry.android.router.api.Router;
 /**
  * Created by ROOT on 2017/7/20.
  */
-@Route("movie://activity/search")
+@Route("/activity/search")
 public class SearchActivity extends BaseActivity implements SearchContract.View, RecyclerAdapter.OnItemClickListener {
 
     @BindView(R.id.et_search)
@@ -180,10 +181,16 @@ public class SearchActivity extends BaseActivity implements SearchContract.View,
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
         List<Movie> movies = mAdapter.getCurrentItems();
         Movie movie = movies.get(position);
-        String url = "movie://activity/movie/detail?id=" + movie.getId()
-                + "&name=" + movie.getTitle()
-                + "&imageUrl=" + movie.getImages().getLarge();
-        Router.build(url).open(this);
+//        String url = "movie://activity/movie/detail?id=" + movie.getId()
+//                + "&name=" + movie.getTitle()
+//                + "&imageUrl=" + movie.getImages().getLarge();
+//        Router.build(url).open(this);
+        MovieRouter.get()
+                .getRouteService()
+                .startMovieDetailActivity(this,
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getImages().getLarge());
     }
 
     @OnClick(R.id.tv_cancel)

@@ -13,6 +13,7 @@ import java.util.List;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.MoviePersonAdapter;
 import cherry.android.douban.model.MoviePerson;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.ItemViewDelegate;
@@ -63,8 +64,13 @@ public class MoviePersonDelegate implements ItemViewDelegate<String, ViewHolder>
             return;
         }
         String imageUrl = moviePerson.getAvatars() != null ? moviePerson.getAvatars().getLarge() : "";
-        String query = "id=" + moviePerson.getId() + "&name=" + moviePerson.getName()
-                + "&imageUrl=" + imageUrl;
-        Router.build("movie://activity/celebrity/detail?" + query).open(itemView.getContext());
+//        String query = "id=" + moviePerson.getId() + "&name=" + moviePerson.getName()
+//                + "&imageUrl=" + imageUrl;
+//        Router.build("movie://activity/celebrity/detail?" + query).open(itemView.getContext());
+        MovieRouter.get().getRouteService()
+                .startCelebrityActivity(itemView.getContext(),
+                        moviePerson.getId(),
+                        moviePerson.getName(),
+                        imageUrl);
     }
 }

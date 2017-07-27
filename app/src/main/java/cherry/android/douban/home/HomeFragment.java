@@ -25,13 +25,14 @@ import cherry.android.douban.adapter.HomePageAdapter;
 import cherry.android.douban.common.Constants;
 import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.GankData;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/2.
  */
-@Route("movie://fragment/home")
+@Route("/fragment/home")
 public class HomeFragment extends ToolbarFragment implements HomeContract.View {
 
     @BindView(R.id.banner)
@@ -109,6 +110,7 @@ public class HomeFragment extends ToolbarFragment implements HomeContract.View {
 
     @OnClick(R.id.tv_search)
     void onClick() {
-        Router.build("movie://activity/search").open();
+//        Router.build("movie://activity/search").open();
+        MovieRouter.get().getRouteService().startSearchActivity();
     }
 }

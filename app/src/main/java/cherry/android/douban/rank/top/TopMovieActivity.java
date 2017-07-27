@@ -15,6 +15,7 @@ import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.rank.delegate.RankDelegate;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.annotations.Route;
@@ -23,7 +24,7 @@ import cherry.android.router.api.Router;
 /**
  * Created by LHEE on 2017/6/19.
  */
-@Route("movie://activity/movie/top")
+@Route("/activity/movie/top")
 public class TopMovieActivity extends BaseActivity implements TopContract.View, RecyclerAdapter.OnItemClickListener {
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
@@ -111,9 +112,15 @@ public class TopMovieActivity extends BaseActivity implements TopContract.View, 
         List<Movie> movies = mPresenter.getCurrentMovies();
         Movie movie = movies.get(position);
         if (movie == null) return;
-        String url = "movie://activity/movie/detail?id=" + movie.getId()
-                + "&name=" + movie.getTitle()
-                + "&imageUrl=" + movie.getImages().getLarge();
-        Router.build(url).open(this);
+//        String url = "movie://activity/movie/detail?id=" + movie.getId()
+//                + "&name=" + movie.getTitle()
+//                + "&imageUrl=" + movie.getImages().getLarge();
+//        Router.build(url).open(this);
+        MovieRouter.get()
+                .getRouteService()
+                .startMovieDetailActivity(this,
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getImages().getLarge());
     }
 }

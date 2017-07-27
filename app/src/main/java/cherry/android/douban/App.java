@@ -4,9 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import cherry.android.douban.util.Logger;
-import cherry.android.router.api.RouteMeta;
 import cherry.android.router.api.Router;
 import cherry.android.router.api.intercept.IInterceptor;
+import cherry.android.router.api.request.Request;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -21,13 +21,13 @@ public class App extends Application {
         super.onCreate();
         sContext = this;
         Router.openDebug();
-        Router.openLog(true, false);
+        Router.openLog(true, true);
         Router.init(this);
         Router.addGlobalInterceptor(new IInterceptor() {
             @Override
-            public boolean intercept(RouteMeta routeMeta) {
-                Logger.i(TAG, "[GlobalIntercept] url=" + routeMeta.getUri()
-                        + ",class=" + routeMeta.getDestination());
+            public boolean intercept(Request request) {
+                Logger.i(TAG, "[GlobalIntercept] url=" + request.getUri()
+                        + ",class=" + request.getDestination());
                 return false;
             }
         });

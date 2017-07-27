@@ -21,7 +21,7 @@ import cherry.android.douban.rank.RankFragment;
 import cherry.android.router.annotations.Route;
 import cherry.android.toast.Toaster;
 
-@Route("movie://activity/main")
+@Route("/activity/main")
 public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.navigation)

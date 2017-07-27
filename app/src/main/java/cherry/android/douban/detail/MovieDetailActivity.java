@@ -34,14 +34,14 @@ import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewChooser;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
+import cherry.android.router.annotations.Extra;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
 
 /**
  * Created by LHEE on 2017/6/4.
  */
-@Route("movie://activity/movie/detail")
+@Route("/activity/movie/detail")
 public class MovieDetailActivity extends BaseActivity implements MovieDetailContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -50,11 +50,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    @RouteField(name = "id")
+    @Extra(name = "id")
     String mMovieId;
-    @RouteField(name = "name", nonNull = true)
+    @Extra(name = "name", nonNull = true)
     String mMovieName;
-    @RouteField(name = "imageUrl", nonNull = true)
+    @Extra(name = "imageUrl", nonNull = true)
     String mImageUrl;
     int mToolbarBackground = 0;
 

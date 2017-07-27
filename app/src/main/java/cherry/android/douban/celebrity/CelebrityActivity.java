@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,22 +26,21 @@ import cherry.android.douban.celebrity.header.CelebrityHeader;
 import cherry.android.douban.celebrity.header.CelebritySummaryHeader;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.model.MovieCelebrity;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.util.CompatUtils;
-import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.PaletteHelper;
-import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
+import cherry.android.router.annotations.Extra;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.annotations.RouteField;
 import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/7.
  */
-@Route("movie://activity/celebrity/detail")
+@Route("/activity/celebrity/detail")
 public class CelebrityActivity extends BaseActivity implements CelebrityContract.View, RecyclerAdapter.OnItemClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -51,11 +49,11 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    @RouteField(name = "id", nonNull = true)
+    @Extra(name = "id", nonNull = true)
     String mCelebrityId;
-    @RouteField(name = "name")
+    @Extra(name = "name")
     String mCelebrityName;
-    @RouteField(name = "imageUrl", nonNull = true)
+    @Extra(name = "imageUrl", nonNull = true)
     String mImageUrl;
     private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;
@@ -198,10 +196,13 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
         if (object instanceof MovieCelebrity.Works) {
             MovieCelebrity.Works work = (MovieCelebrity.Works) object;
             final Movie movie = work.getSubject();
-            String url = "movie://activity/movie/detail?id=" + movie.getId()
-                    + "&name=" + movie.getTitle()
-                    + "&imageUrl=" + movie.getImages().getLarge();
-            Router.build(url).open(this);
+//            String url = "movie://activity/movie/detail?id=" + movie.getId()
+//                    + "&name=" + movie.getTitle()
+//                    + "&imageUrl=" + movie.getImages().getLarge();
+//            Router.build(url).open(this);
+            MovieRouter.get()
+                    .getRouteService()
+                    .startMovieDetailActivity(this, movie.getId(), movie.getTitle(), movie.getImages().getLarge());
         }
     }
 

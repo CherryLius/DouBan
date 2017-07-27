@@ -8,6 +8,7 @@ import android.view.View;
 
 import cherry.android.douban.R;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.sticker.IStickyHeader;
 import cherry.android.douban.util.Utils;
 import cherry.android.router.api.Router;
@@ -56,6 +57,7 @@ public class TicketBuySticky implements IStickyHeader, View.OnClickListener {
     public void onClick(View v) {
         if (mMovie == null)
             return;
-        Router.build("movie://activity/web?ticket_url=" + mMovie.getScheduleUrl()).open();
+//        Router.build("movie://activity/web?ticket_url=" + mMovie.getScheduleUrl()).open();
+        MovieRouter.get().getRouteService().startWebActivity(mMovie.getScheduleUrl());
     }
 }

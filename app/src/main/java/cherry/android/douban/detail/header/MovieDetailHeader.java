@@ -15,6 +15,7 @@ import butterknife.OnClick;
 import cherry.android.douban.R;
 import cherry.android.douban.base.AbstractHeader;
 import cherry.android.douban.model.Movie;
+import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.util.Utils;
 import cherry.android.router.api.Router;
 
@@ -101,10 +102,16 @@ public class MovieDetailHeader extends AbstractHeader<Movie> {
             return;
         switch (view.getId()) {
             case R.id.layout_ticket_buy:
-                Router.build("movie://activity/web?ticket_url=" + movie.getScheduleUrl()).open(mContext);
+//                Router.build("movie://activity/web?ticket_url=" + movie.getScheduleUrl()).open(mContext);
+                MovieRouter.get()
+                        .getRouteService()
+                        .startWebActivity(mContext, movie.getScheduleUrl());
                 break;
             case R.id.iv_image:
-                Router.build("movie://activity/web?ticket_url=" + movie.getMobileUrl()).open(mContext);
+//                Router.build("movie://activity/web?ticket_url=" + movie.getMobileUrl()).open(mContext);
+                MovieRouter.get()
+                        .getRouteService()
+                        .startWebActivity(movie.getMobileUrl());
                 break;
         }
     }
