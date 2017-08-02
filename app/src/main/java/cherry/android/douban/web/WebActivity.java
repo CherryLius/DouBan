@@ -45,7 +45,7 @@ public class WebActivity extends BaseActivity {
     @Override
     protected void onViewInflated() {
         ButterKnife.bind(this);
-        Router.bind(this);
+        Router.inject(this);
         initView();
     }
 

@@ -105,7 +105,7 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @Override
     protected void onViewInflated() {
         ButterKnife.bind(this);
-        Router.bind(this);
+        Router.inject(this);
         initToolbar();
         initView();
         initToolbarBackground();

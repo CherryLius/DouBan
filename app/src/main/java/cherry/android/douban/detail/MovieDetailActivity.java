@@ -124,7 +124,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @Override
     protected void onViewInflated() {
         ButterKnife.bind(this);
-        Router.bind(this);
+        Router.inject(this);
         initToolbar();
         initView();
         initToolbarBackground();
