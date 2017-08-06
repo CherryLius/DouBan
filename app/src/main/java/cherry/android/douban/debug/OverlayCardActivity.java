@@ -39,10 +39,10 @@ public class OverlayCardActivity extends AppCompatActivity {
                 textView.setText("" + integer);
             }
 
-            @Override
-            protected ViewHolder createDefaultViewHolder(View itemView) {
-                return new ViewHolder(itemView);
-            }
+//            @Override
+//            protected ViewHolder createDefaultViewHolder(View itemView) {
+//                return new ViewHolder(itemView);
+//            }
         });
         mAdapter.notifyDataSetChanged();
     }

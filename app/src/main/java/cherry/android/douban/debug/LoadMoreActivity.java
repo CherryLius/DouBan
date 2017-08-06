@@ -44,10 +44,10 @@ public class LoadMoreActivity extends AppCompatActivity {
                 textView.setText("" + integer);
             }
 
-            @Override
-            protected ViewHolder createDefaultViewHolder(View itemView) {
-                return new ViewHolder(itemView);
-            }
+//            @Override
+//            protected ViewHolder createDefaultViewHolder(View itemView) {
+//                return new ViewHolder(itemView);
+//            }
         };
         loadMoreWrapper = new LoadMoreWrapper(adapter, R.layout.layout_load_more);
         loadMoreWrapper.setState(LoadMoreWrapper.STATE_LOADING_MORE);

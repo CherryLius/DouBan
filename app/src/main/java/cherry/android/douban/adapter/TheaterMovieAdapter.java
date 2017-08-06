@@ -68,10 +68,10 @@ public class TheaterMovieAdapter extends CommonAdapter<Movie, TheaterMovieAdapte
         holder.watchingView.setText(mContext.getString(resId, movie.getCollectCount()));
     }
 
-    @Override
-    protected TheaterHolder createDefaultViewHolder(View itemView) {
-        return new TheaterHolder(itemView);
-    }
+//    @Override
+//    protected TheaterHolder createDefaultViewHolder(View itemView) {
+//        return new TheaterHolder(itemView);
+//    }
 
     private String list2String(List<MoviePerson> persons) {
         return Utils.list2String(persons, new Utils.IPicker<MoviePerson>() {

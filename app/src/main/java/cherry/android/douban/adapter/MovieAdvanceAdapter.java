@@ -33,10 +33,10 @@ public class MovieAdvanceAdapter extends CommonAdapter<MovieAvatars, MovieAdvanc
                 .into(holder.imageView);
     }
 
-    @Override
-    protected AdvanceHolder createDefaultViewHolder(View itemView) {
-        return new AdvanceHolder(itemView);
-    }
+//    @Override
+//    protected AdvanceHolder createDefaultViewHolder(View itemView) {
+//        return new AdvanceHolder(itemView);
+//    }
 
     static class AdvanceHolder extends RecyclerView.ViewHolder {
         ImageView imageView;

@@ -53,6 +53,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (mItems == null) return;
         int viewType = holder.getItemViewType();
         ItemViewDelegate delegate = mDelegateManager.getItemViewDelegate(viewType);
+        holder.itemView.setTag(R.id.item_position, position);
         delegate.convert(holder, mItems.get(position), position);
     }
 
@@ -75,7 +76,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    int position = holder.getAdapterPosition();
+//                    int position = holder.getAdapterPosition();
+                    int position = (int) itemView.getTag(R.id.item_position);
                     mItemClickListener.onItemClick(itemView, holder, position);
                 }
             }
@@ -84,7 +86,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public boolean onLongClick(View v) {
                 if (mItemLongClickListener != null) {
-                    int position = holder.getAdapterPosition();
+//                    int position = holder.getAdapterPosition();
+                    int position = (int) itemView.getTag(R.id.item_position);
                     return mItemLongClickListener.onItemLongClick(itemView, holder, position);
                 }
                 return false;
@@ -122,4 +125,36 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public interface OnItemLongClickListener {
         boolean onItemLongClick(View itemView, RecyclerView.ViewHolder holder, int position);
     }
+
+//    private static final ArrayMap<ItemViewDelegate, Constructor> CONSTRUCTORS = new ArrayMap<>();
+//    private RecyclerView.ViewHolder createViewHolder(ItemViewDelegate delegate, View itemView) {
+//        Constructor constructor = CONSTRUCTORS.get(delegate);
+//        if (constructor == null) {
+//            constructor = getHolderConstructor(delegate);
+//            CONSTRUCTORS.put(delegate, constructor);
+//        }
+//        try {
+//            return (RecyclerView.ViewHolder) constructor.newInstance(itemView);
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
+//        throw new IllegalArgumentException("cant create instance for class: " + delegate);
+//    }
+//
+//    private static <VH> Constructor<VH> getHolderConstructor(ItemViewDelegate delegate) {
+//        Type type = delegate.getClass().getGenericSuperclass();
+//        Type[] params = ((ParameterizedType)type).getActualTypeArguments();
+//        Class<VH> clazz = (Class<VH>) params[1];
+//        try {
+//            Constructor constructor = clazz.getConstructor(View.class);
+//            return constructor;
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//            throw new IllegalArgumentException("can't get construct with View.class for class: " + clazz);
+//        }
+//    }
 }

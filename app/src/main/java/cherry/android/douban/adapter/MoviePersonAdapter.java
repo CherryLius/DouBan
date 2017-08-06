@@ -40,10 +40,10 @@ public class MoviePersonAdapter extends CommonAdapter<MoviePerson, MoviePersonAd
         holder.castView.setText(moviePerson.getId());
     }
 
-    @Override
-    protected MoviePersonHolder createDefaultViewHolder(View itemView) {
-        return new MoviePersonHolder(itemView);
-    }
+//    @Override
+//    protected MoviePersonHolder createDefaultViewHolder(View itemView) {
+//        return new MoviePersonHolder(itemView);
+//    }
 
     static class MoviePersonHolder extends RecyclerView.ViewHolder {
 

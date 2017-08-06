@@ -59,10 +59,10 @@ public class QueryAdapter extends CommonAdapter<Movie, QueryAdapter.QueryHolder>
         holder.detailView.setText(builder.toString());
     }
 
-    @Override
-    protected QueryHolder createDefaultViewHolder(View itemView) {
-        return new QueryHolder(itemView);
-    }
+//    @Override
+//    protected QueryHolder createDefaultViewHolder(View itemView) {
+//        return new QueryHolder(itemView);
+//    }
 
     private String list2String(List<MoviePerson> persons) {
         return Utils.list2String(persons, new Utils.IPicker<MoviePerson>() {

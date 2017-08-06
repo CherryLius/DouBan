@@ -190,9 +190,8 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
 
     @Override
     public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
-        int realPosition = position - mHeaderAndFooterWrapper.getHeaderCount();
         List<Object> list = mPresenter.getCurrentData();
-        Object object = list.get(realPosition);
+        Object object = list.get(position);
         if (object instanceof MovieCelebrity.Works) {
             MovieCelebrity.Works work = (MovieCelebrity.Works) object;
             final Movie movie = work.getSubject();

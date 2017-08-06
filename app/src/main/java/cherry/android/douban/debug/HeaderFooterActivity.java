@@ -71,7 +71,6 @@ public class HeaderFooterActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, RecyclerView.ViewHolder holder, int position) {
-                position -= mWrapper.getHeaderCount();
                 if (position % 5 == 0) {
                     Toaster.iError(HeaderFooterActivity.this, "Header Footer Activity " + position).show();
                     startActivity(new Intent(HeaderFooterActivity.this, NestedScrollingActivity.class));
@@ -123,10 +122,10 @@ public class HeaderFooterActivity extends AppCompatActivity {
             textView.setText(s);
         }
 
-        @Override
-        protected ViewHolder createDefaultViewHolder(View itemView) {
-            return new ViewHolder(itemView);
-        }
+//        @Override
+//        protected ViewHolder createDefaultViewHolder(View itemView) {
+//            return new ViewHolder(itemView);
+//        }
     }
 
     static class SimpleDelegate implements ItemViewDelegate<String, ViewHolder> {
