@@ -7,6 +7,7 @@ import cherry.android.douban.util.Logger;
 import cherry.android.router.api.Router;
 import cherry.android.router.api.intercept.IInterceptor;
 import cherry.android.router.api.request.Request;
+import cherry.android.router.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -23,6 +24,7 @@ public class App extends Application {
         Router.openDebug();
         Router.openLog(true, true);
         Router.init(this);
+        Router.addConverterFactory(GsonConverterFactory.create());
         Router.addGlobalInterceptor(new IInterceptor() {
             @Override
             public boolean intercept(Request request) {

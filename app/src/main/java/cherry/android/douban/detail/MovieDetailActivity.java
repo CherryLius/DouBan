@@ -34,7 +34,7 @@ import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewChooser;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
-import cherry.android.router.annotations.Extra;
+import cherry.android.router.annotations.Args;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.api.Router;
 
@@ -50,11 +50,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    @Extra(name = "id")
+    @Args(name = "id")
     String mMovieId;
-    @Extra(name = "name", nonNull = true)
+    @Args(name = "name", nonNull = true)
     String mMovieName;
-    @Extra(name = "imageUrl", nonNull = true)
+    @Args(name = "imageUrl", nonNull = true)
     String mImageUrl;
     int mToolbarBackground = 0;
 

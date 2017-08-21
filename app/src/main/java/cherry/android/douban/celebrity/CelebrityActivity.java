@@ -33,7 +33,7 @@ import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
-import cherry.android.router.annotations.Extra;
+import cherry.android.router.annotations.Args;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.api.Router;
 
@@ -49,11 +49,11 @@ public class CelebrityActivity extends BaseActivity implements CelebrityContract
     @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
-    @Extra(name = "id", nonNull = true)
+    @Args(name = "id", nonNull = true)
     String mCelebrityId;
-    @Extra(name = "name")
+    @Args(name = "name")
     String mCelebrityName;
-    @Extra(name = "imageUrl", nonNull = true)
+    @Args(name = "imageUrl", nonNull = true)
     String mImageUrl;
     private float mDistance;
     private HeaderAndFooterWrapper mHeaderAndFooterWrapper;

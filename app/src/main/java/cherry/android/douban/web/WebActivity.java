@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.douban.base.BaseActivity;
-import cherry.android.router.annotations.Extra;
+import cherry.android.router.annotations.Args;
 import cherry.android.router.annotations.Route;
 import cherry.android.router.api.Router;
 
@@ -28,7 +28,7 @@ import cherry.android.router.api.Router;
 
 @Route("/activity/web")
 public class WebActivity extends BaseActivity {
-    @Extra(name = "ticket_url")
+    @Args(name = "ticket_url")
     String ticketUrl;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout refreshLayout;
