@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -20,7 +18,6 @@ public abstract class BaseItemViewDelegate<T, VH extends RecyclerView.ViewHolder
 
     @LayoutRes
     private final int mLayoutId;
-    private Constructor<VH> mConstructor;
 
     public BaseItemViewDelegate(@LayoutRes int layoutId) {
         this.mLayoutId = layoutId;
@@ -32,31 +29,24 @@ public abstract class BaseItemViewDelegate<T, VH extends RecyclerView.ViewHolder
         return createViewHolder(itemView);
     }
 
+    private Class<VH> mHolderClass;
+
     private VH createViewHolder(View itemView) {
-        if (mConstructor == null) {
-            Type type = getClass().getGenericSuperclass();
-            Type[] params = ((ParameterizedType) type).getActualTypeArguments();
-            @SuppressWarnings("unchecked") Class<VH> clazz = (Class<VH>) params[1];
-            mConstructor = getHolderConstructor(clazz);
+        if (mHolderClass == null) {
+            mHolderClass = findHolderClass(getClass());
         }
-        try {
-            return mConstructor.newInstance(itemView);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException("cannot create holder instance by view");
+        return ViewHolderHelper.createViewHolder(mHolderClass, itemView);
     }
 
-    private static <VH> Constructor<VH> getHolderConstructor(Class<VH> clazz) {
-        try {
-            return clazz.getConstructor(View.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+    private static <H> Class<H> findHolderClass(Class clazz) {
+        Type type = clazz.getGenericSuperclass();
+        Type[] params = ((ParameterizedType) type).getActualTypeArguments();
+        if (params.length < 2) {
+            if (!ItemViewDelegate.class.isAssignableFrom(clazz)) {
+                throw new IllegalArgumentException("cannot find Holder CLASS");
+            }
+            return findHolderClass(clazz.getSuperclass());
         }
-        throw new IllegalArgumentException("cannot find constructor with parameter View.class: " + clazz);
+        return (Class<H>) params[1];
     }
 }

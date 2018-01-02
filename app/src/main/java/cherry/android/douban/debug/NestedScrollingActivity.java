@@ -20,7 +20,7 @@ import cherry.android.ptr.NestedPullRefreshLayout;
 import cherry.android.ptr.OnRefreshListener;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
-import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.ViewConverter;
 import cherry.android.recycler.ViewHolder;
 
 public class NestedScrollingActivity extends AppCompatActivity implements View.OnClickListener {
@@ -51,9 +51,9 @@ public class NestedScrollingActivity extends AppCompatActivity implements View.O
         adapter = new RecyclerAdapter();
         adapter.addDelegate(String.class)
                 .bindDelegate(new DefaultItemViewDelegate(), new DefaultItemViewDelegate1())
-                .to(new ViewChooser() {
+                .to(new ViewConverter<String>() {
                     @Override
-                    public Class<? extends ItemViewDelegate> choose(Object o, int position) {
+                    public Class<? extends ItemViewDelegate> convert(String s, int position) {
                         return position % 2 == 0 ? DefaultItemViewDelegate.class : DefaultItemViewDelegate1.class;
                     }
                 });

@@ -32,7 +32,7 @@ import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.util.PaletteHelper;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.ItemViewDelegate;
-import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.ViewConverter;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.router.annotations.Args;
 import cherry.android.router.annotations.Route;
@@ -95,9 +95,9 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
                 .bindDelegate(mMoviePersonDelegate = new MoviePersonDelegate(),
                         mMovieAdvanceDelegate = new MovieAdvanceDelegate(),
                         new SimpleDelegate())
-                .to(new ViewChooser<String>() {
+                .to(new ViewConverter<String>() {
                     @Override
-                    public Class<? extends ItemViewDelegate<String, ? extends RecyclerView.ViewHolder>> choose(String s, int position) {
+                    public Class<? extends ItemViewDelegate> convert(String s, int position) {
                         if (position == 0) return MoviePersonDelegate.class;
                         if (position == 1) return MovieAdvanceDelegate.class;
                         return SimpleDelegate.class;

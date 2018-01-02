@@ -67,11 +67,6 @@ public abstract class BaseActivity extends AppCompatActivity implements IRxLifec
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public <T> ObservableTransformer<T, T> bindUntilEvent(@NonNull ActivityEvent event) {
         return bindUntilEvent(lifecycleSubject, event);
     }

@@ -87,11 +87,6 @@ public abstract class BaseFragment extends Fragment implements IRxLifecycleBindi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public <T> ObservableTransformer<T, T> bindUntilEvent(@NonNull FragmentEvent event) {
         return bindUntilEvent(lifecycleSubject, event);
     }

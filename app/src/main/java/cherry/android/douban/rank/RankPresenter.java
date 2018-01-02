@@ -76,27 +76,6 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
 
     private Observable<List<Object>> zipObservable() {
         MovieApi api = Network.get().getMovieApi();
-//        Observable<List<RankMovies>> observable = Observable.zip(api.top250(0, 5),
-//                api.northAmericaMovie(),
-//                api.weekly(),
-//                api.newMovies(),
-//                new Function4<TheaterMovie, NorthAmericaMovie, NewWeeklyMovie, NewWeeklyMovie, List<RankMovies>>() {
-//                    @Override
-//                    public List<RankMovies> apply(@io.reactivex.annotations.NonNull TheaterMovie theaterMovie,
-//                                                  @io.reactivex.annotations.NonNull NorthAmericaMovie northAmericaMovie,
-//                                                  @io.reactivex.annotations.NonNull NewWeeklyMovie newWeeklyMovie,
-//                                                  @io.reactivex.annotations.NonNull NewWeeklyMovie newWeeklyMovie2) throws Exception {
-//                        List<RankMovies> list = new ArrayList<>();
-//                        List<Object> list = new ArrayList<>();
-//        list.add(new RankMovies("Top250", RankMovies.TYPE_TITLE));
-//        list.addAll(movieToRankMovie(theaterMovie.getMovies(), RankMovies.TYPE_TOP_250));
-//        list.add(new RankMovies("北美票房榜", RankMovies.TYPE_TITLE));
-//        for (NorthAmericaMovie.Subjects box : northAmericaMovie.getSubjects()) {
-//            list.add(new RankMovies(box.getMovie(), RankMovies.TYPE_NORTH_AMERICA));
-//        }
-//                        return list;
-//                    }
-//                });
         Observable<List<Object>> observable = Observable.zip(api.top250(0, 6),
                 api.northAmericaMovie(), new BiFunction<TheaterMovie, NorthAmericaMovie, List<Object>>() {
                     @Override
@@ -113,12 +92,4 @@ public class RankPresenter extends RxPresenterImpl<RankContract.View,
                 });
         return observable;
     }
-
-//    private static List<RankMovies> movieToRankMovie(List<Movie> movies, int type) {
-//        List<RankMovies> list = new ArrayList<>(movies.size());
-//        for (int i = 0; i < movies.size(); i++) {
-//            list.add(new RankMovies(movies.get(i), type));
-//        }
-//        return list;
-//    }
 }

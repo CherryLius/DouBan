@@ -20,7 +20,7 @@ import cherry.android.douban.R;
 import cherry.android.recycler.CommonAdapter;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.RecyclerAdapter;
-import cherry.android.recycler.ViewChooser;
+import cherry.android.recycler.ViewConverter;
 import cherry.android.recycler.ViewHolder;
 import cherry.android.recycler.wrapper.HeaderAndFooterWrapper;
 import cherry.android.toast.Toaster;
@@ -62,9 +62,10 @@ public class HeaderFooterActivity extends AppCompatActivity {
 //        Adapter adapter = new Adapter(list);
         RecyclerAdapter adapter = new RecyclerAdapter(list);
         adapter.addDelegate(String.class).bindDelegate(new RecyclerDelegate(), new SimpleDelegate())
-                .to(new ViewChooser() {
+                .to(new ViewConverter<String>() {
+
                     @Override
-                    public Class<? extends ItemViewDelegate> choose(Object o, int position) {
+                    public Class<? extends ItemViewDelegate> convert(String s, int position) {
                         return position == 5 ? RecyclerDelegate.class : SimpleDelegate.class;
                     }
                 });
