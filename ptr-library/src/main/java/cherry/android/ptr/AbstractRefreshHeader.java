@@ -6,14 +6,15 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import static cherry.android.ptr.Common.STATE_COMPLETE;
-import static cherry.android.ptr.Common.STATE_IDLE;
-import static cherry.android.ptr.Common.STATE_PULL_TO_REFRESH;
-import static cherry.android.ptr.Common.STATE_REFRESHING;
-import static cherry.android.ptr.Common.STATE_RELEASE_TO_REFRESH;
+import static cherry.android.ptr.State.STATE_COMPLETE;
+import static cherry.android.ptr.State.STATE_IDLE;
+import static cherry.android.ptr.State.STATE_PULL_TO_REFRESH;
+import static cherry.android.ptr.State.STATE_REFRESHING;
+import static cherry.android.ptr.State.STATE_RELEASE_TO_REFRESH;
 
 /**
- * Created by Administrator on 2017/6/23.
+ * @author Administrator
+ * @date 2017/6/23
  */
 
 public abstract class AbstractRefreshHeader implements IRefreshHeader, OnStateChangedListener {
@@ -33,12 +34,17 @@ public abstract class AbstractRefreshHeader implements IRefreshHeader, OnStateCh
     }
 
     @Override
+    public OnStateChangedListener getStateChangedListener() {
+        return this;
+    }
+
+    @Override
     public int getRefreshThreshold() {
         return mHeaderView.getMeasuredHeight();
     }
 
     @Override
-    public void onStateChanged(@Common.State int state) {
+    public void onStateChanged(@State int state) {
         switch (state) {
             case STATE_IDLE:
                 onIdle();
@@ -58,13 +64,28 @@ public abstract class AbstractRefreshHeader implements IRefreshHeader, OnStateCh
         }
     }
 
+    /**
+     * 初始状态
+     */
     public abstract void onIdle();
 
+    /**
+     * 下拉刷新
+     */
     protected abstract void onPullToRefresh();
 
+    /**
+     * 释放刷新
+     */
     protected abstract void onReleaseToRefresh();
 
+    /**
+     * 刷新中
+     */
     protected abstract void onRefreshing();
 
+    /**
+     * 刷新完成
+     */
     protected abstract void onComplete();
 }

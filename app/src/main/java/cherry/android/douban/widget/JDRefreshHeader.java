@@ -15,18 +15,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cherry.android.douban.R;
 import cherry.android.ptr.AbstractRefreshHeader;
-import cherry.android.ptr.Common;
 import cherry.android.ptr.OnStateChangedListener;
+import cherry.android.ptr.State;
 
-import static cherry.android.ptr.Common.STATE_COMPLETE;
-import static cherry.android.ptr.Common.STATE_REFRESHING;
+import static cherry.android.ptr.State.STATE_COMPLETE;
+import static cherry.android.ptr.State.STATE_REFRESHING;
 
 /**
- * Created by Administrator on 2017/6/23.
+ * @author Administrator
+ * @date 2017/6/23
  */
 
 public class JDRefreshHeader extends AbstractRefreshHeader {
-
 
     private SimpleDateFormat mDateFormat;
     private JDHolder mHolder;
@@ -48,12 +48,7 @@ public class JDRefreshHeader extends AbstractRefreshHeader {
     }
 
     @Override
-    public OnStateChangedListener getStateChangedListener() {
-        return this;
-    }
-
-    @Override
-    public void onPositionChanged(float percent, @Common.State int state) {
+    public void onPositionChanged(float percent, @State int state) {
         if (percent > 1 || state == STATE_REFRESHING) {
             percent = 1;
         }

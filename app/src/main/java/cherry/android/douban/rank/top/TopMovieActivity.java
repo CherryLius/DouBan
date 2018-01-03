@@ -19,7 +19,6 @@ import cherry.android.douban.route.MovieRouter;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.api.Router;
 
 /**
  * Created by LHEE on 2017/6/19.

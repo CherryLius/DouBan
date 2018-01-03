@@ -1,6 +1,7 @@
 package cherry.android.ptr;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,11 +17,11 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
-import static cherry.android.ptr.Common.STATE_COMPLETE;
-import static cherry.android.ptr.Common.STATE_IDLE;
-import static cherry.android.ptr.Common.STATE_PULL_TO_REFRESH;
-import static cherry.android.ptr.Common.STATE_REFRESHING;
-import static cherry.android.ptr.Common.STATE_RELEASE_TO_REFRESH;
+import static cherry.android.ptr.State.STATE_COMPLETE;
+import static cherry.android.ptr.State.STATE_IDLE;
+import static cherry.android.ptr.State.STATE_PULL_TO_REFRESH;
+import static cherry.android.ptr.State.STATE_REFRESHING;
+import static cherry.android.ptr.State.STATE_RELEASE_TO_REFRESH;
 
 /**
  * Created by Administrator on 2017/6/23.
@@ -31,21 +32,28 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
     private static final float DEFAULT_OFFSET_RATIO = 2.0f;
     private static final int DEFAULT_SCROLL_DURATION = 1000;
 
-    //    private int mTouchSlop;
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
     private int mMaxVelocity;
     private IRefreshHeader mRefreshHeader;
-    @Common.State
+    @State
     private int mState;
 
-    //滑动刷新控件
+    /**
+     * 滑动刷新控件
+     */
     private View mTarget;
-    //触控点
+    /**
+     * 触控点
+     */
     private float mLastMotionY;
-    //偏移量
+    /**
+     * 偏移量
+     */
     private int mOffset;
-    // Scroll偏移量
+    /**
+     * Scroll偏移量
+     */
     private int mLastScrollY;
 
     private OnChildScrollCallback<PullToRefreshLayout> mCallback;
@@ -72,6 +80,7 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
         mState = STATE_IDLE;
     }
 
+    @Override
     public void setRefreshHeader(@NonNull IRefreshHeader refreshHeader) {
         if (mRefreshHeader != null)
             removeView(mRefreshHeader.getView());
@@ -155,7 +164,7 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && mTarget instanceof AbsListView)
                 || (mTarget != null && !ViewCompat.isNestedScrollingEnabled(mTarget))) {
             // Nope.
         } else {
@@ -214,28 +223,28 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
         if (mCallback != null) {
             return mCallback.canChildScrollUp(this, mTarget);
         }
-        if (android.os.Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (mTarget instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mTarget;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
                         .getTop() < absListView.getPaddingTop());
             } else {
-                return ViewCompat.canScrollVertically(mTarget, -1) || mTarget.getScrollY() > 0;
+                return mTarget.canScrollVertically(-1) || mTarget.getScrollY() > 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
+            return mTarget.canScrollVertically(-1);
         }
     }
 
-    protected void setState(@Common.State int state) {
+    protected void setState(@State int state) {
         if (mState != state) {
             mState = state;
             onStateChanged(state);
         }
     }
 
-    private void onStateChanged(@Common.State int state) {
+    private void onStateChanged(@State int state) {
         if (mOnRefreshListener != null && mState == STATE_REFRESHING)
             mOnRefreshListener.onRefresh();
         if (mRefreshHeader == null || mRefreshHeader.getStateChangedListener() == null)
@@ -244,6 +253,7 @@ public class PullToRefreshLayout extends FrameLayout implements IPullToRefresh {
         listener.onStateChanged(state);
     }
 
+    @Override
     public void refreshComplete() {
         setState(STATE_COMPLETE);
         mLastScrollY = 0;

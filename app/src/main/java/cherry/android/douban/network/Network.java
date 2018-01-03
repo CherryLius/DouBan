@@ -105,7 +105,7 @@ public class Network {
                 Request request = chain.request();
                 Response response = chain.proceed(request);
                 if (Utils.isNetworkAvailable(App.getContext())) {
-                    int maxAge = 1 * 60;//1 min
+                    int maxAge = 60;//1 min
                     response = response.newBuilder()
                             .header("Cache-Control", "public, max-age=" + maxAge)
                             .removeHeader("Pragma")

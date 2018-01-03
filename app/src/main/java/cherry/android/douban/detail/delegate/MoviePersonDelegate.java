@@ -18,7 +18,6 @@ import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.ItemViewDelegate;
 import cherry.android.recycler.ViewHolder;
-import cherry.android.router.api.Router;
 import cherry.android.toast.Toaster;
 
 /**

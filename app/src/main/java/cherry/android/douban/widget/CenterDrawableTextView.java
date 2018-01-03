@@ -6,8 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
-import cherry.android.douban.util.Logger;
-
 /**
  * Created by LHEE on 2017/6/3.
  */

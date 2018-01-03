@@ -2,7 +2,6 @@ package cherry.android.douban.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v7.graphics.Palette;
 
 import com.bumptech.glide.Glide;

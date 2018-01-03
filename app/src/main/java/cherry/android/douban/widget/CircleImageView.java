@@ -28,7 +28,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.animation.Animation;
-import android.widget.ImageView;
 
 /**
  * Private class created to work around issues with AnimationListeners being

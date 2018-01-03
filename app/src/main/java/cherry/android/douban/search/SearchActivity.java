@@ -1,18 +1,15 @@
 package cherry.android.douban.search;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ViewStubCompat;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
@@ -25,7 +22,6 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import cherry.android.douban.R;
 import cherry.android.douban.adapter.QueryAdapter;
-import cherry.android.douban.adapter.TheaterMovieAdapter;
 import cherry.android.douban.base.BaseActivity;
 import cherry.android.douban.model.Movie;
 import cherry.android.douban.route.MovieRouter;
@@ -33,9 +29,7 @@ import cherry.android.douban.util.Utils;
 import cherry.android.douban.widget.ClearTextView;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.RecyclerAdapter;
-import cherry.android.recycler.wrapper.LoadMoreWrapper;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.api.Router;
 
 /**
  * Created by ROOT on 2017/7/20.
@@ -104,8 +98,7 @@ public class SearchActivity extends BaseActivity implements SearchContract.View,
 
     @Override
     public void showHotSearch(String[] hots) {
-        for (int i = 0; i < hots.length; i++) {
-            String title = hots[i];
+        for (String title : hots) {
             final TextView textView = new TextView(this);
             textView.setBackgroundResource(R.drawable.ic_round_rect_stroke_bg);
             textView.setText(title);
@@ -138,6 +131,7 @@ public class SearchActivity extends BaseActivity implements SearchContract.View,
         historyView.setVisibility(View.GONE);
     }
 
+    @SuppressLint("RestrictedApi")
     void initRecyclerView() {
         if (recyclerView == null) {
             recyclerView = (RecyclerView) viewStub.inflate();

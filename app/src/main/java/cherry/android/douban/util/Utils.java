@@ -24,9 +24,7 @@ public final class Utils {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager cm = getSystemService(context, Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null)
-            return activeNetwork.isAvailable();
-        return false;
+        return activeNetwork != null && activeNetwork.isAvailable();
     }
 
     /**

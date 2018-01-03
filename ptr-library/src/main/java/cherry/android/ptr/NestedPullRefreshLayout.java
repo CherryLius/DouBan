@@ -1,7 +1,9 @@
 package cherry.android.ptr;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -23,26 +25,25 @@ import android.widget.AbsListView;
 import android.widget.ScrollView;
 import android.widget.Scroller;
 
-import static cherry.android.ptr.Common.STATE_COMPLETE;
-import static cherry.android.ptr.Common.STATE_IDLE;
-import static cherry.android.ptr.Common.STATE_PULL_TO_REFRESH;
-import static cherry.android.ptr.Common.STATE_REFRESHING;
-import static cherry.android.ptr.Common.STATE_RELEASE_TO_REFRESH;
 import static cherry.android.ptr.NestedPullRefreshLayout.OverScrollHandler.MSG_START_COMPUTE_SCROLL;
+import static cherry.android.ptr.State.STATE_COMPLETE;
+import static cherry.android.ptr.State.STATE_IDLE;
+import static cherry.android.ptr.State.STATE_PULL_TO_REFRESH;
+import static cherry.android.ptr.State.STATE_REFRESHING;
+import static cherry.android.ptr.State.STATE_RELEASE_TO_REFRESH;
 
 /**
  * Created by LHEE on 2017/6/25.
  */
 
-public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild,
-        IPullToRefresh {
+public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild, IPullToRefresh {
 
     private static final String TAG = "NestedPullRefreshLayout";
     private static final int DEFAULT_SCROLL_DURATION = 1000;
     private static final float DEFAULT_OFFSET_RATIO = 3.0f;
     private static final int OVER_SCROLL_MIN_VX = 3000;
 
-    @Common.State
+    @State
     private int mState;
 
     private IRefreshHeader mRefreshHeader;
@@ -230,14 +231,14 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         }
     }
 
-    /**
-     * 解决未实现NestScrollingChild的Target的下拉刷新
-     * 两种方案：
-     * A. 重写dispatchTouchEvent
-     * B. 重写onInterceptTouchEvent、onTouchEvent、requestDisallowInterceptTouchEvent
+    /*
+      解决未实现NestScrollingChild的Target的下拉刷新
+      两种方案：
+      A. 重写dispatchTouchEvent
+      B. 重写onInterceptTouchEvent、onTouchEvent、requestDisallowInterceptTouchEvent
      */
 
-    /***    A.START:{   ***/
+    /**    A.START:{   ***/
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
 //        final int action = MotionEventCompat.getActionMasked(ev);
@@ -306,21 +307,21 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
 //        }
 //        return super.dispatchTouchEvent(ev);
 //    }
-    /***    A.END:}   ***/
+    /**    A.END:}   ***/
+
     /***    B.START:{   ***/
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.e(TAG, "[onInterceptTouchEvent] action=" + ev.getAction());
-        if (mRefreshHeader == null) {
+        if (mRefreshHeader == null || mNestedScrollInProgress) {
             return super.onInterceptTouchEvent(ev);
         }
-        if (mNestedScrollInProgress)
-            return super.onInterceptTouchEvent(ev);
         final int action = MotionEventCompat.getActionMasked(ev);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                if (mState != STATE_REFRESHING)
+                if (mState != STATE_REFRESHING) {
                     setState(STATE_IDLE);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 float distance = ev.getY() - mMotionDownY;
@@ -331,16 +332,21 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
                 }
                 Log.d(TAG, "distance=" + distance + ",dy=" + dy + ", offset=" + mCurrentOffset);
                 //上滑
-                if (dy < 0 && mCurrentOffset <= 0)
+                if (dy < 0 && mCurrentOffset <= 0) {
                     return super.onInterceptTouchEvent(ev);
+                }
                 //下滑
-                if (dy > 0 && canChildScrollUp())
+                if (dy > 0 && canChildScrollUp()) {
                     return super.onInterceptTouchEvent(ev);
+                }
                 return true;
+            default:
+                break;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.v(TAG, "[onTouchEvent] action=" + event.getAction());
@@ -360,10 +366,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
                     return super.onTouchEvent(event);
                 }
                 float offset = dy / DEFAULT_OFFSET_RATIO;
-                if (!mScroller.isFinished())
+                if (!mScroller.isFinished()) {
                     mScroller.forceFinished(true);
-                if (mOverScrollAnimator.isRunning())
+                }
+                if (mOverScrollAnimator.isRunning()) {
                     mOverScrollAnimator.end();
+                }
                 if (offset < 0 && mCurrentOffset > 0) {
                     if (Math.abs(offset) > mCurrentOffset) {
                         offsetViewTopAndBottom((int) mCurrentOffset);
@@ -395,12 +403,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         // if this is a List < L or another view that doesn't support nested
         // scrolling, ignore this request so that the vertical scroll event
         // isn't stolen
-        if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+                && mTarget instanceof AbsListView)
                 || (mTarget != null && !ViewCompat.isNestedScrollingEnabled(mTarget))) {
             // Nope.
             Log.d(TAG, "request Nope");
         } else {
-            //Log.d(LOG_TAG, "super request");
             super.requestDisallowInterceptTouchEvent(disallowIntercept);
         }
     }
@@ -423,7 +431,14 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         super.dispatchTouchEvent(e);
     }
 
-    //NestedScrollingParent
+    /**
+     * NestedScrollingParent
+     *
+     * @param child
+     * @param target
+     * @param nestedScrollAxes
+     * @return
+     */
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         return isEnabled()
@@ -436,8 +451,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
         startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
         mNestedScrollInProgress = true;
-        if (mState != STATE_REFRESHING)
+        if (mState != STATE_REFRESHING) {
             setState(STATE_IDLE);
+        }
     }
 
     @Override
@@ -478,10 +494,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         //下滑时处理
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !canChildScrollUp()) {
-            if (!mScroller.isFinished())
+            if (!mScroller.isFinished()) {
                 mScroller.forceFinished(true);
-            if (mOverScrollAnimator.isRunning())
+            }
+            if (mOverScrollAnimator.isRunning()) {
                 mOverScrollAnimator.end();
+            }
             Log.e(TAG, "startDrag " + mTotalUnconsumed);
             mTotalUnconsumed += (-dy);
             startDragTarget(mTotalUnconsumed);
@@ -532,7 +550,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         return mNestedScrollingParentHelper.getNestedScrollAxes();
     }
 
-    //NestedScrollingChild
+    /**
+     * NestedScrollingChild
+     *
+     * @param enabled
+     */
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
@@ -616,7 +638,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         if (mOnChildScrollCallback != null) {
             return mOnChildScrollCallback.canChildScrollUp(this, mTarget);
         }
-        if (android.os.Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (mTarget instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) mTarget;
                 return absListView.getChildCount() > 0
@@ -636,6 +658,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
      * @return
      */
     public boolean canChildScrollDown() {
+        if (mOnChildScrollCallback != null) {
+            return mOnChildScrollCallback.canChildScrollDown(this, mTarget);
+        }
         if (mTarget instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) mTarget;
             final int childCount = absListView.getChildCount();
@@ -686,8 +711,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private void overScrollOffsetTopAndBottom(final int value) {
         final int offset = (int) (value - mCurrentOffset);
         mRefreshHeader.getView().bringToFront();
-        if (mOverScrollTopShow)
+        if (mOverScrollTopShow) {
             ViewCompat.offsetTopAndBottom(mRefreshHeader.getView(), offset);
+        }
         ViewCompat.offsetTopAndBottom(mTarget, offset);
         mCurrentOffset = value;
         mTotalUnconsumed = mCurrentOffset * DEFAULT_OFFSET_RATIO;
@@ -697,10 +723,11 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     private void finishDragTarget() {
         final int threshold = getThresholdDistance();
         if (mState == STATE_REFRESHING) {
-            if (mCurrentOffset >= threshold)
+            if (mCurrentOffset >= threshold) {
                 mScroller.startScroll(0, 0, 0, (int) (mCurrentOffset - threshold), currentScrollDuration());
-            else
+            } else {
                 mScroller.startScroll(0, 0, 0, (int) mCurrentOffset, currentScrollDuration());
+            }
         } else if (mState == STATE_RELEASE_TO_REFRESH) {
             setState(STATE_REFRESHING);
             mScroller.startScroll(0, 0, 0, (int) (mCurrentOffset - threshold), currentScrollDuration());
@@ -718,10 +745,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         int duration;
         final int threshold = getThresholdDistance();
         float offset = mCurrentOffset;
-        if (offset > threshold)
+        if (offset > threshold) {
             offset -= threshold;
-        if (offset > threshold)
+        }
+        if (offset > threshold) {
             return DEFAULT_SCROLL_DURATION;
+        }
         duration = (int) (offset / threshold * DEFAULT_SCROLL_DURATION);
         return duration;
     }
@@ -737,8 +766,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         final int realOverHeight = overHeight > headerThreshold ? headerThreshold : overHeight;
         final int duration = realOverHeight < 50 ? 300 : (int) (0.8f * realOverHeight + 200);
         Log.e(TAG, "[overScroll] " + realOverHeight + ", duration=" + duration);
-        if (!mScroller.isFinished())
+        if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
+        }
         mOverScrollAnimator.setIntValues(0, scrollToTop ? realOverHeight : -realOverHeight);
         mOverScrollAnimator.setDuration(duration);
         mOverScrollAnimator.start();
@@ -750,8 +780,9 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
     }
 
     private void ensureState() {
-        if (mState == STATE_REFRESHING || mState == STATE_COMPLETE)
+        if (mState == STATE_REFRESHING || mState == STATE_COMPLETE) {
             return;
+        }
         final int threshold = getThresholdDistance();
         if (mCurrentOffset > threshold) {
             setState(STATE_RELEASE_TO_REFRESH);
@@ -760,27 +791,32 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         }
     }
 
-    protected void setState(@Common.State int state) {
+    protected void setState(@State int state) {
         if (mState != state) {
             mState = state;
             onStateChanged(mState);
         }
     }
 
-    private void onStateChanged(@Common.State int state) {
-        if (mState == STATE_REFRESHING && mOnRefreshListener != null)
+    private void onStateChanged(@State int state) {
+        if (mState == STATE_REFRESHING && mOnRefreshListener != null) {
             mOnRefreshListener.onRefresh();
-        if (mRefreshHeader == null || mRefreshHeader.getStateChangedListener() == null)
+        }
+        if (mRefreshHeader == null || mRefreshHeader.getStateChangedListener() == null) {
             return;
+        }
         final OnStateChangedListener listener = mRefreshHeader.getStateChangedListener();
         listener.onStateChanged(state);
     }
 
+    @Override
     public void setRefreshHeader(@NonNull IRefreshHeader refreshHeader) {
-        if (mRefreshHeader != null)
+        if (mRefreshHeader != null) {
             removeView(mRefreshHeader.getView());
-        if (refreshHeader.getView() == null)
+        }
+        if (refreshHeader.getView() == null) {
             throw new NullPointerException("header view should not be Null");
+        }
         mRefreshHeader = refreshHeader;
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
@@ -788,11 +824,13 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         ensureTarget();
     }
 
+    @Override
     public void refreshComplete() {
         setState(STATE_COMPLETE);
         mLastScrollY = 0;
-        if (mCurrentOffset <= 0)
+        if (mCurrentOffset <= 0) {
             return;
+        }
         mScroller.startScroll(0, 0, 0, (int) mCurrentOffset, DEFAULT_SCROLL_DURATION);
         postInvalidate();
     }
@@ -812,6 +850,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
         this.mOnChildScrollCallback = callback;
     }
 
+    @Override
     public void setOnRefreshListener(OnRefreshListener listener) {
         this.mOnRefreshListener = listener;
     }
@@ -854,7 +893,7 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
             switch (msg.what) {
                 case MSG_START_COMPUTE_SCROLL:
                     currentDelayTime = -1;
-                case MSG_CONTINUE_COMPUTE_SCROLL:
+                case MSG_CONTINUE_COMPUTE_SCROLL: {
                     currentDelayTime++;
                     if (!layout.canChildScrollUp()) {
                         layout.overScroll(velocityY, currentDelayTime, true/*scroll To Top*/);
@@ -864,8 +903,12 @@ public class NestedPullRefreshLayout extends ViewGroup implements NestedScrollin
                         layout.overScroll(velocityY, currentDelayTime, false/*scroll To Bottom*/);
                         currentDelayTime = DEFAULT_DELAY;
                     }
-                    if (currentDelayTime < DEFAULT_DELAY)
+                    if (currentDelayTime < DEFAULT_DELAY) {
                         sendMessageDelayed(obtainMessage(MSG_CONTINUE_COMPUTE_SCROLL, velocityY), 10);
+                    }
+                    break;
+                }
+                default:
                     break;
             }
         }

@@ -122,7 +122,8 @@
             android:background="@drawable/ic_button_state_bg"
             android:clickable="true"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:focusable="true">
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"

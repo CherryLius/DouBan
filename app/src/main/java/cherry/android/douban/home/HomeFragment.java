@@ -27,7 +27,6 @@ import cherry.android.douban.common.ui.ToolbarFragment;
 import cherry.android.douban.model.GankData;
 import cherry.android.douban.route.MovieRouter;
 import cherry.android.router.annotations.Route;
-import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/2.

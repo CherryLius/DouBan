@@ -2,7 +2,6 @@ package cherry.android.douban.route;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import cherry.android.douban.network.Network;
 import cherry.android.router.api.Router;
 
 /**

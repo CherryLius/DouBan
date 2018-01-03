@@ -21,12 +21,10 @@ import cherry.android.douban.rank.delegate.NorthRankDelegate;
 import cherry.android.douban.rank.delegate.RankDelegate;
 import cherry.android.douban.rank.delegate.SectionDelegate;
 import cherry.android.douban.route.MovieRouter;
-import cherry.android.douban.route.RouteService;
 import cherry.android.douban.widget.JDRefreshHeader;
 import cherry.android.ptr.NestedPullRefreshLayout;
 import cherry.android.ptr.OnRefreshListener;
 import cherry.android.recycler.RecyclerAdapter;
-import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/13.

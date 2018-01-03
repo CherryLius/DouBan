@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import cherry.android.douban.R;
 import cherry.android.douban.util.CompatUtils;
-import cherry.android.douban.util.Logger;
 import cherry.android.douban.util.Utils;
 
 /**

@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,7 +21,6 @@ import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.util.CompatUtils;
 import cherry.android.douban.widget.CustomGridItem;
 import cherry.android.douban.widget.CustomGridLayout;
-import cherry.android.router.api.Router;
 
 public class MineFragment extends ToolbarFragment {
 

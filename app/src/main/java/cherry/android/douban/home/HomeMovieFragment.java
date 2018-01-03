@@ -22,7 +22,6 @@ import cherry.android.douban.route.MovieRouter;
 import cherry.android.recycler.DividerItemDecoration;
 import cherry.android.recycler.RecyclerAdapter;
 import cherry.android.recycler.wrapper.LoadMoreWrapper;
-import cherry.android.router.api.Router;
 import cherry.android.router.api.utils.Logger;
 import cherry.android.toast.Toaster;
 

@@ -88,7 +88,7 @@ class MaterialProgressDrawable extends Drawable implements Animatable {
     /** The number of points in the progress "star". */
     private static final float NUM_POINTS = 5f;
     /** The list of animators operating on this drawable. */
-    private final ArrayList<Animation> mAnimators = new ArrayList<Animation>();
+    private final ArrayList<Animation> mAnimators = new ArrayList<>();
 
     /** The indicator ring, used to manage animation state. */
     private final Ring mRing;

@@ -11,7 +11,6 @@ import cherry.android.douban.model.Movie;
 import cherry.android.douban.route.MovieRouter;
 import cherry.android.douban.sticker.IStickyHeader;
 import cherry.android.douban.util.Utils;
-import cherry.android.router.api.Router;
 
 /**
  * Created by Administrator on 2017/6/13.

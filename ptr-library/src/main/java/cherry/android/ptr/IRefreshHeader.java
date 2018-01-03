@@ -15,5 +15,5 @@ public interface IRefreshHeader {
 
     OnStateChangedListener getStateChangedListener();
 
-    void onPositionChanged(float percent, @Common.State int state);
+    void onPositionChanged(float percent, @State int state);
 }

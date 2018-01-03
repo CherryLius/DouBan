@@ -13,7 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/6/23.
+ * @author Administrator
+ * @date 2017/6/23
  */
 
 public class DefaultRefreshHeader extends AbstractRefreshHeader {
@@ -57,12 +58,7 @@ public class DefaultRefreshHeader extends AbstractRefreshHeader {
     }
 
     @Override
-    public OnStateChangedListener getStateChangedListener() {
-        return this;
-    }
-
-    @Override
-    public void onPositionChanged(float percent, @Common.State int state) {
+    public void onPositionChanged(float percent, @State int state) {
 
     }
 
